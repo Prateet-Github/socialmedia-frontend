@@ -1,5 +1,20 @@
+import ForgotPassword from "./pages/ForgotPassword";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import { Routes, Route } from "react-router-dom";
+import Signup from "./pages/Signup";
+
 const App = () => {
-  return <div>App</div>;
+  return (
+    <>
+      <Routes>
+        <Route path="/" element={<Home />}></Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />}></Route>
+        <Route path="signup" element={<Signup />}></Route>
+      </Routes>
+    </>
+  );
 };
 
 export default App;
