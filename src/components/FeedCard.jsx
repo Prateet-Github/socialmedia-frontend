@@ -1,9 +1,47 @@
-import React from 'react'
-
 const FeedCard = () => {
   return (
-    <div>FeedCard</div>
-  )
-}
+    <main className="flex p-6 border-b gap-3">
+      {/* Profile Picture */}
+      <div className="flex-shrink-0">
+        <img
+          src="/pfp.jpeg"
+          alt="profile"
+          className="w-10 h-10 rounded-full object-cover"
+        />
+      </div>
 
-export default FeedCard
+      {/* Content */}
+      <div className="flex flex-col gap-3 w-full">
+        {/* Username + Time */}
+        <div className="flex items-center gap-2">
+          <h1 className="font-semibold hover:underline cursor-pointer">
+            Prateet Tiwari
+          </h1>
+          <p className="text-gray-400 text-sm">2h ago</p>
+        </div>
+
+        {/* Text */}
+        <p className="text-sm leading-5">
+          So, there is a free and open-source alternative to Netflix available —
+          it's known as Stremio.
+        </p>
+
+        {/* Image */}
+        <img
+          src="/pfp.jpeg"
+          alt="post"
+          className="rounded-2xl w-full h-auto object-cover"
+        />
+
+        {/* Buttons */}
+        <div className="flex justify-between text-sm text-gray-300 px-2">
+          <button className="hover:text-white">Like</button>
+          <button className="hover:text-white">Comment</button>
+          <button className="hover:text-white">Share</button>
+        </div>
+      </div>
+    </main>
+  );
+};
+
+export default FeedCard;

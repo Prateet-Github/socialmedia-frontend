@@ -85,7 +85,7 @@ const Home = () => {
         </div>
       </div>
       <div className="w-2/4 flex flex-col justify">
-        <div className="border-b py-5 px-10 flex items-center gap-4">
+        {/* <div className="border-b py-5 px-10 flex items-center gap-4">
           <div className="flex flex-col gap-2 w-20">
             <img
               src="pfp.jpeg"
@@ -121,7 +121,7 @@ const Home = () => {
             />
             <p className="truncate text-center w-full">Usernameeeeee</p>
           </div>
-        </div>
+        </div> */}
 
         <div>
           <FeedCard />
