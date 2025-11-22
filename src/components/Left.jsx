@@ -16,7 +16,7 @@ const Left = () => {
       <div className="flex flex-col gap-4 w-full">
         <h1 className="text-4xl px-4 w-full truncate">Social Media</h1>
         <Link
-          to="/login"
+          to="/"
           className="flex gap-4 w-full px-4 py-3 hover:bg-gray-300 hover:text-black rounded-4xl"
         >
           <HomeIcon className="flex-shrink-0" />

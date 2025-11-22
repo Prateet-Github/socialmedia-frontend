@@ -7,7 +7,7 @@ const Profile = () => {
       <div className="w-1/4">
         <Left />
       </div>
-      <div className="w-3/4">
+      <div className="w-3/4 flex justify-center">
         <ProfileCard />
       </div>
     </main>
