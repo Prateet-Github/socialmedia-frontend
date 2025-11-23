@@ -30,7 +30,7 @@ const Left = () => {
           <p className="truncate w-full">Home</p>
         </Link>
         <Link
-          to="/login"
+          to="/search"
           className="flex  gap-4 w-full px-4 py-3 hover:bg-gray-300 hover:text-black rounded-4xl"
         >
           <Search className="flex-shrink-0" />
@@ -50,13 +50,6 @@ const Left = () => {
         >
           <Mail className="flex-shrink-0" />
           <p className="truncate w-full">Messages</p>
-        </Link>
-        <Link
-          to="/login"
-          className="flex gap-4 w-full px-4 py-3 hover:bg-gray-300 hover:text-black rounded-4xl"
-        >
-          <PresentationIcon className="flex-shrink-0" />
-          <p className="truncate w-full">Premium</p>
         </Link>
         <Link
           to="/profile"

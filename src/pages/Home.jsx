@@ -1,5 +1,6 @@
 import FeedCard from "../components/FeedCard.jsx";
 import Left from "../components/Left.jsx";
+import Right from "../components/Right.jsx";
 
 const Home = () => {
   return (
@@ -10,7 +11,9 @@ const Home = () => {
       <div className="w-2/4">
         <FeedCard />
       </div>
-      <div className="w-1/4 border-l h-screen top-0 sticky px-4 py-6 flex flex-col gap-4"></div>
+      <div className="w-1/4 border-l">
+      <Right/>
+      </div>
     </main>
   );
 };
