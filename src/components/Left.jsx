@@ -8,13 +8,20 @@ import {
   Search,
   User2,
   PlusIcon,
+  Instagram,
 } from "lucide-react";
 
 const Left = () => {
   return (
     <main className="border-r h-screen sticky flex flex-col items-center justify-between py-6 px-10 top-0">
       <div className="flex flex-col gap-4 w-full">
-        <h1 className="text-4xl px-4 w-full truncate">Social Media</h1>
+        <Link
+          to="/"
+          className="flex gap-4 w-full px-4 py-3 hover:bg-gray-300 hover:text-black rounded-4xl"
+        >
+          <Instagram className="flex-shrink-0" />
+          <p className="truncate w-full">Instagram</p>
+        </Link>
         <Link
           to="/"
           className="flex gap-4 w-full px-4 py-3 hover:bg-gray-300 hover:text-black rounded-4xl"
@@ -38,7 +45,7 @@ const Left = () => {
           {/* TEXT TRUNCATES */}
         </Link>
         <Link
-          to="/login"
+          to="/messages"
           className="flex gap-4 w-full px-4 py-3 hover:bg-gray-300 hover:text-black rounded-4xl"
         >
           <Mail className="flex-shrink-0" />

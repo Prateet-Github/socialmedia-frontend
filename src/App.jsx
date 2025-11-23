@@ -7,6 +7,7 @@ import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
+import Messages from "./pages/Messages";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/about" element={<About />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
         <Route path="/notification" element={<Notifications/>} ></Route>
+        <Route path="/messages" element={<Messages/>}></Route>
       </Routes>
     </>
   );
