@@ -6,6 +6,7 @@ import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import Profile from "./pages/Profile";
+import Notifications from "./pages/Notifications";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route path="signup" element={<Signup />}></Route>
         <Route path="/about" element={<About />}></Route>
         <Route path="/profile" element={<Profile />}></Route>
+        <Route path="/notification" element={<Notifications/>} ></Route>
       </Routes>
     </>
   );

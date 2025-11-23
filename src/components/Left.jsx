@@ -30,7 +30,7 @@ const Left = () => {
           <p className="truncate w-full">Search</p>
         </Link>
         <Link
-          to="/login"
+          to="/notification"
           className="flex gap-4 w-full px-4 py-3 hover:bg-gray-300 hover:text-black rounded-4xl items-center"
         >
           <Bell className="flex-shrink-0" /> {/* ICON NEVER SHRINKS */}
