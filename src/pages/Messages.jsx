@@ -6,27 +6,27 @@ import { Search } from "lucide-react";
 const Messages = () => {
   return (
     <main className="flex min-h-screen w-full mx-auto">
-      {/* Left Sidebar - Fixed width */}
-      <div className="w-22 flex-shrink-0 border-r">
+      {/* Left Sidebar - Icons only */}
+      <div className="hidden md:block w-22 flex-shrink-0 border-r">
         <Left showLabels={false} />
       </div>
 
-      {/* Chats List - Fixed width */}
-      <div className="w-80 lg:w-72 flex-shrink-0 border-r">
+      {/* Chats List - Responsive width */}
+      <div className="w-full md:w-80 lg:w-96 flex-shrink-0 border-r">
         <div className="flex relative p-4 border-b">
           <Search className="text-gray-400 absolute left-7 top-1/2 -translate-y-1/2 size-5" />
           <input
             type="text"
             placeholder="Search"
-            className="bg-gray-950 p-2 pl-10 border outline-none w-full rounded-full"
+            className="bg-gray-950 p-2 pl-10 border border-gray-700 outline-none w-full rounded-full focus:border-blue-500 transition-colors"
           />
         </div>
         <Chats />
         <Chats />
       </div>
 
-      {/* Chat Box - Takes remaining space */}
-      <div className="flex-1 min-w-0">
+      {/* Chat Box - Takes remaining space, hidden on mobile */}
+      <div className="hidden md:block flex-1 min-w-0">
         <ChatBox />
       </div>
     </main>

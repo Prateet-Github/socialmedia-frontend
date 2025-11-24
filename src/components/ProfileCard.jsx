@@ -2,41 +2,51 @@ import FeedCard from "./FeedCard";
 
 const ProfileCard = () => {
   return (
-    <main className="w-full max-w-3xl p-8 flex flex-col gap-6">
-      <div className="flex  justify-center gap-20 flex-shrink-0">
-        <div className="justify-center flex items-center">
+    <main className="w-full max-w-3xl p-4 md:p-8 flex flex-col gap-6">
+      {/* Profile Header */}
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-12">
+        {/* Profile Image */}
+        <div className="flex-shrink-0">
           <img
             src="./pfp.jpeg"
-            alt=""
-            className="w-35 h-35 object-contain rounded-full p-1 border"
+            alt="pfp"
+            className="w-24 h-24 md:w-32 md:h-32 lg:w-36 lg:h-36 object-cover rounded-full border"
           />
         </div>
-        <div className="flex flex-col gap-4 justify-center">
+
+        {/* Profile Info */}
+        <div className="flex flex-col gap-4 flex-1 text-center md:text-left">
           <div>
             <h1 className="text-2xl font-semibold">Prateet Tiwari</h1>
             <p className="text-gray-400">@prateettiwari</p>
           </div>
-          <div className="flex gap-2">
-            <p>50 Posts</p>
-            <p>1.2K Followers</p>
-            <p>300 Following</p>
+          
+          <div className="flex gap-4 justify-center md:justify-start">
+            <p><span className="font-semibold">50</span> Posts</p>
+            <p><span className="font-semibold">1.2K</span> Followers</p>
+            <p><span className="font-semibold">300</span> Following</p>
           </div>
+          
           <div>
-            <p className="max-w-md">
+            <p className="text-sm md:text-base">
               Software Engineer | Tech Enthusiast | Open Source Contributor.
               Love coding and coffee!
             </p>
           </div>
         </div>
       </div>
-      <div className="flex gap-2 border-b pb-12 justify-center flex-shrink-0 w-full truncate">
-        <button className="px-16 py-2 w-full rounded-2xl bg-gray-600">
+
+      {/* Action Buttons */}
+      <div className="flex gap-3 border-b pb-6">
+        <button className="flex-1 py-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 transition-colors font-medium">
           Follow
         </button>
-        <button className="px-16 py-2 w-full rounded-2xl bg-gray-600">
+        <button className="flex-1 py-2 px-4 rounded-xl bg-gray-700 hover:bg-gray-600 transition-colors font-medium">
           Message
         </button>
       </div>
+
+      {/* Posts Grid */}
       <div className="flex flex-col gap-6 pt-6">
         <FeedCard />
         <FeedCard />

@@ -53,7 +53,6 @@ const Left = ({ showLabels = true }) => {
           { to: "/notification", icon: Bell, label: "Notifications" },
           { to: "/messages", icon: Mail, label: "Messages" },
           { to: "/profile", icon: User2, label: "Profile" },
-          { to: "/more", icon: MoreVertical, label: "More" },
           { to: "/post", icon: PlusIcon, label: "Post" },
         ].map(({ to, icon: Icon, label }) => (
           <Link
@@ -65,7 +64,7 @@ const Left = ({ showLabels = true }) => {
           >
             <Icon className="size-6 flex-shrink-0" />
             {showLabels && (
-              <span className="hidden lg:inline whitespace-nowrap">
+              <span className="hidden text-xl lg:inline whitespace-nowrap">
                 {label}
               </span>
             )}
@@ -94,7 +93,7 @@ const Left = ({ showLabels = true }) => {
                 <h1 className="font-semibold truncate">Prateet Tiwari</h1>
                 <p className="text-gray-400 text-sm truncate">@prateettiwari</p>
               </div>
-              <MoreVertical className="hidden lg:block size-5 flex-shrink-0" />
+              <MoreVertical className="hidden lg:block size-5 flex-shrink-0 border-2 rounded-full" />
             </>
           )}
         </div>
@@ -120,6 +119,11 @@ const Left = ({ showLabels = true }) => {
           <div className="border-t border-gray-800"></div>
           <button className="w-full text-left px-4 py-3 hover:bg-gray-900 transition-colors">
             <span className="font-medium">Log out @prateettiwari</span>
+          </button>
+          <div className="border-t border-gray-800"></div>
+          <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-900 transition-colors">
+            <Sun className="size-5" />
+            <span className="font-medium">Dark Mode</span>
           </button>
         </div>
       )}

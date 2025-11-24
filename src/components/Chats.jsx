@@ -1,18 +1,25 @@
 const Chats = () => {
   return (
-    <main className="flex gap-4 p-4 border-b cursor-pointer">
-      <div className="flex justify-center items-center">
+    <article className="flex gap-3 md:gap-4 p-3 md:p-4 border-b cursor-pointer hover:bg-gray-900 transition-colors">
+      <div className="flex-shrink-0">
         <img
           src="./pfp.jpeg"
           alt="pfp"
-          className="h-14 w-14 object-cover rounded-full border"
+          className="h-12 w-12 md:h-14 md:w-14 object-cover rounded-full border"
         />
       </div>
-      <div className="flex flex-col justify-center">
-        <h1 className="font-semibold">Prateet Tiwari</h1>
-        <p className="text-gray-400 text-sm">Hey! How are you?</p>
+      <div className="flex flex-col justify-center flex-1 min-w-0">
+        <div className="flex items-center justify-between gap-2">
+          <h1 className="font-semibold text-sm md:text-base truncate">
+            Prateet Tiwari
+          </h1>
+          <span className="text-xs text-gray-500 flex-shrink-0">2h</span>
+        </div>
+        <p className="text-gray-400 text-xs md:text-sm truncate">
+          Hey! How are you?
+        </p>
       </div>
-    </main>
+    </article>
   );
 };
 
