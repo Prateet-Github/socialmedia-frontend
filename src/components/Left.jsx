@@ -12,9 +12,11 @@ import {
   Sun,
   User,
 } from "lucide-react";
+import PostCard from "./PostCard";
 
 const Left = ({ showLabels = true }) => {
   const [isUp, setIsUp] = useState(false);
+  const [showPostCard, setShowPostCard] = useState(false);
 
   const dropdownRef = useRef(null);
 
@@ -53,7 +55,6 @@ const Left = ({ showLabels = true }) => {
           { to: "/notification", icon: Bell, label: "Notifications" },
           { to: "/messages", icon: Mail, label: "Messages" },
           { to: "/profile", icon: User2, label: "Profile" },
-          { to: "/post", icon: PlusIcon, label: "Post" },
         ].map(({ to, icon: Icon, label }) => (
           <Link
             key={label}
@@ -70,6 +71,21 @@ const Left = ({ showLabels = true }) => {
             )}
           </Link>
         ))}
+        <button className="w-full" onClick={() => setShowPostCard(true)}>
+          <div
+            className={`flex  ${
+              showLabels ? "justify-center lg:justify-start" : "justify-center"
+            } items-center gap-3 p-2 rounded-2xl bg-blue-600 hover:bg-blue-700 cursor-pointer`}
+          >
+            <PlusIcon className="size-6 flex-shrink-0 text-white" />
+            {showLabels && (
+              <span className="hidden text-xl lg:inline text-white whitespace-nowrap">
+                Create Post
+              </span>
+            )}
+          </div>
+        </button>
+        {showPostCard && <PostCard onClose={() => setShowPostCard(false)} />}
       </div>
 
       <button
