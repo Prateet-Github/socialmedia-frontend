@@ -7,12 +7,12 @@ const Messages = () => {
   return (
     <main className="flex min-h-screen w-full mx-auto">
       {/* Left Sidebar - Fixed width */}
-      <div className="w-14 lg:w-56 flex-shrink-0 border-r">
-        <Left />
+      <div className="w-24 flex-shrink-0 border-r">
+        <Left showLabels={false} />
       </div>
 
       {/* Chats List - Fixed width */}
-      <div className="w-80 lg:w-96 flex-shrink-0 border-r">
+      <div className="w-80 lg:w-72 flex-shrink-0 border-r">
         <div className="flex relative p-4 border-b">
           <Search className="text-gray-400 absolute left-7 top-1/2 -translate-y-1/2 size-5" />
           <input

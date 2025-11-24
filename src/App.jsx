@@ -9,6 +9,8 @@ import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
 import Messages from "./pages/Messages";
 import Search from "./pages/Search";
+import EmailVerification from "./pages/EmailVerification";
+import EnterEmail from "./pages/EnterEmail";
 
 const App = () => {
   return (
@@ -24,6 +26,11 @@ const App = () => {
         <Route path="/notification" element={<Notifications />}></Route>
         <Route path="/messages" element={<Messages />}></Route>
         <Route path="/search" element={<Search />}></Route>
+        <Route
+          path="/email-verification"
+          element={<EmailVerification />}
+        ></Route>
+        <Route path="/enter-email" element={<EnterEmail />}></Route>
       </Routes>
     </>
   );

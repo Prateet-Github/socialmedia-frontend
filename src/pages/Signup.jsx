@@ -1,10 +1,23 @@
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Here you can add logic to handle the signup submission
+    // For now, we'll just navigate to a welcome page or home
+    navigate("/");
+  };
+
   return (
-    <main className="flex bg-black text-white flex-col gap-4 min-h-screen w-full justify-center items-center">
+    <form
+      onSubmit={handleSubmit}
+      className="flex bg-black text-white flex-col gap-4 min-h-screen w-full justify-center items-center"
+    >
       <div className="flex flex-col w-full max-w-sm border rounded text-center p-6 gap-8">
-        <h1 className="text-4xl">Social Media</h1>
+        <h1 className="text-4xl">Enter your profile details</h1>
         <div className="flex flex-col gap-4">
           <input
             type="text"
@@ -13,7 +26,7 @@ const Signup = () => {
           />
           <input
             type="text"
-            placeholder="Email"
+            placeholder="Full Name"
             className="p-4 border rounded"
           />
           <input
@@ -28,7 +41,10 @@ const Signup = () => {
           Policy .
         </p>
 
-        <button className=" border p-4 rounded-2xl cursor-pointer">
+        <button
+          type="submit"
+          className=" border p-4 rounded-2xl cursor-pointer"
+        >
           Sign Up
         </button>
       </div>
@@ -40,7 +56,7 @@ const Signup = () => {
           </Link>
         </p>
       </div>
-    </main>
+    </form>
   );
 };
 
