@@ -6,7 +6,7 @@ const Home = () => {
   return (
     <main className="flex min-h-screen w-full mx-auto max-w-7xl">
       {/* Left Sidebar - Fixed width */}
-      <div className="w-16 lg:w-64 xl:w-72 flex-shrink-0">
+      <div className="w-22 lg:w-64 xl:w-72 flex-shrink-0">
         <Left />
       </div>
       

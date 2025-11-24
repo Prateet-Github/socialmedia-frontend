@@ -7,7 +7,7 @@ const Messages = () => {
   return (
     <main className="flex min-h-screen w-full mx-auto">
       {/* Left Sidebar - Fixed width */}
-      <div className="w-24 flex-shrink-0 border-r">
+      <div className="w-22 flex-shrink-0 border-r">
         <Left showLabels={false} />
       </div>
 

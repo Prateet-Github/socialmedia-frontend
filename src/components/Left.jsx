@@ -14,8 +14,20 @@ const Left = ({ showLabels = true }) => {
   return (
     <aside className="flex border-r flex-col justify-between h-screen sticky top-0 py-6 px-4 overflow-hidden">
       <div className="flex flex-col gap-2">
+        <Link
+          to="/"
+          className={`flex items-center ${
+            showLabels ? "justify-center lg:justify-start" : "justify-center"
+          } gap-3 p-2 rounded-2xl hover:bg-gray-900`}
+        >
+          <Instagram className="size-8 flex-shrink-0 text-blue-500" />
+          {showLabels && (
+            <span className="hidden text-blue-500 lg:inline font-bold text-xl whitespace-nowrap">
+              GeeksGram
+            </span>
+          )}
+        </Link>
         {[
-          { to: "/", icon: Instagram, label: "Instagram" },
           { to: "/", icon: HomeIcon, label: "Home" },
           { to: "/search", icon: Search, label: "Search" },
           { to: "/notification", icon: Bell, label: "Notifications" },
