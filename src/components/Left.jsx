@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useRef, useState, useEffect } from "react";
 import {
   Bell,
   HomeIcon,
@@ -8,9 +9,28 @@ import {
   User2,
   PlusIcon,
   Instagram,
+  Sun,
+  User,
 } from "lucide-react";
 
 const Left = ({ showLabels = true }) => {
+  const [isUp, setIsUp] = useState(false);
+
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsUp(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <aside className="flex border-r flex-col justify-between h-screen sticky top-0 py-6 px-4 overflow-hidden">
       <div className="flex flex-col gap-2">
@@ -53,26 +73,56 @@ const Left = ({ showLabels = true }) => {
         ))}
       </div>
 
-      <div
-        className={`flex ${
-          showLabels ? "justify-center lg:justify-between" : "justify-center"
-        } items-center gap-3 p-2 rounded-2xl hover:bg-gray-900 cursor-pointer`}
+      <button
+        onClick={() => setIsUp(!isUp)}
+        ref={dropdownRef}
+        className="w-full"
       >
-        <img
-          src="./pfp.jpeg"
-          alt="Profile"
-          className="size-10 object-cover rounded-full flex-shrink-0"
-        />
-        {showLabels && (
-          <>
-            <div className="hidden lg:flex flex-col flex-1 min-w-0">
-              <h1 className="font-semibold truncate">Prateet Tiwari</h1>
-              <p className="text-gray-400 text-sm truncate">@prateettiwari</p>
+        <div
+          className={`flex ${
+            showLabels ? "justify-center lg:justify-between" : "justify-center"
+          } items-center gap-3 p-2 rounded-2xl hover:bg-gray-900 cursor-pointer`}
+        >
+          <img
+            src="./pfp.jpeg"
+            alt="Profile"
+            className="size-10 object-cover rounded-full flex-shrink-0"
+          />
+          {showLabels && (
+            <>
+              <div className="hidden lg:flex flex-col flex-1 min-w-0">
+                <h1 className="font-semibold truncate">Prateet Tiwari</h1>
+                <p className="text-gray-400 text-sm truncate">@prateettiwari</p>
+              </div>
+              <MoreVertical className="hidden lg:block size-5 flex-shrink-0" />
+            </>
+          )}
+        </div>
+      </button>
+      {isUp && (
+        <div className="fixed bottom-20 left-2 lg:left-20 bg-black border border-gray-800 rounded-2xl shadow-2xl overflow-hidden w-72 z-50">
+          <div className="px-4 py-3 border-b border-gray-800">
+            <div className="flex items-center gap-3">
+              <img
+                src="./pfp.jpeg"
+                alt="Profile"
+                className="size-10 object-cover rounded-full"
+              />
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold truncate">Prateet Tiwari</p>
+                <p className="text-sm text-gray-400 truncate">@prateettiwari</p>
+              </div>
             </div>
-            <MoreVertical className="hidden lg:block size-5 flex-shrink-0" />
-          </>
-        )}
-      </div>
+          </div>
+          <button className="w-full text-left px-4 py-3 hover:bg-gray-900 transition-colors">
+            <span className="font-medium">Add an existing account</span>
+          </button>
+          <div className="border-t border-gray-800"></div>
+          <button className="w-full text-left px-4 py-3 hover:bg-gray-900 transition-colors">
+            <span className="font-medium">Log out @prateettiwari</span>
+          </button>
+        </div>
+      )}
     </aside>
   );
 };
