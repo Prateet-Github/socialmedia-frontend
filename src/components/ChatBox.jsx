@@ -4,9 +4,32 @@ import {
   PlusCircle,
   SendHorizonal,
   ArrowLeft,
+  Sun,
+  File,
+  Image,
+  Map,
+  MapIcon,
+  MapPin,
 } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
 
 const ChatBox = () => {
+  const [isUp, setIsUp] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsUp(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <main className="flex flex-col h-screen">
       {/* Header - fixed to top */}
@@ -90,19 +113,39 @@ const ChatBox = () => {
 
         <div className="flex justify-end">
           <div className="bg-blue-600 p-2.5 md:p-3 rounded-2xl rounded-tr-sm max-w-[75%] md:max-w-xs text-white">
-            <p className="text-sm md:text-base">
-              Sure! Let's catch up soon 🚀
-            </p>
+            <p className="text-sm md:text-base">Sure! Let's catch up soon 🚀</p>
             <span className="text-xs text-blue-200 mt-1 block">10:37 AM</span>
           </div>
         </div>
       </div>
 
       {/* Input - fixed to bottom */}
-      <div className="border-t p-3 md:p-4 bg-black flex gap-2 md:gap-4 items-center">
-        <button className="flex-shrink-0 hover:text-gray-300 transition-colors">
+      <div className="border-t relative p-3 md:p-4 bg-black flex gap-2 md:gap-4 items-center">
+        <button
+          onClick={() => setIsUp(!isUp)}
+          ref={dropdownRef}
+          className="flex-shrink-0 hover:text-gray-300 transition-colors"
+        >
           <PlusCircle className="size-5 md:size-6" />
         </button>
+        {isUp && (
+          <div className="absolute  bottom-22 left-0 lg:left-2 bg-black border border-gray-800 rounded-2xl shadow-2xl overflow-hidden w-44 z-50">
+            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-900 transition-colors">
+              <File className="size-5 text-blue-500" />
+              <span className="font-medium">File</span>
+            </button>
+            <div className="border-t border-gray-800"></div>
+            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-900 transition-colors">
+              <Image className="size-5  text-blue-500" />
+              <span className="font-medium">Photo & Video</span>
+            </button>
+            <div className="border-t border-gray-800"></div>
+            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-900 transition-colors">
+              <MapPin className="size-5  text-blue-500" />
+              <span className="font-medium">Location</span>
+            </button>
+          </div>
+        )}
         <input
           type="text"
           placeholder="Type a message..."
