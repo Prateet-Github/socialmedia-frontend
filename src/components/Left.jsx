@@ -13,21 +13,10 @@ import {
 
 const Left = () => {
   return (
-    <aside className="border-r h-screen sticky top-0 py-6 px-4 overflow-hidden">
+    <aside className="h-screen border-r sticky top-0 py-6 px-4 overflow-hidden">
       <div className="flex flex-col gap-2">
-        {/* APP NAME */}
-        <Link
-          to="/"
-          className="flex items-center justify-center xl:justify-start gap-3 px-3 py-2 rounded-2xl hover:bg-gray-900"
-        >
-          <Instagram className="size-6 flex-shrink-0" />
-          <p className="hidden xl:block text-xl font-semibold whitespace-nowrap truncate w-full">
-            Instagram
-          </p>
-        </Link>
-
-        {/* NAV LINKS */}
         {[
+          { to: "/", icon: Instagram, label: "Instagram" },
           { to: "/", icon: HomeIcon, label: "Home" },
           { to: "/search", icon: Search, label: "Search" },
           { to: "/notification", icon: Bell, label: "Notifications" },
@@ -40,10 +29,10 @@ const Left = () => {
           <Link
             key={label}
             to={to}
-            className="flex items-center justify-center xl:justify-start gap-3 px-3 py-2 rounded-2xl hover:bg-gray-900"
+            className="flex items-center justify-center lg:justify-start gap-3 p-2 rounded-2xl hover:bg-gray-900"
           >
             <Icon className="size-6 flex-shrink-0" />
-            <p className="hidden xl:block whitespace-nowrap truncate w-full">{label}</p>
+            <span className="hidden lg:inline whitespace-nowrap">{label}</span>
           </Link>
         ))}
       </div>

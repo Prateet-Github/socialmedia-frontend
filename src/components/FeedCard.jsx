@@ -1,6 +1,6 @@
 const FeedCard = () => {
   return (
-    <main className="flex border-y p-6 gap-3">
+    <main className="flex border-b p-6 gap-3">
       {/* Profile Picture */}
       <div className="flex-shrink-0">
         <img
@@ -23,7 +23,7 @@ const FeedCard = () => {
         {/* Text */}
         <p className="text-sm leading-5">
           So, there is a free and open-source alternative to Netflix available —
-          it's known as Stremio.dfghfghjfgh
+          it's known as Stremio.
         </p>
 
         {/* Image */}

@@ -3,7 +3,7 @@ import FeedCard from "./FeedCard";
 const ProfileCard = () => {
   return (
     <main className="w-full max-w-3xl p-8 flex flex-col gap-6">
-      <div className="flex justify-center gap-20 flex-shrink-0">
+      <div className="flex  justify-center gap-20 flex-shrink-0">
         <div className="justify-center flex items-center">
           <img
             src="./pfp.jpeg"
@@ -29,7 +29,7 @@ const ProfileCard = () => {
           </div>
         </div>
       </div>
-      <div className="flex gap-2 justify-center flex-shrink-0 w-full truncate">
+      <div className="flex gap-2 border-b pb-12 justify-center flex-shrink-0 w-full truncate">
         <button className="px-16 py-2 w-full rounded-2xl bg-gray-600">
           Follow
         </button>
@@ -37,9 +37,11 @@ const ProfileCard = () => {
           Message
         </button>
       </div>
-     <div className="flex flex-col gap-6 pt-6">
-      <FeedCard/>
-     </div>
+      <div className="flex flex-col gap-6 pt-6">
+        <FeedCard />
+        <FeedCard />
+        <FeedCard />
+      </div>
     </main>
   );
 };

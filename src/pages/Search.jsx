@@ -1,16 +1,24 @@
 import Left from "../components/Left";
 import SearchCard from "../components/SearchCard";
 
+
 const Search = () => {
   return (
-    <main className="flex min-h-screen w-full mx-auto">
-      <div className="w-1/4">
+     <main className="flex min-h-screen w-full mx-auto max-w-7xl">
+      {/* Left Sidebar - Fixed width */}
+      <div className="w-16 lg:w-64 xl:w-72 flex-shrink-0">
         <Left />
       </div>
-      <div className="w-2/4">
-        <SearchCard />
+      
+      {/* Center Feed - Flexible, with max width */}
+      <div className="flex-1 min-w-0 max-w-2xl">
+       <SearchCard/>
       </div>
-      <div className="w-1/4 border-l h-screen top-0 sticky px-4 py-6 flex flex-col gap-4"></div>
+      
+      {/* Right Sidebar - Fixed width, hidden on small screens */}
+      <div className="hidden border-l lg:block w-80 xl:w-96 flex-shrink-0">
+        {/* <Right /> */}
+      </div>
     </main>
   );
 };

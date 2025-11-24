@@ -6,10 +6,13 @@ import { Search } from "lucide-react";
 const Messages = () => {
   return (
     <main className="flex min-h-screen w-full mx-auto">
-      <div className="w-1/16">
+      {/* Left Sidebar - Fixed width */}
+      <div className="w-14 lg:w-56 flex-shrink-0 border-r">
         <Left />
       </div>
-      <div className="w-4/16">
+
+      {/* Chats List - Fixed width */}
+      <div className="w-80 lg:w-96 flex-shrink-0 border-r">
         <div className="flex relative p-4 border-b">
           <Search className="text-gray-400 absolute left-7 top-1/2 -translate-y-1/2 size-5" />
           <input
@@ -21,7 +24,9 @@ const Messages = () => {
         <Chats />
         <Chats />
       </div>
-      <div className="w-11/16 border-l">
+
+      {/* Chat Box - Takes remaining space */}
+      <div className="flex-1 min-w-0">
         <ChatBox />
       </div>
     </main>
