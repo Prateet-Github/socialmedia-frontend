@@ -2,7 +2,6 @@ import {
   Camera,
   PhoneCall,
   PlusCircle,
-  Search,
   SendHorizonal,
 } from "lucide-react";
 
@@ -114,7 +113,9 @@ const ChatBox = () => {
 
       {/* Input - fixed to bottom */}
       <div className="border-t p-4 bg-black flex gap-4 items-center">
-        <PlusCircle className="cursor-pointer" />
+        <button>
+          <PlusCircle className="cursor-pointer" />
+        </button>
         <input
           type="text"
           placeholder="Type a message..."

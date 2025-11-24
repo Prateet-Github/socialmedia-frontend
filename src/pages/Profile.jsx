@@ -3,7 +3,7 @@ import ProfileCard from "../components/ProfileCard";
 
 const Profile = () => {
   return (
-    <main className="flex min-h-screen max-w-7xl w-full mx-auto">
+    <main className="flex min-h-screen w-full mx-auto">
       <div className="w-1/4">
         <Left />
       </div>

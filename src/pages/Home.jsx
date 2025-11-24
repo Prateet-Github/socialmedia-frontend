@@ -4,14 +4,14 @@ import Right from "../components/Right.jsx";
 
 const Home = () => {
   return (
-    <main className="flex min-h-screen max-w-7xl w-full mx-auto">
+    <main className="flex min-h-screen w-full mx-auto">
       <div className="w-1/4">
         <Left />
       </div>
-      <div className="w-2/4">
+      <div className="w-1/2 border-x">
         <FeedCard />
       </div>
-      <div className="w-1/4 border-l">
+      <div className="w-1/4">
       <Right/>
       </div>
     </main>
