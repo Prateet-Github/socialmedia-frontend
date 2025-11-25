@@ -124,7 +124,7 @@ const ChatBox = () => {
         <button
           onClick={() => setIsUp(!isUp)}
           ref={dropdownRef}
-          className="flex-shrink-0 hover:text-gray-300 transition-colors"
+          className="shrink-0 hover:text-gray-300 transition-colors"
         >
           <PlusCircle className="size-5 md:size-6 dark:hover:text-gray-300 hover:text-gray-500 cursor-pointer" />
         </button>
@@ -151,7 +151,7 @@ const ChatBox = () => {
           placeholder="Type a message..."
           className="flex-1 p-2 md:p-2.5 px-4 border-2 border-gray-700 rounded-full outline-none focus:border-blue-500 transition-colors text-sm md:text-base"
         />
-        <button className="flex-shrink-0 bg-blue-600 hover:bg-blue-700 p-2 md:p-2.5 cursor-pointer rounded-full transition-colors">
+        <button className="shrink-0 bg-blue-600 hover:bg-blue-700 p-2 md:p-2.5 cursor-pointer rounded-full transition-colors">
           <SendHorizonal className="size-4 md:size-5" />
         </button>
       </div>

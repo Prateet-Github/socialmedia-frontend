@@ -1,7 +1,7 @@
 const Chats = () => {
   return (
     <article className="flex gap-3 md:gap-4 p-3 md:p-4 border-b cursor-pointer dark:hover:bg-gray-800 hover:bg-gray-200  transition-colors">
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <img
           src="./pfp.jpeg"
           alt="pfp"
@@ -13,7 +13,7 @@ const Chats = () => {
           <h1 className="font-semibold text-sm md:text-base truncate">
             Prateet Tiwari
           </h1>
-          <span className="text-xs text-gray-500 flex-shrink-0">2h</span>
+          <span className="text-xs text-gray-500 shrink-0">2h</span>
         </div>
         <p className="text-gray-400 text-xs md:text-sm truncate">
           Hey! How are you?

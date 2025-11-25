@@ -6,7 +6,7 @@ const ProfileCard = () => {
       {/* Profile Header */}
       <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-12">
         {/* Profile Image */}
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <img
             src="./pfp.jpeg"
             alt="pfp"

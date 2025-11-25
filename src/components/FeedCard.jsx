@@ -4,7 +4,7 @@ const FeedCard = () => {
   return (
     <article className="flex border-b p-3 md:p-6 gap-2 md:gap-3 transition-colors">
       {/* Profile Picture */}
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <img
           src="/pfp.jpeg"
           alt="profile"
@@ -20,7 +20,7 @@ const FeedCard = () => {
             Prateet Tiwari
           </h1>
           <span className="text-gray-500 text-xs md:text-sm">•</span>
-          <p className="text-gray-400 text-xs md:text-sm flex-shrink-0">2h</p>
+          <p className="text-gray-400 text-xs md:text-sm shrink-0">2h</p>
         </div>
 
         {/* Text */}
