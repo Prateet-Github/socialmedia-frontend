@@ -9,9 +9,13 @@ import {
   MapPin,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
+import CallModal from "./VideoCallModal";
+import VoiceCallModal from "./VoiceCallModal";
 
 const ChatBox = () => {
   const [isUp, setIsUp] = useState(false);
+  const [showCall, setShowCall] = useState(false);
+  const [voiceCall, setVoiceCall] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -49,12 +53,22 @@ const ChatBox = () => {
           </div>
         </div>
         <div className="flex gap-3 md:gap-4">
-          <button className="cursor-pointer dark:hover:text-gray-300 hover:text-gray-500 transition-colors">
+          <button
+            onClick={() => setShowCall(true)}
+            title="Video Call"
+            className="cursor-pointer dark:hover:text-gray-300 hover:text-gray-500 transition-colors"
+          >
             <Camera className="size-5 md:size-6" />
           </button>
-          <button className="cursor-pointer dark:hover:text-gray-300 hover:text-gray-500 transition-colors">
+          {showCall && <CallModal onClose={() => setShowCall(false)} />}
+          <button
+            onClick={() => setVoiceCall(true)}
+            title="Voice Call"
+            className="cursor-pointer dark:hover:text-gray-300 hover:text-gray-500 transition-colors"
+          >
             <PhoneCall className="size-5 md:size-6" />
           </button>
+          {voiceCall && <VoiceCallModal onClose={() => setVoiceCall(false)} />}
         </div>
       </div>
 

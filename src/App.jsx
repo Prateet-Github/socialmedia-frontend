@@ -10,6 +10,7 @@ import Messages from "./pages/Messages";
 import Search from "./pages/Search";
 import EmailVerification from "./pages/EmailVerification";
 import EnterEmail from "./pages/EnterEmail";
+import CallModal from "./components/VideoCallModal";
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
           element={<EmailVerification />}
         ></Route>
         <Route path="/enter-email" element={<EnterEmail />}></Route>
+        <Route path="vc" element={<CallModal />}></Route>
       </Routes>
     </>
   );
