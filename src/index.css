@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
+/* index.css or global.css */
 body {
-  background-color: black;
-  color: white;
+  @apply bg-white text-black dark:bg-black dark:text-white;
 }
+

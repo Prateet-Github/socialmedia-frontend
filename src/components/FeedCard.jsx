@@ -2,7 +2,7 @@ import { Heart, MessageCircle, Share2, Bookmark } from "lucide-react";
 
 const FeedCard = () => {
   return (
-    <article className="flex border-b p-3 md:p-6 gap-2 md:gap-3 hover:bg-gray-950 transition-colors">
+    <article className="flex border-b p-3 md:p-6 gap-2 md:gap-3 transition-colors">
       {/* Profile Picture */}
       <div className="flex-shrink-0">
         <img
@@ -40,20 +40,20 @@ const FeedCard = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-between text-gray-400 -mx-2">
-          <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-800 hover:text-red-500 transition-colors group">
+        <div className="flex items-center justify-between mx-2">
+          <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer hover:text-red-500 transition-colors group">
             <Heart className="size-4 md:size-5 group-hover:fill-red-500" />
             <span className="text-xs md:text-sm hidden sm:inline">Like</span>
           </button>
-          <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-800 hover:text-blue-500 transition-colors group">
+          <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer  hover:text-blue-500 transition-colors group">
             <MessageCircle className="size-4 md:size-5" />
             <span className="text-xs md:text-sm hidden sm:inline">Comment</span>
           </button>
-          <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-800 hover:text-green-500 transition-colors group">
+          <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer  hover:text-green-500 transition-colors group">
             <Share2 className="size-4 md:size-5" />
             <span className="text-xs md:text-sm hidden sm:inline">Share</span>
           </button>
-          <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-800 hover:text-yellow-500 transition-colors group">
+          <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer  hover:text-yellow-500 transition-colors group">
             <Bookmark className="size-4 md:size-5 group-hover:fill-yellow-500" />
             <span className="text-xs md:text-sm hidden sm:inline">Save</span>
           </button>

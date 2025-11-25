@@ -18,7 +18,7 @@ const Messages = () => {
           <input
             type="text"
             placeholder="Search"
-            className="bg-gray-950 p-2 pl-10 border border-gray-700 outline-none w-full rounded-full focus:border-blue-500 transition-colors"
+            className="p-2 pl-10 border-2 border-gray-700 outline-none w-full rounded-full focus:border-blue-500 transition-colors"
           />
         </div>
         <Chats />

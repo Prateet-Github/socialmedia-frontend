@@ -40,7 +40,7 @@ const Left = ({ showLabels = true }) => {
           to="/"
           className={`flex items-center ${
             showLabels ? "justify-center lg:justify-start" : "justify-center"
-          } gap-3 p-2 rounded-2xl hover:bg-gray-900`}
+          } gap-3 p-2 rounded-2xl hover:opacity-90`}
         >
           <Instagram className="size-8 flex-shrink-0 text-blue-500" />
           {showLabels && (
@@ -58,10 +58,11 @@ const Left = ({ showLabels = true }) => {
         ].map(({ to, icon: Icon, label }) => (
           <Link
             key={label}
+            title={label}
             to={to}
             className={`flex items-center ${
               showLabels ? "justify-center lg:justify-start" : "justify-center"
-            } gap-3 p-2 rounded-2xl hover:bg-gray-900`}
+            } gap-3 p-2 rounded-2xl dark:hover:bg-gray-800 hover:bg-gray-200 cursor-pointer`}
           >
             <Icon className="size-6 flex-shrink-0" />
             {showLabels && (
@@ -71,7 +72,11 @@ const Left = ({ showLabels = true }) => {
             )}
           </Link>
         ))}
-        <button className="w-full" onClick={() => setShowPostCard(true)}>
+        <button
+          title="Create Post"
+          className="w-full"
+          onClick={() => setShowPostCard(true)}
+        >
           <div
             className={`flex  ${
               showLabels ? "justify-center lg:justify-start" : "justify-center"
@@ -94,9 +99,10 @@ const Left = ({ showLabels = true }) => {
         className="w-full"
       >
         <div
+          title="Options"
           className={`flex ${
             showLabels ? "justify-center lg:justify-between" : "justify-center"
-          } items-center gap-3 p-2 rounded-2xl hover:bg-gray-900 cursor-pointer`}
+          } items-center gap-3 p-2 rounded-2xl  dark:hover:bg-gray-800 hover:bg-gray-200  cursor-pointer`}
         >
           <img
             src="./pfp.jpeg"
@@ -115,8 +121,8 @@ const Left = ({ showLabels = true }) => {
         </div>
       </button>
       {isUp && (
-        <div className="fixed bottom-20 left-2 lg:left-20 bg-black border border-gray-800 rounded-2xl shadow-2xl overflow-hidden w-72 z-50">
-          <div className="px-4 py-3 border-b border-gray-800">
+        <div className="fixed bottom-20 left-2 lg:left-20 border border-gray-300 dark:border-gray-800 rounded-2xl shadow-2xl overflow-hidden w-72 z-50">
+          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800">
             <div className="flex items-center gap-3">
               <img
                 src="./pfp.jpeg"
@@ -132,11 +138,11 @@ const Left = ({ showLabels = true }) => {
           <button className="w-full text-left px-4 py-3 hover:bg-gray-900 transition-colors">
             <span className="font-medium">Add an existing account</span>
           </button>
-          <div className="border-t border-gray-800"></div>
+          <div className="border-t  border-gray-300 dark:border-gray-800"></div>
           <button className="w-full text-left px-4 py-3 hover:bg-gray-900 transition-colors">
             <span className="font-medium">Log out @prateettiwari</span>
           </button>
-          <div className="border-t border-gray-800"></div>
+          <div className="border-t  border-gray-300 dark:border-gray-800"></div>
           <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-900 transition-colors">
             <Sun className="size-5" />
             <span className="font-medium">Dark Mode</span>

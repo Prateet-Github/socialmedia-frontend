@@ -33,7 +33,7 @@ const ChatBox = () => {
   return (
     <main className="flex flex-col h-screen">
       {/* Header - fixed to top */}
-      <div className="border-b p-3 md:p-4 flex justify-between items-center sticky top-0 bg-black z-10">
+      <div className="border-b p-3 md:p-4 flex justify-between items-center sticky top-0 z-10">
         <div className="flex gap-3 md:gap-4 items-center">
           {/* Back button for mobile */}
           <button className="md:hidden">
@@ -52,10 +52,10 @@ const ChatBox = () => {
           </div>
         </div>
         <div className="flex gap-3 md:gap-4">
-          <button className="cursor-pointer hover:text-gray-300 transition-colors">
+          <button className="cursor-pointer dark:hover:text-gray-300 hover:text-gray-500 transition-colors">
             <Camera className="size-5 md:size-6" />
           </button>
-          <button className="cursor-pointer hover:text-gray-300 transition-colors">
+          <button className="cursor-pointer dark:hover:text-gray-300 hover:text-gray-500 transition-colors">
             <PhoneCall className="size-5 md:size-6" />
           </button>
         </div>
@@ -65,7 +65,7 @@ const ChatBox = () => {
       <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4">
         {/* Received message */}
         <div className="flex">
-          <div className="bg-gray-800 p-2.5 md:p-3 rounded-2xl rounded-tl-sm max-w-[75%] md:max-w-xs">
+          <div className="dark:bg-gray-800 bg-gray-200 p-2.5 md:p-3 rounded-2xl rounded-tl-sm max-w-[75%] md:max-w-xs">
             <p className="text-sm md:text-base">
               Hey Prateet! How's it going? Just wanted to check in and see how
               you're doing.
@@ -85,7 +85,7 @@ const ChatBox = () => {
         </div>
 
         <div className="flex">
-          <div className="bg-gray-800 p-2.5 md:p-3 rounded-2xl rounded-tl-sm max-w-[75%] md:max-w-xs">
+          <div className="dark:bg-gray-800 bg-gray-200 p-2.5 md:p-3 rounded-2xl rounded-tl-sm max-w-[75%] md:max-w-xs">
             <p className="text-sm md:text-base">
               That's awesome! What have you been up to lately?
             </p>
@@ -103,7 +103,7 @@ const ChatBox = () => {
         </div>
 
         <div className="flex">
-          <div className="bg-gray-800 p-2.5 md:p-3 rounded-2xl rounded-tl-sm max-w-[75%] md:max-w-xs">
+          <div className="dark:bg-gray-800 bg-gray-200 p-2.5 md:p-3 rounded-2xl rounded-tl-sm max-w-[75%] md:max-w-xs">
             <p className="text-sm md:text-base">
               That sounds interesting! Would love to hear more about it.
             </p>
@@ -120,16 +120,16 @@ const ChatBox = () => {
       </div>
 
       {/* Input - fixed to bottom */}
-      <div className="border-t relative p-3 md:p-4 bg-black flex gap-2 md:gap-4 items-center">
+      <div className="border-t relative p-3 md:p-4 flex gap-2 md:gap-4 items-center">
         <button
           onClick={() => setIsUp(!isUp)}
           ref={dropdownRef}
           className="flex-shrink-0 hover:text-gray-300 transition-colors"
         >
-          <PlusCircle className="size-5 md:size-6" />
+          <PlusCircle className="size-5 md:size-6 dark:hover:text-gray-300 hover:text-gray-500 cursor-pointer" />
         </button>
         {isUp && (
-          <div className="absolute  bottom-22 left-0 lg:left-2 bg-black border border-gray-800 rounded-2xl shadow-2xl overflow-hidden w-44 z-50">
+          <div className="absolute  bottom-22 left-0 lg:left-2 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden w-44 z-50">
             <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-900 transition-colors">
               <File className="size-5 text-blue-500" />
               <span className="font-medium">File</span>
@@ -149,9 +149,9 @@ const ChatBox = () => {
         <input
           type="text"
           placeholder="Type a message..."
-          className="flex-1 p-2 md:p-2.5 px-4 bg-gray-900 border border-gray-700 rounded-full outline-none focus:border-blue-500 transition-colors text-sm md:text-base"
+          className="flex-1 p-2 md:p-2.5 px-4 border-2 border-gray-700 rounded-full outline-none focus:border-blue-500 transition-colors text-sm md:text-base"
         />
-        <button className="flex-shrink-0 bg-blue-600 hover:bg-blue-700 p-2 md:p-2.5 rounded-full transition-colors">
+        <button className="flex-shrink-0 bg-blue-600 hover:bg-blue-700 p-2 md:p-2.5 cursor-pointer rounded-full transition-colors">
           <SendHorizonal className="size-4 md:size-5" />
         </button>
       </div>

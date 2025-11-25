@@ -18,15 +18,21 @@ const ProfileCard = () => {
         <div className="flex flex-col gap-4 flex-1 text-center md:text-left">
           <div>
             <h1 className="text-2xl font-semibold">Prateet Tiwari</h1>
-            <p className="text-gray-400">@prateettiwari</p>
+            <p className="text-gray-200">@prateettiwari</p>
           </div>
-          
+
           <div className="flex gap-4 justify-center md:justify-start">
-            <p><span className="font-semibold">50</span> Posts</p>
-            <p><span className="font-semibold">1.2K</span> Followers</p>
-            <p><span className="font-semibold">300</span> Following</p>
+            <p>
+              <span className="font-semibold">50</span> Posts
+            </p>
+            <p>
+              <span className="font-semibold">1.2K</span> Followers
+            </p>
+            <p>
+              <span className="font-semibold">300</span> Following
+            </p>
           </div>
-          
+
           <div>
             <p className="text-sm md:text-base">
               Software Engineer | Tech Enthusiast | Open Source Contributor.
@@ -38,10 +44,10 @@ const ProfileCard = () => {
 
       {/* Action Buttons */}
       <div className="flex gap-3 border-b pb-6">
-        <button className="flex-1 py-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 transition-colors font-medium">
+        <button className="flex-1 text-white py-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 transition-colors font-medium">
           Follow
         </button>
-        <button className="flex-1 py-2 px-4 rounded-xl bg-gray-700 hover:bg-gray-600 transition-colors font-medium">
+        <button className="flex-1 text-white py-2 px-4 rounded-xl bg-gray-700 hover:bg-gray-600 transition-colors font-medium">
           Message
         </button>
       </div>
