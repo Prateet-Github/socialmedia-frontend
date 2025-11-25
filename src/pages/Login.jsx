@@ -1,8 +1,20 @@
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle login logic here
+    navigate("/home");
+  };
+
   return (
-    <main className="flex bg-black text-white flex-col gap-4 min-h-screen w-full justify-center items-center">
+    <form
+      onSubmit={handleSubmit}
+      className="flex bg-black text-white flex-col gap-4 min-h-screen w-full justify-center items-center"
+    >
       <div className="flex flex-col w-full max-w-sm border rounded text-center p-6 gap-8">
         <h1 className="text-4xl">Social Media</h1>
         <div className="flex flex-col gap-4">
@@ -20,7 +32,10 @@ const Login = () => {
         <Link to="/forgot-password" className="hover:underline">
           Forgot password?
         </Link>
-        <button className=" border p-4 rounded-2xl cursor-pointer">
+        <button
+          type="submit"
+          className=" border p-4 rounded-2xl cursor-pointer"
+        >
           Login
         </button>
       </div>
@@ -32,7 +47,7 @@ const Login = () => {
           </Link>
         </p>
       </div>
-    </main>
+    </form>
   );
 };
 

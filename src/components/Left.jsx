@@ -50,7 +50,7 @@ const Left = ({ showLabels = true }) => {
           )}
         </Link>
         {[
-          { to: "/", icon: HomeIcon, label: "Home" },
+          { to: "/home", icon: HomeIcon, label: "Home" },
           { to: "/search", icon: Search, label: "Search" },
           { to: "/notification", icon: Bell, label: "Notifications" },
           { to: "/messages", icon: Mail, label: "Messages" },

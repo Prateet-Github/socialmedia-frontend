@@ -8,7 +8,7 @@ const Signup = () => {
     e.preventDefault();
     // Here you can add logic to handle the signup submission
     // For now, we'll just navigate to a welcome page or home
-    navigate("/");
+    navigate("/home");
   };
 
   return (
