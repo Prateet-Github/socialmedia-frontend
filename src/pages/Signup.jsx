@@ -14,7 +14,7 @@ const Signup = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex bg-black text-white flex-col gap-4 min-h-screen w-full justify-center items-center"
+      className="flex flex-col gap-4 min-h-screen w-full justify-center items-center"
     >
       <div className="flex flex-col w-full max-w-sm border rounded text-center p-6 gap-8">
         <h1 className="text-4xl">Enter your profile details</h1>
