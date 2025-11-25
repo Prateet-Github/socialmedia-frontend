@@ -18,7 +18,7 @@ const ProfileCard = () => {
         <div className="flex flex-col gap-4 flex-1 text-center md:text-left">
           <div>
             <h1 className="text-2xl font-semibold">Prateet Tiwari</h1>
-            <p className="text-gray-200">@prateettiwari</p>
+            <p className="font-medium">@prateettiwari</p>
           </div>
 
           <div className="flex gap-4 justify-center md:justify-start">

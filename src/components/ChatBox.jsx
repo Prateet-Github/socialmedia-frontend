@@ -4,11 +4,8 @@ import {
   PlusCircle,
   SendHorizonal,
   ArrowLeft,
-  Sun,
   File,
   Image,
-  Map,
-  MapIcon,
   MapPin,
 } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
@@ -129,18 +126,18 @@ const ChatBox = () => {
           <PlusCircle className="size-5 md:size-6 dark:hover:text-gray-300 hover:text-gray-500 cursor-pointer" />
         </button>
         {isUp && (
-          <div className="absolute  bottom-22 left-0 lg:left-2 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden w-44 z-50">
-            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-900 transition-colors">
+          <div className="absolute bg-white dark:bg-black bottom-22 left-0 lg:left-2 border border-gray-300 dark:border-gray-800 rounded-2xl shadow-2xl overflow-hidden w-44 z-50">
+            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors">
               <File className="size-5 text-blue-500" />
               <span className="font-medium">File</span>
             </button>
             <div className="border-t border-gray-800"></div>
-            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-900 transition-colors">
+            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900  transition-colors">
               <Image className="size-5  text-blue-500" />
               <span className="font-medium">Photo & Video</span>
             </button>
             <div className="border-t border-gray-800"></div>
-            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-900 transition-colors">
+            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900  transition-colors">
               <MapPin className="size-5  text-blue-500" />
               <span className="font-medium">Location</span>
             </button>
