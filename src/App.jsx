@@ -11,6 +11,7 @@ import Search from "./pages/Search";
 import EmailVerification from "./pages/EmailVerification";
 import EnterEmail from "./pages/EnterEmail";
 import CallModal from "./components/VideoCallModal";
+import Edit from "./pages/Edit";
 
 const App = () => {
   return (
@@ -31,6 +32,7 @@ const App = () => {
         ></Route>
         <Route path="/enter-email" element={<EnterEmail />}></Route>
         <Route path="vc" element={<CallModal />}></Route>
+        <Route path="edit-profile" element={<Edit />}></Route>
       </Routes>
     </>
   );

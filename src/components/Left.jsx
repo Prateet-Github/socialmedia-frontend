@@ -9,6 +9,7 @@ import {
   User2,
   PlusIcon,
   Instagram,
+  Edit,
 } from "lucide-react";
 import PostCard from "./PostCard";
 
@@ -53,6 +54,7 @@ const Left = ({ showLabels = true }) => {
           { to: "/notification", icon: Bell, label: "Notifications" },
           { to: "/messages", icon: Mail, label: "Messages" },
           { to: "/profile", icon: User2, label: "Profile" },
+          { to: "/edit-profile", icon: Edit, label: "Edit Profile" },
         ].map(({ to, icon: Icon, label }) => (
           <Link
             key={label}

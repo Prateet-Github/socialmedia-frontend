@@ -11,12 +11,15 @@ import {
 import { useRef, useState, useEffect } from "react";
 import CallModal from "./VideoCallModal";
 import VoiceCallModal from "./VoiceCallModal";
+import { useNavigate } from "react-router-dom";
 
 const ChatBox = () => {
   const [isUp, setIsUp] = useState(false);
   const [showCall, setShowCall] = useState(false);
   const [voiceCall, setVoiceCall] = useState(false);
   const dropdownRef = useRef(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -31,6 +34,10 @@ const ChatBox = () => {
     };
   }, []);
 
+  const handleClick = () => {
+    navigate("/profile");
+  };
+
   return (
     <main className="flex flex-col h-screen">
       {/* Header - fixed to top */}
@@ -43,7 +50,8 @@ const ChatBox = () => {
           <img
             src="./pfp.jpeg"
             alt="pfp"
-            className="h-9 w-9 md:h-10 md:w-10 object-cover rounded-full border"
+            className="h-9 cursor-pointer hover:opacity-90 w-9 md:h-10 md:w-10 object-cover rounded-full border"
+            onClick={handleClick}
           />
           <div className="flex flex-col">
             <span className="font-semibold text-sm md:text-base">
