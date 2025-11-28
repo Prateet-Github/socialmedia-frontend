@@ -2,7 +2,7 @@ import { Calendar, MapPin, User, Mail } from "lucide-react";
 
 const ProfileInfo = () => {
   return (
-    <article className="w-72 dark:bg-black bg-white flex flex-col gap-2 sm:gap-4 p-3 sm:p-6 border rounded-xl shadow-lg">
+    <article className="w-72 dark:bg-black bg-white flex flex-col gap-2 sm:gap-4 p-3 sm:p-2 border rounded-xl shadow-lg">
       <div className="flex gap-3 sm:gap-4 p-2 sm:p-4 items-center hover:bg-gray-50 dark:hover:bg-gray-900 rounded-lg transition-colors">
         <Calendar className="size-5 sm:size-6 shrink-0 text-blue-600 dark:text-blue-400" />
         <div className="flex flex-col min-w-0">

@@ -25,7 +25,8 @@ const ProfileCard = () => {
         <div className="relative shrink-0" ref={dropdownRef}>
           <button
             onClick={() => setIsUp(!isUp)}
-            className="hover:text-gray-300 transition-colors"
+            title="Profile Info"
+            className="hover:text-gray-300 transition-colors cursor-pointer"
           >
             <img
               src="./pfp.jpeg"
