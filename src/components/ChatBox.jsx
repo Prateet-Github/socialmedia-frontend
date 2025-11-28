@@ -41,7 +41,7 @@ const ChatBox = () => {
   return (
     <main className="flex flex-col h-screen">
       {/* Header - fixed to top */}
-      <div className="border-b p-3 md:p-4 flex justify-between items-center sticky top-0 z-10">
+      <div className="border-b  border-gray-300 dark:border-gray-800 p-3 md:p-4 flex justify-between items-center sticky top-0 z-10">
         <div className="flex gap-3 md:gap-4 items-center">
           {/* Back button for mobile */}
           <button className="md:hidden">
@@ -139,7 +139,7 @@ const ChatBox = () => {
       </div>
 
       {/* Input - fixed to bottom */}
-      <div className="border-t relative p-3 md:p-4 flex gap-2 md:gap-4 items-center">
+      <div className="border-t  border-gray-300 dark:border-gray-800 relative p-3 md:p-4 flex gap-2 md:gap-4 items-center">
         <button
           onClick={() => setIsUp(!isUp)}
           ref={dropdownRef}
@@ -168,7 +168,7 @@ const ChatBox = () => {
         <input
           type="text"
           placeholder="Type a message..."
-          className="flex-1 p-2 md:p-2.5 px-4 border-2 border-gray-700 rounded-full outline-none focus:border-blue-500 transition-colors text-sm md:text-base"
+          className="flex-1 p-2 md:p-2.5 px-4 border border-gray-700 rounded-full outline-none focus:border-blue-500 transition-colors text-sm md:text-base"
         />
         <button className="shrink-0 bg-blue-600 hover:bg-blue-700 p-2 md:p-2.5 cursor-pointer rounded-full transition-colors">
           <SendHorizonal className="size-4 md:size-5" />

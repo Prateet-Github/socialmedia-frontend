@@ -71,7 +71,7 @@ const ProfileCard = () => {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-3 border-b pb-6">
+      <div className="flex gap-3 border-b border-gray-300 dark:border-gray-800 pb-6">
         <button className="flex-1 text-white py-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 transition-colors font-medium">
           Follow
         </button>

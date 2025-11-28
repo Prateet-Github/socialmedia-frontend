@@ -1,8 +1,14 @@
 import { Heart, MessageCircle, Share2, Bookmark } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const FeedCard = () => {
+  const navigate = useNavigate();
+  const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false);
+
   return (
-    <article className="flex border-b p-3 md:p-6 gap-2 md:gap-3 transition-colors">
+    <article className="flex p-3 md:p-6 gap-2 md:gap-3 transition-colors">
       {/* Profile Picture */}
       <div className="shrink-0">
         <img
@@ -16,15 +22,22 @@ const FeedCard = () => {
       <div className="flex flex-col gap-3 md:gap-4 w-full min-w-0">
         {/* Username + Time */}
         <div className="flex items-center gap-2">
-          <h1 className="font-semibold hover:underline cursor-pointer text-sm md:text-base truncate">
+          <h1
+            onClick={() => navigate("/profile")}
+            className="font-semibold hover:underline cursor-pointer text-sm md:text-base truncate"
+          >
             Prateet Tiwari
           </h1>
-          <span className="text-gray-500 text-xs md:text-sm">•</span>
-          <p className="text-gray-400 text-xs md:text-sm shrink-0">2h</p>
+          <span className="dark:text-gray-400 text-gray-700 text-xs md:text-sm">
+            •
+          </span>
+          <p className="dark:text-gray-400 text-gray-700 text-xs md:text-sm shrink-0">
+            2h
+          </p>
         </div>
 
         {/* Text */}
-        <p className="text-sm md:text-base leading-relaxed">
+        <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">
           So, there is a free and open-source alternative to Netflix available -
           it's known as Stremio.
         </p>
@@ -41,22 +54,55 @@ const FeedCard = () => {
 
         {/* Action Buttons */}
         <div className="flex items-center justify-between mx-2">
-          <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer hover:text-red-500 transition-colors group">
-            <Heart className="size-4 md:size-5 group-hover:fill-red-500" />
-            <span className="text-xs md:text-sm hidden sm:inline">Like</span>
-          </button>
-          <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer  hover:text-blue-500 transition-colors group">
-            <MessageCircle className="size-4 md:size-5" />
-            <span className="text-xs md:text-sm hidden sm:inline">Comment</span>
-          </button>
-          <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer  hover:text-green-500 transition-colors group">
-            <Share2 className="size-4 md:size-5" />
-            <span className="text-xs md:text-sm hidden sm:inline">Share</span>
-          </button>
-          <button className="flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer  hover:text-yellow-500 transition-colors group">
-            <Bookmark className="size-4 md:size-5 group-hover:fill-yellow-500" />
-            <span className="text-xs md:text-sm hidden sm:inline">Save</span>
-          </button>
+          <div className="flex items-center px-2 py-1.5 rounded-lg transition-colors group">
+            <button
+              onClick={() => setLiked(!liked)}
+              title={liked ? "Unlike" : "Like"}
+            >
+              <Heart
+                className={`size-5 cursor-pointer hover:text-red-500 ${
+                  liked ? "fill-red-500 text-red-500" : ""
+                }`}
+              />
+            </button>
+            <span className="ml-1 text-sm font-medium inline-flex justify-center min-w-[3ch]">
+              {liked ? 101 : 100}
+            </span>
+          </div>
+
+          <div className="flex items-center px-2 py-1.5 rounded-lg transition-colors group">
+            <button title="Comment">
+              <MessageCircle className="size-5 cursor-pointer hover:text-blue-500" />
+            </button>
+            <span className="ml-1 text-sm font-medium inline-flex justify-center min-w-[3ch]">
+              20
+            </span>
+          </div>
+
+          <div className="flex items-center px-2 py-1.5 rounded-lg  transition-colors group">
+            <button title="Share">
+              <Share2 className="size-5 cursor-pointer hover:text-green-500" />
+            </button>
+            <span className="ml-1 text-sm font-medium inline-flex justify-center min-w-[3ch]">
+              10
+            </span>
+          </div>
+
+          <div className="flex items-center px-2 py-1.5 rounded-lg  transition-colors group">
+            <button
+              onClick={() => setSaved(!saved)}
+              title={saved ? "Unsave" : "Save"}
+            >
+              <Bookmark
+                className={`size-5 cursor-pointer hover:text-yellow-500 ${
+                  saved ? "fill-yellow-500 text-yellow-500" : ""
+                }`}
+              />
+            </button>
+            <span className="ml-1 text-sm font-medium inline-flex justify-center min-w-[3ch]">
+              {saved ? 32 : 31}
+            </span>
+          </div>
         </div>
       </div>
     </article>

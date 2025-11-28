@@ -33,7 +33,7 @@ const Left = ({ showLabels = true }) => {
   }, []);
 
   return (
-    <aside className="flex border-r flex-col justify-between h-screen sticky top-0 py-6 px-4 overflow-hidden">
+    <aside className="flex flex-col justify-between h-screen sticky top-0 py-6 px-4 overflow-hidden">
       <div className="flex flex-col gap-2">
         <Link
           to="/home"

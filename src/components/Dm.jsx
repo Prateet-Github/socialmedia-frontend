@@ -4,9 +4,9 @@ const Dm = () => {
   return (
     <main className="overflow-y-auto h-screen">
       <div className="sticky top-0 z-50 bg-white">
-        <h1 className="text-2xl font-semibold px-4 py-2">Messages</h1>
+        <h1 className="text-2xl font-semibold px-4 pt-2">Messages</h1>
 
-        <div className="flex relative py-2 px-4">
+        <div className="flex relative py-4 px-4">
           <input
             type="text"
             placeholder="Search"
