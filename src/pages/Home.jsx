@@ -1,12 +1,16 @@
 import FeedCard from "../components/FeedCard.jsx";
 import Left from "../components/Left.jsx";
-import Right from "../components/Right.jsx";
 
 const Home = () => {
   return (
-    <main className="flex min-h-screen w-full mx-auto max-w-6xl">
-      {/* Left Sidebar - Fixed width */}
-      <div className="w-22 border-r border-gray-300 dark:border-gray-800 lg:w-64 xl:w-72 shrink-0">
+    <main className="flex min-h-screen w-full mx-auto max-w-6xl pt-16 lg:pt-0">
+      {/* Left Sidebar - Hidden on mobile, visible on desktop */}
+      <div className="hidden lg:block lg:w-64 xl:w-72 shrink-0 border-r border-gray-200 dark:border-gray-800">
+        <Left />
+      </div>
+
+      {/* Mobile hamburger menu - Only renders on mobile */}
+      <div className="lg:hidden">
         <Left />
       </div>
 
@@ -16,8 +20,6 @@ const Home = () => {
         <FeedCard />
         <FeedCard />
       </div>
-
-  
     </main>
   );
 };
