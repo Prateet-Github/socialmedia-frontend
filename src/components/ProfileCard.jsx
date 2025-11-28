@@ -1,17 +1,44 @@
 import FeedCard from "./FeedCard";
+import { useRef, useState, useEffect } from "react";
+import ProfileInfo from "./ProfileInfo";
 
 const ProfileCard = () => {
+  const dropdownRef = useRef(null);
+  const [isUp, setIsUp] = useState(false);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsUp(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   return (
     <main className="w-full max-w-3xl p-4 md:p-8 flex flex-col gap-6">
       {/* Profile Header */}
       <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-12">
         {/* Profile Image */}
-        <div className="shrink-0">
-          <img
-            src="./pfp.jpeg"
-            alt="pfp"
-            className="w-24 h-24 md:w-32 md:h-32 lg:w-36 lg:h-36 object-cover rounded-full border"
-          />
+        <div className="relative shrink-0" ref={dropdownRef}>
+          <button
+            onClick={() => setIsUp(!isUp)}
+            className="hover:text-gray-300 transition-colors"
+          >
+            <img
+              src="./pfp.jpeg"
+              alt="pfp"
+              className="w-24 h-24 md:w-32 md:h-32 lg:w-36 lg:h-36 object-cover rounded-full border"
+            />
+          </button>
+
+          {isUp && (
+            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 z-50">
+              <ProfileInfo />
+            </div>
+          )}
         </div>
 
         {/* Profile Info */}
