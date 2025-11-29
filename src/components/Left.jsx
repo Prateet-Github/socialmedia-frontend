@@ -14,13 +14,20 @@ import {
   X,
 } from "lucide-react";
 import PostCard from "./PostCard";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const Left = ({ showLabels = true }) => {
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
   const [isUp, setIsUp] = useState(false);
   const [showPostCard, setShowPostCard] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const dropdownRef = useRef(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -29,15 +36,24 @@ const Left = ({ showLabels = true }) => {
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    if (isUp) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [isUp]);
 
-  // Close mobile menu when clicking a link
   const handleLinkClick = () => {
     setIsMobileMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    console.log("Logout function called");
+    dispatch(logout());
+    setIsUp(false);
+    navigate("/");
   };
 
   const navItems = [
@@ -80,7 +96,11 @@ const Left = ({ showLabels = true }) => {
           bg-white dark:bg-black
           border-r border-gray-200 dark:border-gray-800
           transition-transform duration-300 ease-in-out
-          ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+          ${
+            isMobileMenuOpen
+              ? "translate-x-0"
+              : "-translate-x-full lg:translate-x-0"
+          }
           w-64 lg:w-auto
         `}
       >
@@ -140,61 +160,66 @@ const Left = ({ showLabels = true }) => {
           </button>
         </div>
 
-        <button
-          onClick={() => setIsUp(!isUp)}
-          ref={dropdownRef}
-          className="w-full"
-        >
-          <div
-            title="Options"
-            className={`flex ${
-              showLabels ? "justify-between" : "justify-center"
-            } items-center gap-3 p-2 rounded-full dark:hover:bg-gray-800 hover:bg-gray-200 cursor-pointer`}
+        {/* FIXED: Wrapped both button and dropdown in ref container */}
+        <div ref={dropdownRef} className="relative w-full">
+          <button
+            onClick={() => setIsUp(!isUp)}
+            className="w-full"
           >
-            <img
-              src="./pfp.jpeg"
-              alt="Profile"
-              className="size-10 object-cover rounded-full shrink-0"
-            />
-            {showLabels && (
-              <>
-                <div className="flex flex-col flex-1 min-w-0">
-                  <h1 className="font-semibold truncate">Prateet Tiwari</h1>
-                  <p className="text-sm truncate">@prateettiwari</p>
-                </div>
-                <MoreVertical className="size-5 shrink-0 border-2 rounded-full" />
-              </>
-            )}
-          </div>
-        </button>
+            <div
+              title="Options"
+              className={`flex ${
+                showLabels ? "justify-between" : "justify-center"
+              } items-center gap-3 p-2 rounded-full dark:hover:bg-gray-800 hover:bg-gray-200 cursor-pointer`}
+            >
+              <img
+                src="./pfp.jpeg"
+                alt="Profile"
+                className="size-10 object-cover rounded-full shrink-0"
+              />
+              {showLabels && (
+                <>
+                  <div className="flex flex-col flex-1 min-w-0">
+                    <h1 className="font-semibold truncate">{user?.name}</h1>
+                    <p className="text-sm truncate">@{user?.username}</p>
+                  </div>
+                  <MoreVertical className="size-5 shrink-0 border-2 rounded-full" />
+                </>
+              )}
+            </div>
+          </button>
 
-        {isUp && (
-          <div className="fixed bottom-20 bg-white dark:bg-black left-2 lg:left-20 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl overflow-hidden w-72 z-50">
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800">
-              <div className="flex items-center gap-3">
-                <img
-                  src="./pfp.jpeg"
-                  alt="Profile"
-                  className="size-10 object-cover rounded-full"
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold truncate">Prateet Tiwari</p>
-                  <p className="text-sm text-gray-400 truncate">
-                    @prateettiwari
-                  </p>
+          {isUp && (
+            <div className="fixed bottom-20 bg-white dark:bg-black left-2 lg:left-20 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl overflow-hidden w-72 z-50">
+              <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800">
+                <div className="flex items-center gap-3">
+                  <img
+                    src="./pfp.jpeg"
+                    alt="Profile"
+                    className="size-10 object-cover rounded-full"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold truncate">{user?.name}</p>
+                    <p className="text-sm text-gray-400 truncate">
+                      @{user?.username}
+                    </p>
+                  </div>
                 </div>
               </div>
+              <button className="w-full text-left px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors">
+                <span className="font-medium">Add an existing account</span>
+              </button>
+              <div className="border-t border-gray-200 dark:border-gray-800"></div>
+              <button
+                onClick={handleLogout}
+                className="w-full text-left cursor-pointer px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors"
+              >
+                <span className="font-medium">Log out {user?.name}</span>
+              </button>
+              <div className="border-t border-gray-200 dark:border-gray-800"></div>
             </div>
-            <button className="w-full text-left px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors">
-              <span className="font-medium">Add an existing account</span>
-            </button>
-            <div className="border-t border-gray-200 dark:border-gray-800"></div>
-            <button className="w-full text-left px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors">
-              <span className="font-medium">Log out @prateettiwari</span>
-            </button>
-            <div className="border-t border-gray-200 dark:border-gray-800"></div>
-          </div>
-        )}
+          )}
+        </div>
       </aside>
 
       {/* PostCard Modal - Rendered outside sidebar at root level */}

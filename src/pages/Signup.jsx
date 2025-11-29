@@ -1,14 +1,37 @@
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { registerUser } from "../redux/authSlice";
 
 const Signup = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { loading, error, isAuthenticated } = useSelector(
+    (state) => state.auth
+  );
+
+  const [form, setForm] = useState({
+    name: "",
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setForm((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you can add logic to handle the signup submission
-    // For now, we'll just navigate to a welcome page or home
-    navigate("/home");
+    dispatch(registerUser(form)).then((res) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        navigate("/home");
+      }
+    });
   };
 
   return (
@@ -18,41 +41,53 @@ const Signup = () => {
     >
       <div className="flex flex-col w-full max-w-sm border rounded text-center p-6 gap-8">
         <h1 className="text-4xl">Welcome, to GeeksGram!</h1>
+
         <div className="flex flex-col gap-4">
           <input
+            name="name"
             type="text"
+            value={form.name}
+            onChange={handleChange}
             placeholder="Name"
             className="p-4 border rounded"
           />
           <input
+            name="username"
             type="text"
+            value={form.username}
+            onChange={handleChange}
             placeholder="Username"
             className="p-4 border rounded"
           />
           <input
+            name="email"
             type="email"
+            value={form.email}
+            onChange={handleChange}
             placeholder="Email"
             className="p-4 border rounded"
           />
           <input
+            name="password"
             type="password"
+            value={form.password}
+            onChange={handleChange}
             placeholder="Password"
             className="p-4 border rounded"
           />
         </div>
 
-        <p className="text-xs">
-          By signing up, you agree to our Terms , Privacy Policy and Cookies
-          Policy .
-        </p>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
 
         <button
           type="submit"
-          className=" border p-4 rounded-2xl cursor-pointer"
+          disabled={loading}
+          className="border p-4 rounded-2xl cursor-pointer"
         >
-          Sign Up
+          {loading ? "Signing up..." : "Sign Up"}
         </button>
       </div>
+
       <div className="border rounded py-4 px-6 w-full max-w-sm text-center">
         <p>
           Have an Account?{" "}
