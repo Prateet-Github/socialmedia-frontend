@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const Left = ({ showLabels = true }) => {
   const { user, isAuthenticated } = useSelector((state) => state.auth);
@@ -50,9 +51,9 @@ const Left = ({ showLabels = true }) => {
   };
 
   const handleLogout = () => {
-    console.log("Logout function called");
     dispatch(logout());
     setIsUp(false);
+      toast.success("Logged out successfully");
     navigate("/");
   };
 

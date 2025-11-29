@@ -12,13 +12,16 @@ import EmailVerification from "./pages/EmailVerification";
 import EnterEmail from "./pages/EnterEmail";
 import CallModal from "./components/VideoCallModal";
 import Edit from "./pages/Edit";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
     <>
       <Routes>
         <Route path="*" element={<NotFound />}></Route>
-        <Route path="/home" element={<Home />}></Route>
+        <Route path="/home" element={<ProtectedRoute>
+          <Home />
+        </ProtectedRoute>}></Route>
         <Route path="/" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />}></Route>
         <Route path="signup" element={<Signup />}></Route>
