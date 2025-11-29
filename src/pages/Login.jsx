@@ -42,7 +42,7 @@ const Login = () => {
       <div className="border rounded py-4 px-6 w-full max-w-sm text-center">
         <p>
           Don't have account?{" "}
-          <Link to="/enter-email" className="hover:underline">
+          <Link to="/signup" className="hover:underline">
             Sign Up
           </Link>
         </p>

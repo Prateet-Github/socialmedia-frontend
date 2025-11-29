@@ -17,16 +17,21 @@ const Signup = () => {
       className="flex flex-col gap-4 min-h-screen w-full justify-center items-center"
     >
       <div className="flex flex-col w-full max-w-sm border rounded text-center p-6 gap-8">
-        <h1 className="text-4xl">Enter your profile details</h1>
+        <h1 className="text-4xl">Welcome, to GeeksGram!</h1>
         <div className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Name"
+            className="p-4 border rounded"
+          />
           <input
             type="text"
             placeholder="Username"
             className="p-4 border rounded"
           />
           <input
-            type="text"
-            placeholder="Full Name"
+            type="email"
+            placeholder="Email"
             className="p-4 border rounded"
           />
           <input
@@ -51,7 +56,7 @@ const Signup = () => {
       <div className="border rounded py-4 px-6 w-full max-w-sm text-center">
         <p>
           Have an Account?{" "}
-          <Link to="/login" className="hover:underline">
+          <Link to="/" className="hover:underline">
             Login
           </Link>
         </p>
