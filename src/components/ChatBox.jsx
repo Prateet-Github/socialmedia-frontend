@@ -28,13 +28,31 @@ const ChatBox = () => {
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    if (isUp) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [isUp]);
 
   const handleClick = () => {
+    navigate("/profile");
+  };
+
+  const handleFileClick = () => {
+    setIsUp(false);
+    navigate("/profile");
+  };
+
+  const handlePhotoClick = () => {
+    setIsUp(false);
+    navigate("/profile");
+  };
+
+  const handleLocationClick = () => {
+    setIsUp(false);
     navigate("/profile");
   };
 
@@ -140,31 +158,44 @@ const ChatBox = () => {
 
       {/* Input - fixed to bottom */}
       <div className="border-t  border-gray-300 dark:border-gray-800 relative p-3 md:p-4 flex gap-2 md:gap-4 items-center">
-        <button
-          onClick={() => setIsUp(!isUp)}
-          ref={dropdownRef}
-          className="shrink-0 hover:text-gray-300 transition-colors"
-        >
-          <PlusCircle className="size-5 md:size-6 dark:hover:text-gray-300 hover:text-gray-500 cursor-pointer" />
-        </button>
-        {isUp && (
-          <div className="absolute bg-white dark:bg-black bottom-22 left-0 lg:left-2 border border-gray-300 dark:border-gray-800 rounded-2xl shadow-2xl overflow-hidden w-44 z-50">
-            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors">
-              <File className="size-5 text-blue-500" />
-              <span className="font-medium">File</span>
-            </button>
-            <div className="border-t border-gray-800"></div>
-            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900  transition-colors">
-              <Image className="size-5  text-blue-500" />
-              <span className="font-medium">Photo & Video</span>
-            </button>
-            <div className="border-t border-gray-800"></div>
-            <button className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900  transition-colors">
-              <MapPin className="size-5  text-blue-500" />
-              <span className="font-medium">Location</span>
-            </button>
-          </div>
-        )}
+        {/* FIXED: Wrapped button and dropdown together */}
+        <div ref={dropdownRef} className="relative shrink-0">
+          <button
+            onClick={() => setIsUp(!isUp)}
+            className="hover:text-gray-300 transition-colors"
+          >
+            <PlusCircle className="size-5 md:size-6 dark:hover:text-gray-300 hover:text-gray-500 cursor-pointer" />
+          </button>
+
+          {isUp && (
+            <div className="absolute bg-white dark:bg-black bottom-12 left-0 border border-gray-300 dark:border-gray-800 rounded-2xl shadow-2xl overflow-hidden w-44 z-50">
+              <button
+                onClick={handleFileClick}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors"
+              >
+                <File className="size-5 text-blue-500" />
+                <span className="font-medium">File</span>
+              </button>
+              <div className="border-t border-gray-300 dark:border-gray-800"></div>
+              <button
+                onClick={handlePhotoClick}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors"
+              >
+                <Image className="size-5 text-blue-500" />
+                <span className="font-medium">Photo & Video</span>
+              </button>
+              <div className="border-t border-gray-300 dark:border-gray-800"></div>
+              <button
+                onClick={handleLocationClick}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors"
+              >
+                <MapPin className="size-5 text-blue-500" />
+                <span className="font-medium">Location</span>
+              </button>
+            </div>
+          )}
+        </div>
+
         <input
           type="text"
           placeholder="Type a message..."

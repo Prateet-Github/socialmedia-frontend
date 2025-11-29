@@ -77,6 +77,7 @@ const authSlice = createSlice({
           name: action.payload.name,
           username: action.payload.username,
           email: action.payload.email,
+          createdAt: action.payload.createdAt,
         };
         state.token = action.payload.token;
         state.isAuthenticated = true;
@@ -101,6 +102,7 @@ const authSlice = createSlice({
           name: action.payload.name,
           username: action.payload.username,
           email: action.payload.email,
+          createdAt: action.payload.createdAt,
         };
         state.token = action.payload.token;
         state.isAuthenticated = true;

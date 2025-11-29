@@ -53,7 +53,7 @@ const Left = ({ showLabels = true }) => {
   const handleLogout = () => {
     dispatch(logout());
     setIsUp(false);
-      toast.success("Logged out successfully");
+    toast.success("Logged out successfully");
     navigate("/");
   };
 
@@ -163,10 +163,7 @@ const Left = ({ showLabels = true }) => {
 
         {/* FIXED: Wrapped both button and dropdown in ref container */}
         <div ref={dropdownRef} className="relative w-full">
-          <button
-            onClick={() => setIsUp(!isUp)}
-            className="w-full"
-          >
+          <button onClick={() => setIsUp(!isUp)} className="w-full">
             <div
               title="Options"
               className={`flex ${
@@ -207,9 +204,6 @@ const Left = ({ showLabels = true }) => {
                   </div>
                 </div>
               </div>
-              <button className="w-full text-left px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors">
-                <span className="font-medium">Add an existing account</span>
-              </button>
               <div className="border-t border-gray-200 dark:border-gray-800"></div>
               <button
                 onClick={handleLogout}
