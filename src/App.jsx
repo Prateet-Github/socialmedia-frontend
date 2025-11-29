@@ -10,7 +10,6 @@ import Messages from "./pages/Messages";
 import Search from "./pages/Search";
 import EmailVerification from "./pages/EmailVerification";
 import EnterEmail from "./pages/EnterEmail";
-import CallModal from "./components/VideoCallModal";
 import Edit from "./pages/Edit";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -19,23 +18,62 @@ const App = () => {
     <>
       <Routes>
         <Route path="*" element={<NotFound />}></Route>
-        <Route path="/home" element={<ProtectedRoute>
-          <Home />
-        </ProtectedRoute>}></Route>
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        ></Route>
         <Route path="/" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />}></Route>
         <Route path="signup" element={<Signup />}></Route>
-        <Route path="/profile" element={<Profile />}></Route>
-        <Route path="/notification" element={<Notifications />}></Route>
-        <Route path="/messages" element={<Messages />}></Route>
-        <Route path="/search" element={<Search />}></Route>
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        ></Route>
+        <Route
+          path="/notification"
+          element={
+            <ProtectedRoute>
+              <Notifications />
+            </ProtectedRoute>
+          }
+        ></Route>
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute>
+              <Messages />
+            </ProtectedRoute>
+          }
+        ></Route>
+        <Route
+          path="/search"
+          element={
+            <ProtectedRoute>
+              <Search />
+            </ProtectedRoute>
+          }
+        ></Route>
         <Route
           path="/email-verification"
           element={<EmailVerification />}
         ></Route>
         <Route path="/enter-email" element={<EnterEmail />}></Route>
-        <Route path="vc" element={<CallModal />}></Route>
-        <Route path="edit-profile" element={<Edit />}></Route>
+        <Route
+          path="edit-profile"
+          element={
+            <ProtectedRoute>
+              <Edit />
+            </ProtectedRoute>
+          }
+        ></Route>
       </Routes>
     </>
   );
