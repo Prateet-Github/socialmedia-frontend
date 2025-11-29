@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { loginUser, clearError } from "../redux/authSlice";
+import { toast } from "react-hot-toast";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -30,7 +31,14 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginUser(form));
+    dispatch(loginUser(form)).then((res) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        toast.success(`Welcome back, ${res.payload.username}!`);
+        navigate("/home");
+      } else {
+        toast.error("Invalid email or password");
+      }
+    });
   };
 
   return (

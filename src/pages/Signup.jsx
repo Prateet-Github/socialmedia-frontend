@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { registerUser } from "../redux/authSlice";
+import { toast } from "react-hot-toast";
 
 const Signup = () => {
   const dispatch = useDispatch();
@@ -27,9 +28,13 @@ const Signup = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     dispatch(registerUser(form)).then((res) => {
       if (res.meta.requestStatus === "fulfilled") {
+        toast.success("Account created successfully!");
         navigate("/home");
+      } else {
+        toast.error(res.payload || "Signup failed");
       }
     });
   };
