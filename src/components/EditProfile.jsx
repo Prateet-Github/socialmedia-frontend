@@ -1,31 +1,86 @@
 import { Camera, ArrowLeft } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { updateProfile } from "../redux/authSlice";
+import toast from "react-hot-toast";
 
 const EditProfile = () => {
   const navigate = useNavigate();
-  const [profileImage, setProfileImage] = useState("./pfp.jpeg");
-  const [name, setName] = useState("Prateet Tiwari");
-  const [bio, setBio] = useState(
-    "Software Engineer | Tech Enthusiast | Open Source Contributor. Love coding and coffee!"
-  );
-  const [website, setWebsite] = useState("");
-  const [location, setLocation] = useState("");
+  const dispatch = useDispatch();
+
+  const { user, loading } = useSelector((state) => state.auth);
+
+  // Local form state initialized from Redux user
+  const [profileImage, setProfileImage] = useState(user?.avatar || "./pfp.jpeg");
+  const [name, setName] = useState(user?.name || "");
+  const [bio, setBio] = useState(user?.bio || "");
+  const [website, setWebsite] = useState(user?.website || "");
+  const [location, setLocation] = useState(user?.location || "");
+
+  // If user loads later (e.g. refresh + rehydration), sync form
+  useEffect(() => {
+    if (user) {
+      setProfileImage(user.avatar || "./pfp.jpeg");
+      setName(user.name || "");
+      setBio(user.bio || "");
+      setWebsite(user.website || "");
+      setLocation(user.location || "");
+    }
+  }, [user]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => setProfileImage(e.target.result);
+      reader.onload = (event) => {
+        // This will be a base64 data URL for now
+        setProfileImage(event.target.result);
+      };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSave = () => {
-    // Handle save logic here
-    console.log("Saving:", { name, bio, profileImage, website, location });
-    navigate("/profile");
+  const handleSave = (e) => {
+    e.preventDefault();
+
+    if (!user) return;
+
+    // Only send changed fields (optional but nice)
+    const updates = {};
+
+    if (name !== user.name) updates.name = name;
+    if (bio !== user.bio) updates.bio = bio;
+    if (website !== user.website) updates.website = website;
+    if (location !== user.location) updates.location = location;
+    if (profileImage !== (user.avatar || "./pfp.jpeg")) {
+      updates.avatar = profileImage; // for now this is base64 or URL
+    }
+
+    if (Object.keys(updates).length === 0) {
+      toast("Nothing to update");
+      return;
+    }
+
+    const t = toast.loading("Saving profile...");
+
+    dispatch(updateProfile(updates)).then((res) => {
+      toast.dismiss(t);
+
+      if (res.meta.requestStatus === "fulfilled") {
+        toast.success("Profile updated successfully!");
+        navigate("/profile");
+      } else {
+        toast.error(res.payload || "Failed to update profile");
+      }
+    });
   };
+
+  // If no user (somehow), you can redirect back
+  if (!user) {
+    navigate("/");
+    return null;
+  }
 
   return (
     <main className="min-h-screen">
@@ -43,9 +98,10 @@ const EditProfile = () => {
           </div>
           <button
             onClick={handleSave}
-            className="text-blue-500 cursor-pointer hover:text-blue-400 font-semibold text-sm md:text-base transition-colors"
+            disabled={loading}
+            className="text-blue-500 cursor-pointer hover:text-blue-400 font-semibold text-sm md:text-base transition-colors disabled:opacity-60"
           >
-            Done
+            {loading ? "Saving..." : "Done"}
           </button>
         </div>
       </header>
@@ -113,7 +169,7 @@ const EditProfile = () => {
             <input
               type="text"
               id="username"
-              value="prateettiwari"
+              value={user?.username || ""}
               disabled
               className="w-full border border-gray-700 rounded-lg p-3 outline-none text-sm md:text-base text-gray-500 cursor-not-allowed"
             />

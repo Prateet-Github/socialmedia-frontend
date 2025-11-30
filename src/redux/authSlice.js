@@ -47,6 +47,26 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+// 🔹 Update Profile
+export const updateProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (profileData, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;
+
+      const res = await axios.put(`${API_URL}/update-profile`, profileData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return res.data; // updated user
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Update failed");
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -113,7 +133,31 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Login failed";
-      });
+      })
+      .addCase(updateProfile.pending, (state) => {
+  state.loading = true;
+  state.error = null;
+})
+.addCase(updateProfile.fulfilled, (state, action) => {
+  state.loading = false;
+  state.user = {
+    _id: action.payload._id,
+    name: action.payload.name,
+    username: action.payload.username,
+    email: action.payload.email,
+    avatar: action.payload.avatar,
+    bio: action.payload.bio,
+    location: action.payload.location,
+    website: action.payload.website,
+    createdAt: action.payload.createdAt,
+  };
+  localStorage.setItem("user", JSON.stringify(state.user));
+})
+.addCase(updateProfile.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload || "Update failed";
+});
+      ;
   },
 });
 
