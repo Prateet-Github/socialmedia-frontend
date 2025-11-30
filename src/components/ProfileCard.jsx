@@ -1,8 +1,10 @@
 import FeedCard from "./FeedCard";
 import { useRef, useState, useEffect } from "react";
 import ProfileInfo from "./ProfileInfo";
+import { useSelector } from "react-redux";
 
 const ProfileCard = () => {
+  const { user } = useSelector((state) => state.auth);
   const dropdownRef = useRef(null);
   const [isUp, setIsUp] = useState(false);
   useEffect(() => {
@@ -45,8 +47,8 @@ const ProfileCard = () => {
         {/* Profile Info */}
         <div className="flex flex-col gap-4 flex-1 text-center md:text-left">
           <div>
-            <h1 className="text-2xl font-semibold">Prateet Tiwari</h1>
-            <p className="font-medium">@prateettiwari</p>
+            <h1 className="text-2xl font-semibold">{user?.name}</h1>
+            <p className="font-medium">@{user?.username}</p>
           </div>
 
           <div className="flex gap-4 justify-center md:justify-start">
@@ -63,8 +65,7 @@ const ProfileCard = () => {
 
           <div>
             <p className="text-sm md:text-base">
-              Software Engineer | Tech Enthusiast | Open Source Contributor.
-              Love coding and coffee!
+              {user?.bio || "This user has no bio."}
             </p>
           </div>
         </div>

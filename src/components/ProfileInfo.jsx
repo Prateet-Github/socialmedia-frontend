@@ -23,9 +23,9 @@ const ProfileInfo = () => {
       <div className="flex gap-3 sm:gap-4 p-2 sm:p-4 items-center hover:bg-gray-50 dark:hover:bg-gray-900 rounded-lg transition-colors">
         <MapPin className="size-5 sm:size-6 shrink-0 text-green-600 dark:text-green-400" />
         <div className="flex flex-col min-w-0">
-          <p className="font-semibold text-sm sm:text-base">Account based in</p>
+          <p className="font-semibold text-sm sm:text-base">Location</p>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-            India
+            {user?.location || "Not specified"}
           </p>
         </div>
       </div>
@@ -33,9 +33,9 @@ const ProfileInfo = () => {
       <div className="flex gap-3 sm:gap-4 p-2 sm:p-4 items-center hover:bg-gray-50 dark:hover:bg-gray-900 rounded-lg transition-colors">
         <User className="size-5 sm:size-6 shrink-0 text-purple-600 dark:text-purple-400" />
         <div className="flex flex-col min-w-0">
-          <p className="font-semibold text-sm sm:text-base">Account type</p>
+          <p className="font-semibold text-sm sm:text-base">Website</p>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-            Premium Member
+            {user?.website || "Not specified"}
           </p>
         </div>
       </div>
