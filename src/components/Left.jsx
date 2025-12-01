@@ -171,7 +171,7 @@ const Left = ({ showLabels = true }) => {
               } items-center gap-3 p-2 rounded-full dark:hover:bg-gray-800 hover:bg-gray-200 cursor-pointer`}
             >
               <img
-                src="./pfp.jpeg"
+                src={user?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${user?.name}`}
                 alt="Profile"
                 className="size-10 object-cover rounded-full shrink-0"
               />
@@ -192,7 +192,10 @@ const Left = ({ showLabels = true }) => {
               <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800">
                 <div className="flex items-center gap-3">
                   <img
-                    src="./pfp.jpeg"
+                    src={
+                      user?.avatar ||
+                      `https://api.dicebear.com/7.x/initials/svg?seed=${user?.name}`
+                    }
                     alt="Profile"
                     className="size-10 object-cover rounded-full"
                   />

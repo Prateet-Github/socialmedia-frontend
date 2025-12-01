@@ -11,17 +11,23 @@ const EditProfile = () => {
 
   const { user, loading } = useSelector((state) => state.auth);
 
-  // Local form state initialized from Redux user
-  const [profileImage, setProfileImage] = useState(user?.avatar || "./pfp.jpeg");
+  // Store preview image and real file separately
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [profileImage, setProfileImage] = useState(
+    user?.avatar ||
+      `https://api.dicebear.com/7.x/initials/svg?seed=${user?.name}`
+  );
   const [name, setName] = useState(user?.name || "");
   const [bio, setBio] = useState(user?.bio || "");
   const [website, setWebsite] = useState(user?.website || "");
   const [location, setLocation] = useState(user?.location || "");
 
-  // If user loads later (e.g. refresh + rehydration), sync form
   useEffect(() => {
     if (user) {
-      setProfileImage(user.avatar || "./pfp.jpeg");
+      setProfileImage(
+        user.avatar ||
+          `https://api.dicebear.com/7.x/initials/svg?seed=${user?.name}`
+      );
       setName(user.name || "");
       setBio(user.bio || "");
       setWebsite(user.website || "");
@@ -32,39 +38,31 @@ const EditProfile = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        // This will be a base64 data URL for now
-        setProfileImage(event.target.result);
-      };
-      reader.readAsDataURL(file);
+      setAvatarFile(file); // store REAL file
+      setProfileImage(URL.createObjectURL(file)); // preview only
     }
   };
 
   const handleSave = (e) => {
     e.preventDefault();
-
     if (!user) return;
 
-    // Only send changed fields (optional but nice)
-    const updates = {};
+    const formData = new FormData();
 
-    if (name !== user.name) updates.name = name;
-    if (bio !== user.bio) updates.bio = bio;
-    if (website !== user.website) updates.website = website;
-    if (location !== user.location) updates.location = location;
-    if (profileImage !== (user.avatar || "./pfp.jpeg")) {
-      updates.avatar = profileImage; // for now this is base64 or URL
-    }
+    if (name !== user.name) formData.append("name", name);
+    if (bio !== user.bio) formData.append("bio", bio);
+    if (website !== user.website) formData.append("website", website);
+    if (location !== user.location) formData.append("location", location);
+    if (avatarFile) formData.append("avatar", avatarFile); // <– REAL File, not base64!
 
-    if (Object.keys(updates).length === 0) {
+    if ([...formData.keys()].length === 0) {
       toast("Nothing to update");
       return;
     }
 
     const t = toast.loading("Saving profile...");
 
-    dispatch(updateProfile(updates)).then((res) => {
+    dispatch(updateProfile(formData)).then((res) => {
       toast.dismiss(t);
 
       if (res.meta.requestStatus === "fulfilled") {
@@ -76,7 +74,6 @@ const EditProfile = () => {
     });
   };
 
-  // If no user (somehow), you can redirect back
   if (!user) {
     navigate("/");
     return null;
@@ -139,7 +136,7 @@ const EditProfile = () => {
           </label>
         </div>
 
-        {/* Form Fields */}
+        {/* Form Inputs — same as yours */}
         <div className="space-y-6">
           {/* Name Input */}
           <div>
@@ -158,75 +155,50 @@ const EditProfile = () => {
             <p className="text-xs text-gray-500 mt-1.5">{name.length}/50</p>
           </div>
 
-          {/* Username (Read-only) */}
+          {/* Username */}
           <div>
-            <label
-              className="block text-sm font-semibold mb-2"
-              htmlFor="username"
-            >
-              Username
-            </label>
+            <label className="block text-sm font-semibold mb-2">Username</label>
             <input
               type="text"
-              id="username"
-              value={user?.username || ""}
+              value={user?.username}
               disabled
               className="w-full border border-gray-700 rounded-lg p-3 outline-none text-sm md:text-base text-gray-500 cursor-not-allowed"
             />
-            <p className="text-xs text-gray-500 mt-1.5">
-              Username cannot be changed
-            </p>
           </div>
 
-          {/* Bio Input */}
+          {/* Bio */}
           <div>
-            <label className="block text-sm font-semibold mb-2" htmlFor="bio">
-              Bio
-            </label>
+            <label className="block text-sm font-semibold mb-2">Bio</label>
             <textarea
-              id="bio"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               className="w-full bg-transparent border border-gray-700 rounded-lg p-3 outline-none focus:border-blue-500 transition-colors resize-none text-sm md:text-base"
               rows="4"
-              placeholder="Tell us about yourself"
               maxLength={160}
             />
             <p className="text-xs text-gray-500 mt-1.5">{bio.length}/160</p>
           </div>
 
-          {/* Website Input */}
+          {/* Website */}
           <div>
-            <label
-              className="block text-sm font-semibold mb-2"
-              htmlFor="website"
-            >
-              Website
-            </label>
+            <label className="block text-sm font-semibold mb-2">Website</label>
             <input
               type="url"
-              id="website"
               value={website}
               onChange={(e) => setWebsite(e.target.value)}
-              className="w-full bg-transparent border border-gray-700 rounded-lg p-3 outline-none focus:border-blue-500 transition-colors text-sm md:text-base"
+              className="w-full bg-transparent border border-gray-700 rounded-lg p-3 outline-none focus:border-blue-500 transition-colors"
               placeholder="https://your-website.com"
             />
           </div>
 
-          {/* Location Input */}
+          {/* Location */}
           <div>
-            <label
-              className="block text-sm font-semibold mb-2"
-              htmlFor="location"
-            >
-              Location
-            </label>
+            <label className="block text-sm font-semibold mb-2">Location</label>
             <input
               type="text"
-              id="location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full bg-transparent border border-gray-700 rounded-lg p-3 outline-none focus:border-blue-500 transition-colors text-sm md:text-base"
+              className="w-full bg-transparent border border-gray-700 rounded-lg p-3 outline-none focus:border-blue-500 transition-colors"
               placeholder="City, Country"
             />
           </div>

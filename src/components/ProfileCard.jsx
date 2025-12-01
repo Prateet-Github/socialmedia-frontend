@@ -31,7 +31,10 @@ const ProfileCard = () => {
             className="hover:text-gray-300 transition-colors cursor-pointer"
           >
             <img
-              src="./pfp.jpeg"
+              src={
+                user?.avatar ||
+                `https://api.dicebear.com/7.x/initials/svg?seed=${user?.name}`
+              }
               alt="pfp"
               className="w-24 h-24 md:w-32 md:h-32 lg:w-36 lg:h-36 object-cover rounded-full border"
             />
