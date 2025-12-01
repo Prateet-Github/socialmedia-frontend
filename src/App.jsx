@@ -12,6 +12,7 @@ import EmailVerification from "./pages/EmailVerification";
 import EnterEmail from "./pages/EnterEmail";
 import Edit from "./pages/Edit";
 import ProtectedRoute from "./components/ProtectedRoute";
+import UserProfile from "./components/UserProfile";
 
 const App = () => {
   return (
@@ -74,6 +75,14 @@ const App = () => {
             </ProtectedRoute>
           }
         ></Route>
+       <Route
+  path="/user/:username"
+  element={
+    <ProtectedRoute>
+      <UserProfile />
+    </ProtectedRoute>
+  }
+/>
       </Routes>
     </>
   );
