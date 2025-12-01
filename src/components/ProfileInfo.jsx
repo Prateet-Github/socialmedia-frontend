@@ -1,4 +1,5 @@
 import { Calendar, MapPin, User, Mail } from "lucide-react";
+import { formatDate } from "../utils/time";
 
 const ProfileInfo = ({ user }) => {
   if (!user) return null;
@@ -11,12 +12,7 @@ const ProfileInfo = ({ user }) => {
         <div className="flex flex-col min-w-0">
           <p className="font-semibold text-sm sm:text-base">Date joined</p>
           <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-            {user?.createdAt &&
-              new Date(user.createdAt).toLocaleDateString("en-GB", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
+            {formatDate(user?.createdAt)}
           </p>
         </div>
       </div>

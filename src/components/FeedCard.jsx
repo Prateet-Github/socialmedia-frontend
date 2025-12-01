@@ -1,9 +1,9 @@
 import { Heart, MessageCircle, Share2, Bookmark } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import moment from "moment";
 import { useSelector } from "react-redux";
 import { getDiceBearAvatar } from "../utils/dicebear";
+import { formatTime } from "../utils/time";
 
 const FeedCard = ({ post }) => {
   const [liked, setLiked] = useState(false);
@@ -59,7 +59,7 @@ const FeedCard = ({ post }) => {
           </h1>
           <span className="text-gray-600 text-xs md:text-sm">•</span>
           <p className="text-gray-600 text-xs md:text-sm shrink-0">
-            {moment(post.createdAt).fromNow()}
+            {formatTime(post.createdAt)}
           </p>
         </div>
 
