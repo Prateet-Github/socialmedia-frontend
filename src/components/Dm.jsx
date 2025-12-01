@@ -2,7 +2,7 @@ import Chats from "./Chats";
 
 const Dm = () => {
   return (
-    <main className="overflow-y-auto h-screen">
+    <main className="overflow-y-auto h-screen scroll-hide">
       <div className="sticky top-0 bg-white dark:bg-black">
         <h1 className="text-2xl font-semibold px-4 pt-2">Messages</h1>
 
