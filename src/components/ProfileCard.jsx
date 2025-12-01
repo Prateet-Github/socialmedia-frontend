@@ -51,7 +51,7 @@ const ProfileCard = () => {
 
           {isUp && (
             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 z-50">
-              <ProfileInfo />
+              <ProfileInfo user={user} />
             </div>
           )}
         </div>
