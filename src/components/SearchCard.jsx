@@ -1,18 +1,81 @@
-import { Search } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { searchUsers, clearSearchResults } from "../redux/userSearchSlice";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const SearchCard = () => {
+const Search = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { results, loading } = useSelector((state) => state.userSearch);
+  const { user } = useSelector((state) => state.auth); // <-- ADD THIS
+
+  const [query, setQuery] = useState("");
+
+  // debounce
+  useEffect(() => {
+    if (query.trim() === "") {
+      dispatch(clearSearchResults());
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      dispatch(searchUsers(query));
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [query, dispatch]);
+
+  const goToUser = (u) => {
+    if (u.username === user.username) {
+      navigate("/profile");
+    } else {
+      navigate(`/user/${u.username}`);
+    }
+  };
+
   return (
-    <div className="p-4 w-full">
-      <div className="relative w-full">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
-        <input
-          type="text"
-          placeholder="Search"
-          className="w-full pl-12 pr-4 py-2.5 border border-gray-200 dark:border-gray-800 rounded-full bg-gray-50 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-gray-950 transition-colors"
-        />
+    <div className="px-4 py-6 w-full max-w-2xl mx-auto">
+      
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search users..."
+        className="w-full border border-gray-600 p-3 rounded-full bg-transparent"
+      />
+
+      <div className="mt-5 flex flex-col gap-4">
+        {loading && <p>Searching...</p>}
+
+        {!loading &&
+          results.map((u) => (
+            <div
+              key={u._id}
+              className="flex gap-3 items-center cursor-pointer hover:bg-gray-800 p-2 rounded-xl"
+              onClick={() => goToUser(u)}   // <-- FIXED
+            >
+              <img
+                src={
+                  u.avatar ||
+                  `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
+                    u.name
+                  )}`
+                }
+                className="w-10 h-10 rounded-full"
+              />
+              <div>
+                <p className="font-semibold">{u.name}</p>
+                <p className="text-sm text-gray-400">@{u.username}</p>
+              </div>
+            </div>
+          ))}
+
+        {!loading && query && results.length === 0 && (
+          <p className="text-gray-400">No users found.</p>
+        )}
       </div>
     </div>
   );
 };
 
-export default SearchCard;
+export default Search;
