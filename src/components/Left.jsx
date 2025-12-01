@@ -19,6 +19,7 @@ import { logout } from "../redux/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { getDiceBearAvatar } from "../utils/dicebear";
+import { APP_NAME } from "../utils/constants";
 
 const Left = ({ showLabels = true }) => {
   // state variables
@@ -126,7 +127,7 @@ const Left = ({ showLabels = true }) => {
             <Instagram className="size-8 shrink-0 text-blue-500" />
             {showLabels && (
               <span className="text-blue-500 font-bold text-xl whitespace-nowrap">
-                GeeksGram
+                {APP_NAME}
               </span>
             )}
           </Link>

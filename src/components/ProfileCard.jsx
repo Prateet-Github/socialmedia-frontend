@@ -4,6 +4,7 @@ import ProfileInfo from "./ProfileInfo";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserPosts } from "../redux/postSlice";
 import { getDiceBearAvatar } from "../utils/dicebear";
+import { formatNumber } from "../utils/numbers";
 
 const ProfileCard = () => {
   // state variables
@@ -69,18 +70,20 @@ const ProfileCard = () => {
 
           <div className="flex gap-4 justify-center md:justify-start">
             <p>
-              <span className="font-semibold">{userPosts?.length || 0}</span>{" "}
+              <span className="font-semibold min-w">
+                {formatNumber(userPosts.length)}
+              </span>{" "}
               Posts
             </p>
             <p>
               <span className="font-semibold">
-                {user?.followers?.length || 0}
+                {formatNumber(user?.followers?.length || 0)}
               </span>{" "}
               Followers
             </p>
             <p>
               <span className="font-semibold">
-                {user?.following?.length || 0}
+                {formatNumber(user?.following?.length || 0)}
               </span>{" "}
               Following
             </p>

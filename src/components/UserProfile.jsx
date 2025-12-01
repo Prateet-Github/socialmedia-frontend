@@ -6,6 +6,7 @@ import ProfileInfo from "../components/ProfileInfo";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { getDiceBearAvatar } from "../utils/dicebear";
+import { formatNumber } from "../utils/numbers";
 
 const API_URL = "http://localhost:5001/api/users";
 
@@ -111,18 +112,20 @@ const UserProfile = () => {
 
                   <div className="flex gap-4 justify-center md:justify-start">
                     <p>
-                      <span className="font-semibold">{posts.length}</span>{" "}
+                      <span className="font-semibold">
+                        {formatNumber(posts.length)}
+                      </span>{" "}
                       Posts
                     </p>
                     <p>
                       <span className="font-semibold">
-                        {profile.followers?.length || 0}
+                        {formatNumber(profile.followers?.length || 0)}
                       </span>{" "}
                       Followers
                     </p>
                     <p>
                       <span className="font-semibold">
-                        {profile.following?.length || 0}
+                        {formatNumber(profile.following?.length || 0)}
                       </span>{" "}
                       Following
                     </p>

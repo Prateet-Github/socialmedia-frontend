@@ -4,9 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getDiceBearAvatar } from "../utils/dicebear";
 import { formatTime } from "../utils/time";
+import { shortenNumber } from "../utils/numbers";
+import { formatNumber } from "../utils/numbers";
 
 const FeedCard = ({ post }) => {
+  // state variables
   const [liked, setLiked] = useState(false);
+  const [commented, setCommented] = useState(false);
   const [saved, setSaved] = useState(false);
 
   // redux
@@ -95,17 +99,17 @@ const FeedCard = ({ post }) => {
               />
             </button>
             <span className="ml-1 text-sm font-medium inline-flex justify-center min-w-[3ch]">
-              {post.likes?.length || 0}
+              {shortenNumber(liked ? post.likes + 1000 : post.likes)}
             </span>
           </div>
 
           {/* COMMENT */}
           <div className="flex items-center px-2 py-1.5 rounded-lg transition-colors group">
-            <button title="Comment">
+            <button onClick={() => setCommented(!commented)} title="Comment">
               <MessageCircle className="size-5 cursor-pointer hover:text-blue-500" />
             </button>
             <span className="ml-1 text-sm font-medium inline-flex justify-center min-w-[3ch]">
-              {post.comments?.length || 0}
+              {formatNumber(post.comments)}
             </span>
           </div>
 

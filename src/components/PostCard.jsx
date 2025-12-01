@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../redux/postSlice";
 import { toast } from "react-hot-toast";
 import { getDiceBearAvatar } from "../utils/dicebear";
+import { MAX_CAPTION_LENGTH } from "../utils/constants";
 
 const PostCard = ({ onClose }) => {
   // state variables
@@ -98,7 +99,7 @@ const PostCard = ({ onClose }) => {
             onChange={(e) => setPostText(e.target.value)}
             placeholder="What's on your mind?"
             className="w-full bg-transparent outline-none resize-none text-sm md:text-base min-h-32 md:min-h-40"
-            maxLength={500}
+            maxLength={MAX_CAPTION_LENGTH}
           />
 
           {/* Image Preview */}
@@ -143,7 +144,7 @@ const PostCard = ({ onClose }) => {
           {/* Character Count & Post Button */}
           <div className="flex items-center justify-between">
             <span className="text-xs md:text-sm text-gray-400">
-              {postText.length}/500
+              {postText.length}/{MAX_CAPTION_LENGTH}
             </span>
             <button
               onClick={handlePost}

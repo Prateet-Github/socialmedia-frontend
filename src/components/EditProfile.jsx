@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateProfile } from "../redux/authSlice";
 import toast from "react-hot-toast";
 import { getDiceBearAvatar } from "../utils/dicebear";
+import { MAX_NAME_LENGTH, MAX_BIO_LENGTH } from "../utils/constants";
 
 const EditProfile = () => {
   // redux
@@ -155,9 +156,11 @@ const EditProfile = () => {
               onChange={(e) => setName(e.target.value)}
               className="w-full bg-transparent border border-gray-700 rounded-lg p-3 outline-none focus:border-blue-500 transition-colors text-sm md:text-base"
               placeholder="Enter your name"
-              maxLength={50}
+              maxLength={MAX_NAME_LENGTH}
             />
-            <p className="text-xs text-gray-500 mt-1.5">{name.length}/50</p>
+            <p className="text-xs text-gray-500 mt-1.5">
+              {name.length}/{MAX_NAME_LENGTH}
+            </p>
           </div>
 
           {/* Username */}
@@ -179,9 +182,12 @@ const EditProfile = () => {
               onChange={(e) => setBio(e.target.value)}
               className="w-full bg-transparent border border-gray-700 rounded-lg p-3 outline-none focus:border-blue-500 transition-colors resize-none text-sm md:text-base"
               rows="4"
-              maxLength={160}
+              placeholder="Tell something about yourself"
+              maxLength={MAX_BIO_LENGTH}
             />
-            <p className="text-xs text-gray-500 mt-1.5">{bio.length}/160</p>
+            <p className="text-xs text-gray-500 mt-1.5">
+              {bio.length}/{MAX_BIO_LENGTH}
+            </p>
           </div>
 
           {/* Website */}
