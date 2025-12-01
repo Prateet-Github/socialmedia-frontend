@@ -3,6 +3,7 @@ import { useRef, useState, useEffect } from "react";
 import ProfileInfo from "./ProfileInfo";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserPosts } from "../redux/postSlice";
+import { getDiceBearAvatar } from "../utils/dicebear";
 
 const ProfileCard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -40,10 +41,7 @@ const ProfileCard = () => {
             className="hover:text-gray-300 transition-colors cursor-pointer"
           >
             <img
-              src={
-                user?.avatar ||
-                `https://api.dicebear.com/7.x/initials/svg?seed=${user?.name}`
-              }
+              src={user?.avatar || getDiceBearAvatar(user?.name)}
               alt="pfp"
               className="w-24 h-24 md:w-32 md:h-32 lg:w-36 lg:h-36 object-cover rounded-full border"
             />

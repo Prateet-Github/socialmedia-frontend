@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { useSelector } from "react-redux";
+import { getDiceBearAvatar } from "../utils/dicebear";
 
 const FeedCard = ({ post }) => {
   const navigate = useNavigate();
@@ -33,12 +34,7 @@ const FeedCard = ({ post }) => {
       {/* Profile Picture */}
       <div className="shrink-0">
         <img
-          src={
-            post?.user?.avatar ||
-            `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
-              post?.user?.name || "User"
-            )}`
-          }
+          src={post?.user?.avatar || getDiceBearAvatar(post?.user?.name)}
           alt="pfp"
           onClick={goToUser}
           className="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover cursor-pointer hover:opacity-90 transition-opacity"

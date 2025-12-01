@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { searchUsers, clearSearchResults } from "../redux/userSearchSlice";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { getDiceBearAvatar } from "../utils/dicebear";
 
 const Search = () => {
   const dispatch = useDispatch();
@@ -55,12 +56,8 @@ const Search = () => {
               onClick={() => goToUser(u)}   // <-- FIXED
             >
               <img
-                src={
-                  u.avatar ||
-                  `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
-                    u.name
-                  )}`
-                }
+                src={u.avatar || getDiceBearAvatar(u.name)}
+                alt={u.name}
                 className="w-10 h-10 rounded-full"
               />
               <div>
