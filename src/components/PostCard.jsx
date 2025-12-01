@@ -1,28 +1,62 @@
 import { X, Image, Smile, MapPin } from "lucide-react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createPost } from "../redux/postSlice";
+import { toast } from "react-hot-toast";
 
 const PostCard = ({ onClose }) => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
   const [postText, setPostText] = useState("");
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImagePreview, setSelectedImagePreview] = useState(null); // for UI
+  const [imageFile, setImageFile] = useState(null); // real file for backend
 
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => setSelectedImage(e.target.result);
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    setImageFile(file);
+    setSelectedImagePreview(URL.createObjectURL(file));
   };
 
   const handleRemoveImage = () => {
-    setSelectedImage(null);
+    setImageFile(null);
+    setSelectedImagePreview(null);
   };
 
   const handlePost = () => {
-    // Handle post submission logic here
-    console.log("Posting:", { postText, selectedImage });
-    onClose?.();
+    if (!postText.trim() && !imageFile) return;
+
+    const formData = new FormData();
+    formData.append("content", postText);
+    if (imageFile) {
+      // 👇 must match upload.single("image") in backend
+      formData.append("images", imageFile);
+    }
+
+    const t = toast.loading("Posting...");
+
+    dispatch(createPost(formData)).then((res) => {
+      toast.dismiss(t);
+
+      if (res.meta.requestStatus === "fulfilled") {
+        toast.success("Posted ✅");
+        setPostText("");
+        setImageFile(null);
+        setSelectedImagePreview(null);
+        onClose?.();
+      } else {
+        toast.error(res.payload || "Failed to post");
+      }
+    });
   };
+
+  const avatarSrc =
+    user?.avatar ||
+    `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
+      user?.name || user?.username || "User"
+    )}&radius=50&backgroundColor=blue,green,red,orange,teal`;
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4">
@@ -43,15 +77,17 @@ const PostCard = ({ onClose }) => {
           {/* User Info */}
           <div className="flex items-center gap-3 mb-4">
             <img
-              src="./pfp.jpeg"
+              src={avatarSrc}
               alt="profile"
               className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
             />
             <div>
               <h3 className="font-semibold text-sm md:text-base">
-                Prateet Tiwari
+                {user?.name || "User"}
               </h3>
-              <p className="text-xs text-gray-400">@prateettiwari</p>
+              <p className="text-xs text-gray-400">
+                @{user?.username || "username"}
+              </p>
             </div>
           </div>
 
@@ -65,10 +101,10 @@ const PostCard = ({ onClose }) => {
           />
 
           {/* Image Preview */}
-          {selectedImage && (
+          {selectedImagePreview && (
             <div className="relative mt-4 border border-gray-800 rounded-xl overflow-hidden max-h-96">
               <img
-                src={selectedImage}
+                src={selectedImagePreview}
                 alt="preview"
                 className="w-full h-full object-contain"
               />
@@ -110,7 +146,7 @@ const PostCard = ({ onClose }) => {
             </span>
             <button
               onClick={handlePost}
-              disabled={!postText.trim() && !selectedImage}
+              disabled={!postText.trim() && !imageFile}
               className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed px-6 py-2 rounded-full font-semibold text-sm md:text-base transition-colors"
             >
               Post

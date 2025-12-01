@@ -2,18 +2,21 @@ import { Heart, MessageCircle, Share2, Bookmark } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const FeedCard = () => {
+const FeedCard = ({ post }) => {
   const navigate = useNavigate();
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
 
   return (
-    <article className="flex p-3 md:p-6 gap-2 md:gap-3 transition-colors">
+    <article className="flex p-3 md:p-6 gap-2 md:gap-3 transition-colors border-b border-gray-200 dark:border-gray-800 w-full max-w-2xl">
       {/* Profile Picture */}
       <div className="shrink-0">
         <img
-          src="/pfp.jpeg"
-          alt="profile"
+          src={
+            post.user.avatar ||
+            `https://api.dicebear.com/7.x/initials/svg?seed=${post.user.name}`
+          }
+          alt="pfp"
           className="w-9 h-9 md:w-10 md:h-10 rounded-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
         />
       </div>
@@ -23,37 +26,37 @@ const FeedCard = () => {
         {/* Username + Time */}
         <div className="flex items-center gap-2">
           <h1
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate(`/profile/${post.user.username}`)}
             className="font-semibold hover:underline cursor-pointer text-sm md:text-base truncate"
           >
-            Prateet Tiwari
+            {post.user.name}
           </h1>
-          <span className="dark:text-gray-400 text-gray-700 text-xs md:text-sm">
-            •
-          </span>
-          <p className="dark:text-gray-400 text-gray-700 text-xs md:text-sm shrink-0">
-            2h
+          <span className="text-gray-600 text-xs md:text-sm">•</span>
+          <p className="text-gray-600 text-xs md:text-sm shrink-0">
+            {new Date(post.createdAt).toLocaleDateString()}
           </p>
         </div>
 
         {/* Text */}
-        <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">
-          So, there is a free and open-source alternative to Netflix available -
-          it's known as Stremio.
-        </p>
+        {post.content && (
+          <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">
+            {post.content}
+          </p>
+        )}
 
         {/* Image */}
-        {/* Image */}
-        <div className="border border-gray-600 max-h-140 w-fit overflow-hidden rounded-xl md:rounded-2xl">
-          <img
-            src="/pfp.jpeg"
-            className="w-full h-full object-contain cursor-pointer hover:opacity-95 transition-opacity"
-            alt="post content"
-          />
-        </div>
+        {post.media.length > 0 && (
+          <div className="border border-gray-600 max-h-140 w-fit overflow-hidden rounded-xl md:rounded-2xl">
+            <img
+              src={post.media[0]}
+              className="w-full h-full object-contain cursor-pointer hover:opacity-95 transition-opacity"
+            />
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex items-center justify-between mx-2">
+          {/* LIKE */}
           <div className="flex items-center px-2 py-1.5 rounded-lg transition-colors group">
             <button
               onClick={() => setLiked(!liked)}
@@ -66,29 +69,29 @@ const FeedCard = () => {
               />
             </button>
             <span className="ml-1 text-sm font-medium inline-flex justify-center min-w-[3ch]">
-              {liked ? 101 : 100}
+              {post.likes?.length || 0}
             </span>
           </div>
 
+          {/* COMMENT */}
           <div className="flex items-center px-2 py-1.5 rounded-lg transition-colors group">
             <button title="Comment">
               <MessageCircle className="size-5 cursor-pointer hover:text-blue-500" />
             </button>
             <span className="ml-1 text-sm font-medium inline-flex justify-center min-w-[3ch]">
-              20
+              {post.comments?.length || 0}
             </span>
           </div>
 
-          <div className="flex items-center px-2 py-1.5 rounded-lg  transition-colors group">
+          {/* SHARE */}
+          <div className="flex items-center px-2 py-1.5 rounded-lg transition-colors group">
             <button title="Share">
               <Share2 className="size-5 cursor-pointer hover:text-green-500" />
             </button>
-            <span className="ml-1 text-sm font-medium inline-flex justify-center min-w-[3ch]">
-              10
-            </span>
           </div>
 
-          <div className="flex items-center px-2 py-1.5 rounded-lg  transition-colors group">
+          {/* SAVE */}
+          <div className="flex items-center px-2 py-1.5 rounded-lg transition-colors group">
             <button
               onClick={() => setSaved(!saved)}
               title={saved ? "Unsave" : "Save"}
@@ -99,9 +102,6 @@ const FeedCard = () => {
                 }`}
               />
             </button>
-            <span className="ml-1 text-sm font-medium inline-flex justify-center min-w-[3ch]">
-              {saved ? 32 : 31}
-            </span>
           </div>
         </div>
       </div>

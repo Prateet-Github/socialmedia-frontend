@@ -1,29 +1,38 @@
 import FeedCard from "./FeedCard";
 import { useRef, useState, useEffect } from "react";
 import ProfileInfo from "./ProfileInfo";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { getUserPosts } from "../redux/postSlice";
 
 const ProfileCard = () => {
   const { user } = useSelector((state) => state.auth);
+  const { userPosts, loading } = useSelector((state) => state.posts);
+  const dispatch = useDispatch();
+
+  // fetch posts
+  useEffect(() => {
+    if (user?._id) {
+      dispatch(getUserPosts(user._id));
+    }
+  }, [user, dispatch]);
+
   const dropdownRef = useRef(null);
   const [isUp, setIsUp] = useState(false);
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsUp(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
   return (
     <main className="w-full max-w-3xl p-4 md:p-8 flex flex-col gap-6">
       {/* Profile Header */}
       <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-12">
-        {/* Profile Image */}
         <div className="relative shrink-0" ref={dropdownRef}>
           <button
             onClick={() => setIsUp(!isUp)}
@@ -47,7 +56,6 @@ const ProfileCard = () => {
           )}
         </div>
 
-        {/* Profile Info */}
         <div className="flex flex-col gap-4 flex-1 text-center md:text-left">
           <div>
             <h1 className="text-2xl font-semibold">{user?.name}</h1>
@@ -56,13 +64,20 @@ const ProfileCard = () => {
 
           <div className="flex gap-4 justify-center md:justify-start">
             <p>
-              <span className="font-semibold">50</span> Posts
+              <span className="font-semibold">{userPosts?.length || 0}</span>{" "}
+              Posts
             </p>
             <p>
-              <span className="font-semibold">1.2K</span> Followers
+              <span className="font-semibold">
+                {user?.followers?.length || 0}
+              </span>{" "}
+              Followers
             </p>
             <p>
-              <span className="font-semibold">300</span> Following
+              <span className="font-semibold">
+                {user?.following?.length || 0}
+              </span>{" "}
+              Following
             </p>
           </div>
 
@@ -74,21 +89,17 @@ const ProfileCard = () => {
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex gap-3 border-b border-gray-300 dark:border-gray-800 pb-6">
-        <button className="flex-1 text-white py-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 transition-colors font-medium">
-          Follow
-        </button>
-        <button className="flex-1 text-white py-2 px-4 rounded-xl bg-gray-700 hover:bg-gray-600 transition-colors font-medium">
-          Message
-        </button>
-      </div>
-
       {/* Posts Grid */}
       <div className="flex flex-col gap-6 pt-6">
-        <FeedCard />
-        <FeedCard />
-        <FeedCard />
+        {loading && <p className="text-center text-gray-500">Loading posts…</p>}
+
+        {!loading && userPosts.length === 0 && (
+          <p className="text-center text-gray-500">No posts yet.</p>
+        )}
+
+        {userPosts.map((post) => (
+          <FeedCard key={post._id} post={post} />
+        ))}
       </div>
     </main>
   );
