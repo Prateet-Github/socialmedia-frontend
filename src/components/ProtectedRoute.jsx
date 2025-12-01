@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const ProtectedRoute = ({ children }) => {
+  // redux
   const { isAuthenticated } = useSelector((state) => state.auth);
 
   if (!isAuthenticated) {

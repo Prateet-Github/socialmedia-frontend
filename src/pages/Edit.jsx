@@ -2,6 +2,7 @@ import Left from "../components/Left";
 import EditProfile from "../components/EditProfile";
 
 const Edit = () => {
+  // JSX
   return (
     <main className="flex min-h-screen w-full mx-auto max-w-6xl pt-16 lg:pt-0">
       {/* Left Sidebar - Hidden on mobile, visible on desktop */}

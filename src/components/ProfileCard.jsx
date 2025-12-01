@@ -6,19 +6,25 @@ import { getUserPosts } from "../redux/postSlice";
 import { getDiceBearAvatar } from "../utils/dicebear";
 
 const ProfileCard = () => {
+  // state variables
+  const [isUp, setIsUp] = useState(false);
+
+  // redux
   const { user } = useSelector((state) => state.auth);
   const { userPosts, loading } = useSelector((state) => state.posts);
+
+  // hooks
   const dispatch = useDispatch();
 
-  // fetch posts
+  // refs
+  const dropdownRef = useRef(null);
+
+  // effects
   useEffect(() => {
     if (user?._id) {
       dispatch(getUserPosts(user._id));
     }
   }, [user, dispatch]);
-
-  const dropdownRef = useRef(null);
-  const [isUp, setIsUp] = useState(false);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -30,6 +36,7 @@ const ProfileCard = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // JSX
   return (
     <main className="w-full max-w-3xl p-4 md:p-8 flex flex-col gap-6">
       {/* Profile Header */}

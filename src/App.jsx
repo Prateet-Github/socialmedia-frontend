@@ -75,14 +75,14 @@ const App = () => {
             </ProtectedRoute>
           }
         ></Route>
-       <Route
-  path="/user/:username"
-  element={
-    <ProtectedRoute>
-      <UserProfile />
-    </ProtectedRoute>
-  }
-/>
+        <Route
+          path="/user/:username"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );

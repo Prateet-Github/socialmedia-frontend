@@ -3,6 +3,7 @@ import ChatBox from "../components/ChatBox";
 import Dm from "../components/Dm";
 
 const Messages = () => {
+  // JSX
   return (
     <main className="flex min-h-screen w-full mx-auto pt-16 lg:pt-0">
       {/* Left Sidebar - Hidden on mobile, icons only on desktop */}

@@ -5,23 +5,32 @@ import FeedCard from "../components/FeedCard";
 import ProfileInfo from "../components/ProfileInfo";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { getDiceBearAvatar } from "../utils/dicebear";
 
 const API_URL = "http://localhost:5001/api/users";
 
 const UserProfile = () => {
-  const { username } = useParams();
-  const navigate = useNavigate();
-
-  const { user: loggedInUser } = useSelector((state) => state.auth);
-
+  // state variables
   const [profile, setProfile] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const [showInfo, setShowInfo] = useState(false);
+
+  // redux
+  const { user: loggedInUser } = useSelector((state) => state.auth);
+
+  // hooks
+  const { username } = useParams();
+  const navigate = useNavigate();
+
+  // refs
   const dropdownRef = useRef(null);
 
+  // derived
+  const isMe = loggedInUser?.username === profile?.username;
+
+  // effects
   useEffect(() => {
     function handleClickOutside(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -51,15 +60,7 @@ const UserProfile = () => {
     if (username) fetchProfile();
   }, [username]);
 
-  const avatarSrc =
-    profile?.avatar ||
-    `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
-      profile?.name || username
-    )}`;
-
-  // checking if the logged-in user is viewing their own profile
-  const isMe = loggedInUser?.username === profile?.username;
-
+  // JSX
   return (
     <main className="flex min-h-screen w-full mx-auto max-w-6xl pt-16 lg:pt-0">
       {/* Sidebar */}
@@ -85,11 +86,10 @@ const UserProfile = () => {
             <>
               {/* Header */}
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-12 mb-6">
-
                 {/* CLICKABLE AVATAR */}
                 <div className="relative shrink-0" ref={dropdownRef}>
                   <img
-                    src={avatarSrc}
+                    src={profile.avatar || getDiceBearAvatar(profile.name)}
                     alt="pfp"
                     onClick={() => setShowInfo(!showInfo)}
                     className="w-24 h-24 md:w-32 md:h-32 lg:w-36 lg:h-36 object-cover rounded-full border cursor-pointer hover:opacity-90"
@@ -111,7 +111,8 @@ const UserProfile = () => {
 
                   <div className="flex gap-4 justify-center md:justify-start">
                     <p>
-                      <span className="font-semibold">{posts.length}</span> Posts
+                      <span className="font-semibold">{posts.length}</span>{" "}
+                      Posts
                     </p>
                     <p>
                       <span className="font-semibold">

@@ -3,15 +3,21 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../redux/postSlice";
 import { toast } from "react-hot-toast";
+import { getDiceBearAvatar } from "../utils/dicebear";
 
 const PostCard = ({ onClose }) => {
-  const dispatch = useDispatch();
+  // state variables
+  const [postText, setPostText] = useState("");
+  const [selectedImagePreview, setSelectedImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+
+  // redux
   const { user } = useSelector((state) => state.auth);
 
-  const [postText, setPostText] = useState("");
-  const [selectedImagePreview, setSelectedImagePreview] = useState(null); // for UI
-  const [imageFile, setImageFile] = useState(null); // real file for backend
+  // hooks
+  const dispatch = useDispatch();
 
+  // handlers
   const handleImageSelect = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -52,12 +58,7 @@ const PostCard = ({ onClose }) => {
     });
   };
 
-  const avatarSrc =
-    user?.avatar ||
-    `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
-      user?.name || user?.username || "User"
-    )}&radius=50&backgroundColor=blue,green,red,orange,teal`;
-
+  // JSX
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="bg-black border border-gray-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
@@ -77,7 +78,7 @@ const PostCard = ({ onClose }) => {
           {/* User Info */}
           <div className="flex items-center gap-3 mb-4">
             <img
-              src={avatarSrc}
+              src={user?.avatar || getDiceBearAvatar(user?.name)}
               alt="profile"
               className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
             />

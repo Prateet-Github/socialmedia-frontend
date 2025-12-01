@@ -2,9 +2,11 @@ import { X, Mic, MicOff, Video, VideoOff, Phone } from "lucide-react";
 import { useState } from "react";
 
 export default function CallModal({ onClose }) {
+  // state variables
   const [micOn, setMicOn] = useState(true);
   const [camOn, setCamOn] = useState(true);
 
+  // JSX
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center">
       {/* Main Call Box */}

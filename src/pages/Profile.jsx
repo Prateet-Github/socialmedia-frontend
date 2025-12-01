@@ -2,6 +2,7 @@ import Left from "../components/Left";
 import ProfileCard from "../components/ProfileCard";
 
 const Profile = () => {
+  // JSX
   return (
     <main className="flex min-h-screen w-full mx-auto max-w-6xl pt-18 lg:pt-0">
       {/* Left Sidebar - Hidden on mobile, visible on desktop */}

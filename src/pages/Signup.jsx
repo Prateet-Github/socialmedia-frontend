@@ -5,13 +5,7 @@ import { registerUser } from "../redux/authSlice";
 import { toast } from "react-hot-toast";
 
 const Signup = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const { loading, error, isAuthenticated } = useSelector(
-    (state) => state.auth
-  );
-
+  // state variables
   const [form, setForm] = useState({
     name: "",
     username: "",
@@ -19,6 +13,16 @@ const Signup = () => {
     password: "",
   });
 
+  // redux
+  const { loading, error, isAuthenticated } = useSelector(
+    (state) => state.auth
+  );
+
+  // hooks
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // handlers
   const handleChange = (e) => {
     setForm((prev) => ({
       ...prev,
@@ -39,6 +43,7 @@ const Signup = () => {
     });
   };
 
+  // JSX
   return (
     <form
       onSubmit={handleSubmit}

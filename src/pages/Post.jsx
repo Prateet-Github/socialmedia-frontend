@@ -13,11 +13,6 @@ const Post = () => {
       <div className="flex-1 min-w-0 max-w-2xl">
         <PostCard />
       </div>
-
-      {/* Right Sidebar - Fixed width, hidden on small screens */}
-      <div className="hidden border-l lg:block w-80 xl:w-96 shrink-0">
-        {/* <Right /> */}
-      </div>
     </main>
   );
 };

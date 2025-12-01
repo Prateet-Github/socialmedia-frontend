@@ -1,4 +1,5 @@
 const Chats = () => {
+  // JSX
   return (
     <article className="flex gap-3 md:gap-4 p-3 md:p-3 cursor-pointer dark:hover:bg-gray-800 hover:bg-gray-200  transition-colors">
       <div className="shrink-0">

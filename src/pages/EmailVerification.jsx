@@ -1,16 +1,17 @@
 import { useNavigate } from "react-router-dom";
 
 const EmailVerification = () => {
-const navigate = useNavigate();
+  // hooks
+  const navigate = useNavigate();
 
+  // handlers
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you can add logic to handle the verification code submission
-    // For now, we'll just navigate to the home page
+
     navigate("/signup");
-  }
+  };
 
-
+  // JSX
   return (
     <form onSubmit={handleSubmit}>
       <div className="min-h-screen flex items-center justify-center">
@@ -26,7 +27,10 @@ const navigate = useNavigate();
             placeholder="Verification Code"
             className="w-full p-4 border rounded mb-6"
           />
-          <button type="submit" className="w-full bg-blue-600 text-white p-4 rounded hover:bg-blue-700 transition">
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white p-4 rounded hover:bg-blue-700 transition"
+          >
             Verify Email
           </button>
         </div>

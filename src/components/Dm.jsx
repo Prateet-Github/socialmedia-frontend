@@ -1,6 +1,7 @@
 import Chats from "./Chats";
 
 const Dm = () => {
+  // JSX
   return (
     <main className="overflow-y-auto h-screen scroll-hide">
       <div className="sticky top-0 bg-white dark:bg-black">

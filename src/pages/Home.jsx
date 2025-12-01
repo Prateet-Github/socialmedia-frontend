@@ -5,13 +5,18 @@ import { useEffect } from "react";
 import { fetchFeed } from "../redux/postSlice";
 
 const Home = () => {
-  const dispatch = useDispatch();
+  // redux
   const { items, loading, error } = useSelector((state) => state.posts);
 
+  // hooks
+  const dispatch = useDispatch();
+
+  // effects
   useEffect(() => {
     dispatch(fetchFeed());
   }, [dispatch]);
 
+  // JSX
   return (
     <main className="flex min-h-screen w-full mx-auto max-w-6xl pt-16 lg:pt-0">
       {/* Left Sidebar - Hidden on mobile, visible on desktop */}

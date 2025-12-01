@@ -1,6 +1,7 @@
-import { Home, Search, ArrowLeft } from "lucide-react";
+import { Home, ArrowLeft } from "lucide-react";
 
 const NotFound = () => {
+  // JSX
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="text-center rounded-lg p-8 max-w-lg w-full">

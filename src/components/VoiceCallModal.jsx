@@ -2,9 +2,11 @@ import { X, Mic, MicOff, Phone, Volume2, VolumeX } from "lucide-react";
 import { useState } from "react";
 
 export default function VoiceCallModal({ onClose }) {
+  // state variables
   const [micOn, setMicOn] = useState(true);
   const [speakerOn, setSpeakerOn] = useState(true);
 
+  // JSX
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center">
       <div className="relative w-[350px] bg-gray-900 text-white rounded-2xl p-8 text-center flex flex-col items-center gap-6">

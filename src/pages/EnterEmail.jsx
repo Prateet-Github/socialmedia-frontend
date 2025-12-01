@@ -1,15 +1,15 @@
 import { useNavigate } from "react-router-dom";
 
 const EnterEmail = () => {
+  // hooks
   const navigate = useNavigate();
 
+  // handlers
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you can add logic to handle the email submission
-    // For now, we'll just navigate to a confirmation page
     navigate("/email-verification");
   };
-
+  // JSX
   return (
     <form onSubmit={handleSubmit}>
       <div className="min-h-screen flex items-center justify-center">

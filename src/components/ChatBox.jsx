@@ -14,13 +14,18 @@ import VoiceCallModal from "./VoiceCallModal";
 import { useNavigate } from "react-router-dom";
 
 const ChatBox = () => {
+  // state variables
   const [isUp, setIsUp] = useState(false);
   const [showCall, setShowCall] = useState(false);
   const [voiceCall, setVoiceCall] = useState(false);
-  const dropdownRef = useRef(null);
 
+  // hooks
   const navigate = useNavigate();
 
+  // refs
+  const dropdownRef = useRef(null);
+
+  // effects
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -37,6 +42,7 @@ const ChatBox = () => {
     };
   }, [isUp]);
 
+  // handlers
   const handleClick = () => {
     navigate("/profile");
   };
@@ -56,6 +62,7 @@ const ChatBox = () => {
     navigate("/profile");
   };
 
+  // JSX
   return (
     <main className="flex flex-col h-screen">
       {/* Header - fixed to top */}

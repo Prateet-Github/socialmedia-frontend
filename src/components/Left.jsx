@@ -14,23 +14,29 @@ import {
   X,
 } from "lucide-react";
 import PostCard from "./PostCard";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { getDiceBearAvatar } from "../utils/dicebear";
 
 const Left = ({ showLabels = true }) => {
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  // state variables
   const [isUp, setIsUp] = useState(false);
   const [showPostCard, setShowPostCard] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const dropdownRef = useRef(null);
+  // redux
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+
+  // hooks
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  // refs
+  const dropdownRef = useRef(null);
+
+  // effects
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -47,6 +53,7 @@ const Left = ({ showLabels = true }) => {
     };
   }, [isUp]);
 
+  // handlers
   const handleLinkClick = () => {
     setIsMobileMenuOpen(false);
   };
@@ -58,6 +65,7 @@ const Left = ({ showLabels = true }) => {
     navigate("/");
   };
 
+  // nav items
   const navItems = [
     { to: "/home", icon: Home, label: "Home" },
     { to: "/search", icon: Search, label: "Search" },
@@ -67,6 +75,7 @@ const Left = ({ showLabels = true }) => {
     { to: "/edit-profile", icon: Edit, label: "Edit Profile" },
   ];
 
+  // JSX
   return (
     <>
       {/* Mobile Menu Button - Fixed at top */}

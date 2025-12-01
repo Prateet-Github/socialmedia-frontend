@@ -2,6 +2,7 @@ import Left from "../components/Left";
 import Notification from "../components/Notification";
 
 const Notifications = () => {
+  // JSX
   return (
     <main className="flex min-h-screen w-full mx-auto max-w-6xl pt-16 lg:pt-0">
       {/* Left Sidebar - Hidden on mobile, visible on desktop */}
@@ -17,7 +18,6 @@ const Notifications = () => {
       {/* Center Feed - Flexible, with max width */}
       <div className="flex-1 min-w-0 max-w-2xl flex flex-col">
         <Notification />
-
       </div>
 
       {/* Right Sidebar - Fixed width, hidden on small screens */}

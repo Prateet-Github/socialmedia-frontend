@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 const ForgotPassword = () => {
+  // JSX
   return (
     <main className="flex bg-black text-white flex-col min-h-screen w-full justify-center items-center">
       <div className="flex flex-col w-full max-w-sm border rounded text-center p-6 gap-6">

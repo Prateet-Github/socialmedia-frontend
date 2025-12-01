@@ -4,24 +4,27 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { updateProfile } from "../redux/authSlice";
 import toast from "react-hot-toast";
+import { getDiceBearAvatar } from "../utils/dicebear";
 
 const EditProfile = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
+  // redux
   const { user, loading } = useSelector((state) => state.auth);
 
-  // Store preview image and real file separately
+  // state variables
   const [avatarFile, setAvatarFile] = useState(null);
   const [profileImage, setProfileImage] = useState(
-    user?.avatar ||
-      `https://api.dicebear.com/7.x/initials/svg?seed=${user?.name}`
+    user?.avatar || getDiceBearAvatar(user?.name)
   );
   const [name, setName] = useState(user?.name || "");
   const [bio, setBio] = useState(user?.bio || "");
   const [website, setWebsite] = useState(user?.website || "");
   const [location, setLocation] = useState(user?.location || "");
 
+  // hooks
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // effects
   useEffect(() => {
     if (user) {
       setProfileImage(
@@ -35,6 +38,7 @@ const EditProfile = () => {
     }
   }, [user]);
 
+  // handlers
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -79,6 +83,7 @@ const EditProfile = () => {
     return null;
   }
 
+  // JSX
   return (
     <main className="min-h-screen">
       {/* Header */}

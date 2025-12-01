@@ -5,14 +5,18 @@ import { useNavigate } from "react-router-dom";
 import { getDiceBearAvatar } from "../utils/dicebear";
 
 const Search = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { results, loading } = useSelector((state) => state.userSearch);
-  const { user } = useSelector((state) => state.auth); // <-- ADD THIS
-
+  // state variables
   const [query, setQuery] = useState("");
 
-  // debounce
+  // redux
+  const { results, loading } = useSelector((state) => state.userSearch);
+  const { user } = useSelector((state) => state.auth);
+
+  // hooks
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // debounce search
   useEffect(() => {
     if (query.trim() === "") {
       dispatch(clearSearchResults());
@@ -26,6 +30,7 @@ const Search = () => {
     return () => clearTimeout(timeout);
   }, [query, dispatch]);
 
+  // handlers
   const goToUser = (u) => {
     if (u.username === user.username) {
       navigate("/profile");
@@ -34,9 +39,9 @@ const Search = () => {
     }
   };
 
+  // JSX
   return (
     <div className="px-4 py-6 w-full max-w-2xl mx-auto">
-      
       <input
         type="text"
         value={query}
@@ -53,7 +58,7 @@ const Search = () => {
             <div
               key={u._id}
               className="flex gap-3 items-center cursor-pointer hover:bg-gray-800 p-2 rounded-xl"
-              onClick={() => goToUser(u)}   // <-- FIXED
+              onClick={() => goToUser(u)} // <-- FIXED
             >
               <img
                 src={u.avatar || getDiceBearAvatar(u.name)}

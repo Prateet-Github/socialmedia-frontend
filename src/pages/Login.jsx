@@ -5,25 +5,29 @@ import { loginUser, clearError } from "../redux/authSlice";
 import { toast } from "react-hot-toast";
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const { loading, error, isAuthenticated } = useSelector(
-    (state) => state.auth
-  );
-
+  // state variables
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-  // if already logged in, don't show login page
+  // redux
+  const { loading, error, isAuthenticated } = useSelector(
+    (state) => state.auth
+  );
+
+  // hooks
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // effects
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/home");
     }
   }, [isAuthenticated, navigate]);
 
+  // handlers
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     if (error) dispatch(clearError());
@@ -41,6 +45,7 @@ const Login = () => {
     });
   };
 
+  // JSX
   return (
     <form
       onSubmit={handleSubmit}

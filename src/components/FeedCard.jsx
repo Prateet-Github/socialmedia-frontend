@@ -6,17 +6,22 @@ import { useSelector } from "react-redux";
 import { getDiceBearAvatar } from "../utils/dicebear";
 
 const FeedCard = ({ post }) => {
-  const navigate = useNavigate();
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  // 👇 logged-in user
+  // redux
   const { user: currentUser } = useSelector((state) => state.auth);
 
+  // hooks
+  const navigate = useNavigate();
+
+  // helpers
   const isOwnPost =
-    currentUser && post?.user?._id &&
+    currentUser &&
+    post?.user?._id &&
     post.user._id.toString() === currentUser._id.toString();
 
+  // handlers
   const goToUser = () => {
     if (!post?.user?.username) return;
 
@@ -29,6 +34,7 @@ const FeedCard = ({ post }) => {
     }
   };
 
+  // JSX
   return (
     <article className="flex p-3 md:p-6 gap-2 md:gap-3 transition-colors border-b border-gray-200 dark:border-gray-800 w-full max-w-2xl">
       {/* Profile Picture */}
@@ -44,7 +50,10 @@ const FeedCard = ({ post }) => {
       {/* Content */}
       <div className="flex flex-col gap-3 md:gap-4 w-full min-w-0">
         {/* Username + Time */}
-        <div className="flex items-center gap-2 cursor-pointer" onClick={goToUser}>
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={goToUser}
+        >
           <h1 className="font-semibold hover:underline text-sm md:text-base truncate">
             {post?.user?.name || "Unknown User"}
           </h1>
