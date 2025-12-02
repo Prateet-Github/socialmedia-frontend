@@ -103,7 +103,10 @@ const Left = ({ showLabels = true }) => {
         <div className="flex flex-col gap-2">
           <Link
             to="/home"
-            onClick={handleLinkClick}
+            onClick={() => {
+              handleLinkClick();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
             className={`flex items-center ${
               showLabels ? "justify-start" : "justify-center"
             } gap-3 p-2 rounded-2xl hover:opacity-90`}
