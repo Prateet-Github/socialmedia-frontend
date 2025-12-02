@@ -3,6 +3,7 @@ import { searchUsers, clearSearchResults } from "../redux/userSearchSlice";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getDiceBearAvatar } from "../utils/dicebear";
+import useDebounce from "../hooks/useDebounce";
 
 const Search = () => {
   // state variables
@@ -16,19 +17,17 @@ const Search = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // debounce search
+  // debounced query hook
+  const debouncedQuery = useDebounce(query, 400);
+
+  // effects
   useEffect(() => {
-    if (query.trim() === "") {
+    if (!debouncedQuery.trim()) {
       dispatch(clearSearchResults());
       return;
     }
-
-    const timeout = setTimeout(() => {
-      dispatch(searchUsers(query));
-    }, 400);
-
-    return () => clearTimeout(timeout);
-  }, [query, dispatch]);
+    dispatch(searchUsers(debouncedQuery));
+  }, [debouncedQuery]);
 
   // handlers
   const goToUser = (u) => {
