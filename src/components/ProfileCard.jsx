@@ -12,7 +12,7 @@ import { fetchCurrentUserProfile } from "../redux/authSlice";
 const ProfileCard = () => {
   // state
   const [isUp, setIsUp] = useState(false);
-  const [activeTab, setActiveTab] = useState("posts"); // posts | followers | following
+  const [activeTab, setActiveTab] = useState("posts");
 
   // redux
   const { user } = useSelector((state) => state.auth);
@@ -22,17 +22,11 @@ const ProfileCard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // fetch posts when user loads
+  // ✅ Fixed: Single useEffect
   useEffect(() => {
     if (user?._id) {
       dispatch(getUserPosts(user._id));
-      dispatch(fetchCurrentUserProfile()); // ✅ Fetch populated profile
-    }
-  }, [user?._id, dispatch]);
-
-  useEffect(() => {
-    if (user?._id) {
-      dispatch(getUserPosts(user._id));
+      dispatch(fetchCurrentUserProfile());
     }
   }, [user?._id, dispatch]);
 
@@ -157,7 +151,8 @@ const ProfileCard = () => {
                 {user?.followers?.map((follower) => (
                   <div
                     key={follower._id || follower}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
+                    onClick={() => navigate(`/user/${follower.username}`)}
                   >
                     <img
                       src={
@@ -175,12 +170,6 @@ const ProfileCard = () => {
                         @{follower.username || "username"}
                       </p>
                     </div>
-                    <button
-                      onClick={() => navigate(`/profile/${follower.username}`)}
-                      className="px-4 py-1 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition text-sm"
-                    >
-                      View
-                    </button>
                   </div>
                 ))}
               </div>
@@ -201,7 +190,8 @@ const ProfileCard = () => {
                 {user?.following?.map((following) => (
                   <div
                     key={following._id || following}
-                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
+                    onClick={() => navigate(`/user/${following.username}`)}
                   >
                     <img
                       src={
@@ -219,12 +209,6 @@ const ProfileCard = () => {
                         @{following.username || "username"}
                       </p>
                     </div>
-                    <button
-                      onClick={() => navigate(`/profile/${following.username}`)}
-                      className="px-4 py-1 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition text-sm"
-                    >
-                      View
-                    </button>
                   </div>
                 ))}
               </div>

@@ -186,7 +186,7 @@ const UserProfile = () => {
                           <div
                             key={follower._id}
                             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
-                            onClick={() => navigate(`/profile/${follower.username}`)}
+                            onClick={() => navigate(`/user/${follower.username}`)}
                           >
                             <img
                               src={follower.avatar || getDiceBearAvatar(follower.name)}
@@ -216,7 +216,7 @@ const UserProfile = () => {
                           <div
                             key={following._id}
                             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
-                            onClick={() => navigate(`/profile/${following.username}`)}
+                            onClick={() => navigate(`/user/${following.username}`)}
                           >
                             <img
                               src={following.avatar || getDiceBearAvatar(following.name)}

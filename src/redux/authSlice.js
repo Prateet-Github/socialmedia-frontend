@@ -161,6 +161,8 @@ export const fetchCurrentUserProfile = createAsyncThunk(
   }
 );
 
+
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
