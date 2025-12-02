@@ -5,10 +5,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { getUserPosts } from "../redux/postSlice";
 import { getDiceBearAvatar } from "../utils/dicebear";
 import { formatNumber } from "../utils/numbers";
+import { useNavigate } from "react-router-dom";
 import useClickOutside from "../hooks/useClickOutside";
 
 const ProfileCard = () => {
-  // state variables
+  // state
   const [isUp, setIsUp] = useState(false);
 
   // redux
@@ -17,27 +18,28 @@ const ProfileCard = () => {
 
   // hooks
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  // effects
+  // fetch posts when user loads
   useEffect(() => {
     if (user?._id) {
       dispatch(getUserPosts(user._id));
     }
-  }, [user, dispatch]);
+  }, [user?._id, dispatch]);
 
-  // click outside hook for profile info
+  // click outside close
   const dropdownRef = useClickOutside(() => setIsUp(false));
 
-  // JSX
   return (
     <main className="w-full max-w-3xl p-4 md:p-8 flex flex-col gap-6">
       {/* Profile Header */}
       <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-12">
+        {/* PROFILE IMAGE + INFO DROPDOWN */}
         <div className="relative shrink-0" ref={dropdownRef}>
           <button
             onClick={() => setIsUp(!isUp)}
             title="Profile Info"
-            className="hover:text-gray-300 transition-colors cursor-pointer"
+            className="hover:opacity-90 transition"
           >
             <img
               src={user?.avatar || getDiceBearAvatar(user?.name)}
@@ -53,15 +55,18 @@ const ProfileCard = () => {
           )}
         </div>
 
+        {/* NAME + STATS + BIO + EDIT BUTTON */}
         <div className="flex flex-col gap-4 flex-1 text-center md:text-left">
+          {/* Name */}
           <div>
             <h1 className="text-2xl font-semibold">{user?.name}</h1>
             <p className="font-medium">@{user?.username}</p>
           </div>
 
+          {/* STATS */}
           <div className="flex gap-4 justify-center md:justify-start">
             <p>
-              <span className="font-semibold min-w">
+              <span className="font-semibold">
                 {formatNumber(userPosts.length)}
               </span>{" "}
               Posts
@@ -80,25 +85,31 @@ const ProfileCard = () => {
             </p>
           </div>
 
-          <div>
-            <p className="text-sm md:text-base">
-              {user?.bio || "This user has no bio."}
-            </p>
-          </div>
+          {/* BIO */}
+          <p className="text-sm md:text-base">
+            {user?.bio || "This user has no bio."}
+          </p>
+
+          {/* EDIT PROFILE BUTTON */}
+          <button
+            onClick={() => navigate("/edit-profile")}
+            className="bg-blue-500 py-2 px-4 rounded-xl font-medium w-full sm:w-auto text-center"
+          >
+            Edit Profile
+          </button>
         </div>
       </div>
 
-      {/* Posts Grid */}
+      {/* Posts */}
       <div className="flex flex-col gap-6 pt-6">
         {loading && <p className="text-center text-gray-500">Loading posts…</p>}
 
         {!loading && userPosts.length === 0 && (
-          <p className="text-center text-gray-500">No posts yet.</p>
+          <p className="text-center text-gray-400">No posts yet.</p>
         )}
 
-        {userPosts.map((post) => (
-          <FeedCard key={post._id} post={post} />
-        ))}
+        {!loading &&
+          userPosts.map((post) => <FeedCard key={post._id} post={post} />)}
       </div>
     </main>
   );
