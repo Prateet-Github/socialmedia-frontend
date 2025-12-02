@@ -60,9 +60,103 @@ export const updateProfile = createAsyncThunk(
         },
       });
 
-      return res.data; // updated user
+      return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Update failed");
+    }
+  }
+);
+
+// 🔹 Follow User
+export const followUser = createAsyncThunk(
+  "auth/followUser",
+  async (username, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;
+
+      const res = await axios.post(
+        `${API_URL}/${username}/follow`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return { username, data: res.data };
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Follow failed");
+    }
+  }
+);
+
+// 🔹 Unfollow User
+export const unfollowUser = createAsyncThunk(
+  "auth/unfollowUser",
+  async (username, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;
+
+      const res = await axios.post(
+        `${API_URL}/${username}/unfollow`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return { username, data: res.data };
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Unfollow failed");
+    }
+  }
+);
+
+// 🔹 Get Followers
+export const getFollowers = createAsyncThunk(
+  "auth/getFollowers",
+  async (username, { rejectWithValue }) => {
+    try {
+      const res = await axios.get(`${API_URL}/${username}/followers`);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed to fetch followers");
+    }
+  }
+);
+
+// 🔹 Get Following
+export const getFollowing = createAsyncThunk(
+  "auth/getFollowing",
+  async (username, { rejectWithValue }) => {
+    try {
+      const res = await axios.get(`${API_URL}/${username}/following`);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed to fetch following");
+    }
+  }
+);
+
+// 🔹 Fetch Current User Profile
+export const fetchCurrentUserProfile = createAsyncThunk(
+  "auth/fetchCurrentUserProfile",
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;
+      
+      const res = await axios.get(`${API_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed to fetch profile");
     }
   }
 );
@@ -134,30 +228,97 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload || "Login failed";
       })
+
+      // Update Profile
       .addCase(updateProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = {
+          _id: action.payload._id,
+          name: action.payload.name,
+          username: action.payload.username,
+          email: action.payload.email,
+          avatar: action.payload.avatar,
+          bio: action.payload.bio,
+          location: action.payload.location,
+          website: action.payload.website,
+          createdAt: action.payload.createdAt,
+        };
+        localStorage.setItem("user", JSON.stringify(state.user));
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Update failed";
+      })
+
+      // Follow User
+      .addCase(followUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(followUser.fulfilled, (state, action) => {
+        state.loading = false;
+        // You can update user's following list here if needed
+      })
+      .addCase(followUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Follow failed";
+      })
+
+      // Unfollow User
+      .addCase(unfollowUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(unfollowUser.fulfilled, (state, action) => {
+        state.loading = false;
+        // You can update user's following list here if needed
+      })
+      .addCase(unfollowUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Unfollow failed";
+      })
+
+      // Get Followers
+      .addCase(getFollowers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getFollowers.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(getFollowers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch followers";
+      })
+
+      // Get Following
+      .addCase(getFollowing.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getFollowing.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(getFollowing.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "Failed to fetch following";
+      })
+      .addCase(fetchCurrentUserProfile.pending, (state) => {
   state.loading = true;
-  state.error = null;
 })
-.addCase(updateProfile.fulfilled, (state, action) => {
+.addCase(fetchCurrentUserProfile.fulfilled, (state, action) => {
   state.loading = false;
-  state.user = {
-    _id: action.payload._id,
-    name: action.payload.name,
-    username: action.payload.username,
-    email: action.payload.email,
-    avatar: action.payload.avatar,
-    bio: action.payload.bio,
-    location: action.payload.location,
-    website: action.payload.website,
-    createdAt: action.payload.createdAt,
-  };
-  localStorage.setItem("user", JSON.stringify(state.user));
+  state.user = action.payload;
+  localStorage.setItem("user", JSON.stringify(action.payload));
 })
-.addCase(updateProfile.rejected, (state, action) => {
+.addCase(fetchCurrentUserProfile.rejected, (state, action) => {
   state.loading = false;
-  state.error = action.payload || "Update failed";
+  state.error = action.payload;
 });
-      ;
   },
 });
 
