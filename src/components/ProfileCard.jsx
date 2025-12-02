@@ -38,7 +38,7 @@ const ProfileCard = () => {
   };
 
   return (
-    <main className="w-full max-w-3xl p-4 md:p-8 flex flex-col gap-6">
+    <main className="w-full min-h-screen max-w-3xl p-4 md:p-8 flex flex-col gap-6">
       {/* Profile Header */}
       <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-12">
         {/* PROFILE IMAGE + INFO DROPDOWN */}

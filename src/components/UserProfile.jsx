@@ -7,11 +7,11 @@ import ProfileInfo from "../components/ProfileInfo";
 import { getDiceBearAvatar } from "../utils/dicebear";
 import { formatNumber } from "../utils/numbers";
 import useClickOutside from "../hooks/useClickOutside";
-import { 
-  fetchPublicProfile, 
-  followUserProfile, 
+import {
+  fetchPublicProfile,
+  followUserProfile,
   unfollowUserProfile,
-  clearProfile 
+  clearProfile,
 } from "../redux/userSlice";
 
 const UserProfile = () => {
@@ -21,7 +21,7 @@ const UserProfile = () => {
   const { username } = useParams();
   const navigate = useNavigate();
   const dropdownRef = useClickOutside(() => setShowInfo(false));
-  
+
   const dispatch = useDispatch();
   const { user: currentUser, token } = useSelector((state) => state.auth);
   const { profile, posts, loading, error, followLoading } = useSelector(
@@ -30,7 +30,8 @@ const UserProfile = () => {
 
   // Check if current user is following this profile
   const isFollowing = profile?.followers?.some(
-    (follower) => follower._id === currentUser?._id || follower === currentUser?._id
+    (follower) =>
+      follower._id === currentUser?._id || follower === currentUser?._id
   );
 
   const isOwnProfile = currentUser?.username === username;
@@ -39,7 +40,7 @@ const UserProfile = () => {
     if (username) {
       dispatch(fetchPublicProfile(username));
     }
-    
+
     // Cleanup on unmount
     return () => {
       dispatch(clearProfile());
@@ -65,7 +66,6 @@ const UserProfile = () => {
 
   return (
     <main className="flex min-h-screen w-full mx-auto max-w-6xl pt-16 lg:pt-0">
-      
       <div className="hidden lg:block lg:w-64 xl:w-72 shrink-0 border-r dark:border-gray-800">
         <Left />
       </div>
@@ -75,14 +75,14 @@ const UserProfile = () => {
 
       <div className="flex-1 min-w-0 flex justify-center">
         <div className="w-full max-w-3xl p-4 md:p-8">
-          
           {loading && <p className="text-center mt-10">Loading profile…</p>}
-          {error && !loading && <p className="text-center text-red-500 mt-10">{error}</p>}
+          {error && !loading && (
+            <p className="text-center text-red-500 mt-10">{error}</p>
+          )}
 
           {!loading && profile && (
             <>
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-12 mb-6">
-                
                 <div className="relative shrink-0" ref={dropdownRef}>
                   <img
                     src={profile.avatar || getDiceBearAvatar(profile.name)}
@@ -108,7 +108,10 @@ const UserProfile = () => {
                         activeTab === "posts" ? "text-blue-500" : ""
                       }`}
                     >
-                      <span className="font-semibold">{formatNumber(posts.length)}</span> Posts
+                      <span className="font-semibold">
+                        {formatNumber(posts.length)}
+                      </span>{" "}
+                      Posts
                     </button>
                     <button
                       onClick={() => setActiveTab("followers")}
@@ -118,7 +121,8 @@ const UserProfile = () => {
                     >
                       <span className="font-semibold">
                         {formatNumber(profile.followers?.length || 0)}
-                      </span> Followers
+                      </span>{" "}
+                      Followers
                     </button>
                     <button
                       onClick={() => setActiveTab("following")}
@@ -128,7 +132,8 @@ const UserProfile = () => {
                     >
                       <span className="font-semibold">
                         {formatNumber(profile.following?.length || 0)}
-                      </span> Following
+                      </span>{" "}
+                      Following
                     </button>
                   </div>
 
@@ -136,16 +141,20 @@ const UserProfile = () => {
 
                   {!isOwnProfile && (
                     <div className="flex gap-3 pt-2 w-full">
-                      <button 
+                      <button
                         onClick={handleFollowToggle}
                         disabled={followLoading}
                         className={`flex-1 text-white py-2 px-4 rounded-xl ${
-                          isFollowing 
-                            ? 'bg-gray-700 hover:bg-gray-600' 
-                            : 'bg-blue-600 hover:bg-blue-700'
+                          isFollowing
+                            ? "bg-gray-700 hover:bg-gray-600"
+                            : "bg-blue-600 hover:bg-blue-700"
                         } disabled:opacity-50 disabled:cursor-not-allowed transition`}
                       >
-                        {followLoading ? 'Loading...' : isFollowing ? 'Unfollow' : 'Follow'}
+                        {followLoading
+                          ? "Loading..."
+                          : isFollowing
+                          ? "Unfollow"
+                          : "Follow"}
                       </button>
                       <button className="flex-1 text-white py-2 px-4 rounded-xl bg-gray-700 hover:bg-gray-600 transition">
                         Message
@@ -169,8 +178,14 @@ const UserProfile = () => {
                 {/* Posts Tab */}
                 {activeTab === "posts" && (
                   <div className="flex flex-col items-center gap-6">
-                    {posts.length === 0 && <p className="text-gray-400">No posts from this user yet.</p>}
-                    {posts.map((post) => <FeedCard key={post._id} post={post} />)}
+                    {posts.length === 0 && (
+                      <p className="text-gray-400">
+                        No posts from this user yet.
+                      </p>
+                    )}
+                    {posts.map((post) => (
+                      <FeedCard key={post._id} post={post} />
+                    ))}
                   </div>
                 )}
 
@@ -179,23 +194,32 @@ const UserProfile = () => {
                   <div className="flex flex-col gap-4">
                     <h2 className="text-xl font-semibold mb-2">Followers</h2>
                     {profile.followers?.length === 0 ? (
-                      <p className="text-center text-gray-400">No followers yet.</p>
+                      <p className="text-center text-gray-400">
+                        No followers yet.
+                      </p>
                     ) : (
                       <div className="space-y-3">
                         {profile.followers?.map((follower) => (
                           <div
                             key={follower._id}
                             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
-                            onClick={() => navigate(`/user/${follower.username}`)}
+                            onClick={() =>
+                              navigate(`/user/${follower.username}`)
+                            }
                           >
                             <img
-                              src={follower.avatar || getDiceBearAvatar(follower.name)}
+                              src={
+                                follower.avatar ||
+                                getDiceBearAvatar(follower.name)
+                              }
                               alt=""
                               className="w-12 h-12 rounded-full object-cover"
                             />
                             <div className="flex-1">
                               <p className="font-semibold">{follower.name}</p>
-                              <p className="text-sm text-gray-500">@{follower.username}</p>
+                              <p className="text-sm text-gray-500">
+                                @{follower.username}
+                              </p>
                             </div>
                           </div>
                         ))}
@@ -209,23 +233,32 @@ const UserProfile = () => {
                   <div className="flex flex-col gap-4">
                     <h2 className="text-xl font-semibold mb-2">Following</h2>
                     {profile.following?.length === 0 ? (
-                      <p className="text-center text-gray-400">Not following anyone yet.</p>
+                      <p className="text-center text-gray-400">
+                        Not following anyone yet.
+                      </p>
                     ) : (
                       <div className="space-y-3">
                         {profile.following?.map((following) => (
                           <div
                             key={following._id}
                             className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition cursor-pointer"
-                            onClick={() => navigate(`/user/${following.username}`)}
+                            onClick={() =>
+                              navigate(`/user/${following.username}`)
+                            }
                           >
                             <img
-                              src={following.avatar || getDiceBearAvatar(following.name)}
+                              src={
+                                following.avatar ||
+                                getDiceBearAvatar(following.name)
+                              }
                               alt=""
                               className="w-12 h-12 rounded-full object-cover"
                             />
                             <div className="flex-1">
                               <p className="font-semibold">{following.name}</p>
-                              <p className="text-sm text-gray-500">@{following.username}</p>
+                              <p className="text-sm text-gray-500">
+                                @{following.username}
+                              </p>
                             </div>
                           </div>
                         ))}

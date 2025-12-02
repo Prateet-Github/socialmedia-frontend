@@ -61,6 +61,54 @@ export const getUserPosts = createAsyncThunk(
   }
 );
 
+// Like a post
+export const likePost = createAsyncThunk(
+  "posts/likePost",
+  async (postId, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;
+      
+      const res = await axios.post(
+        `http://localhost:5001/api/posts/${postId}/like`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      return { postId, likes: res.data.likes };
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed to like post");
+    }
+  }
+);
+
+// Unlike a post
+export const unlikePost = createAsyncThunk(
+  "posts/unlikePost",
+  async (postId, { getState, rejectWithValue }) => {
+    try {
+      const token = getState().auth.token;
+      
+      const res = await axios.post(
+        `http://localhost:5001/api/posts/${postId}/unlike`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      return { postId, likes: res.data.likes };
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed to unlike post");
+    }
+  }
+);
+
 const postSlice = createSlice({
   name: "posts",
   initialState: {
@@ -105,7 +153,38 @@ const postSlice = createSlice({
       .addCase(getUserPosts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+      // In your postSlice extraReducers, add these:
+
+.addCase(likePost.fulfilled, (state, action) => {
+  const { postId, likes } = action.payload;
+
+  // Feed posts
+  const feedPost = state.items.find((p) => p._id === postId);
+  if (feedPost) {
+    feedPost.likesCount = likes;
+  }
+
+  // User profile posts
+  const userPost = state.userPosts.find((p) => p._id === postId);
+  if (userPost) {
+    userPost.likesCount = likes;
+  }
+})
+.addCase(unlikePost.fulfilled, (state, action) => {
+  const { postId, likes } = action.payload;
+
+  const feedPost = state.items.find((p) => p._id === postId);
+  if (feedPost) {
+    feedPost.likesCount = likes;
+  }
+
+  const userPost = state.userPosts.find((p) => p._id === postId);
+  if (userPost) {
+    userPost.likesCount = likes;
+  }
+})
+      ;
   },
 });
 

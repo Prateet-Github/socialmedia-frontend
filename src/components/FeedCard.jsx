@@ -1,47 +1,53 @@
 import { Heart, MessageCircle, Share2, Bookmark } from "lucide-react";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { getDiceBearAvatar } from "../utils/dicebear";
 import { formatTime } from "../utils/time";
-import { shortenNumber } from "../utils/numbers";
-import { formatNumber } from "../utils/numbers";
+import { shortenNumber, formatNumber } from "../utils/numbers";
+import { likePost, unlikePost } from "../redux/postSlice";
+import { useState, useMemo } from "react";
 
 const FeedCard = ({ post }) => {
-  // state variables
-  const [liked, setLiked] = useState(false);
-  const [commented, setCommented] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  // redux
   const { user: currentUser } = useSelector((state) => state.auth);
-
-  // hooks
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // helpers
-  const isOwnPost =
-    currentUser &&
-    post?.user?._id &&
-    post.user._id.toString() === currentUser._id.toString();
+  // initial likes state
+  const [localLikes, setLocalLikes] = useState(post.likes);
 
-  // handlers
-  const goToUser = () => {
-    if (!post?.user?.username) return;
+  // derived values
+  const likeCount = localLikes?.length || 0;
+  const isLiked = useMemo(
+    () => localLikes?.includes(currentUser?._id),
+    [localLikes, currentUser]
+  );
 
-    if (isOwnPost) {
-      // 👇 your own profile
-      navigate("/profile");
+  // follow your brain — local update first
+  const handleLike = () => {
+    if (!currentUser) return;
+
+    let updatedLikes;
+
+    if (isLiked) {
+      updatedLikes = localLikes.filter((id) => id !== currentUser._id);
+      setLocalLikes(updatedLikes);
+      dispatch(unlikePost(post._id));
     } else {
-      // 👇 other user's public profile
-      navigate(`/user/${post.user.username}`);
+      updatedLikes = [...localLikes, currentUser._id];
+      setLocalLikes(updatedLikes);
+      dispatch(likePost(post._id));
     }
   };
 
-  // JSX
+  const goToUser = () => {
+    if (!post?.user?.username) return;
+    if (currentUser?._id === post.user._id) navigate("/profile");
+    else navigate(`/user/${post.user.username}`);
+  };
+
   return (
     <article className="flex p-3 md:p-6 gap-2 md:gap-3 transition-colors border-b border-gray-200 dark:border-gray-800 w-full max-w-2xl">
-      {/* Profile Picture */}
+      {/* Avatar */}
       <div className="shrink-0">
         <img
           src={post?.user?.avatar || getDiceBearAvatar(post?.user?.name)}
@@ -59,17 +65,17 @@ const FeedCard = ({ post }) => {
           onClick={goToUser}
         >
           <h1 className="font-semibold hover:underline text-sm md:text-base truncate">
-            {post?.user?.name || "Unknown User"}
+            {post?.user?.name}
           </h1>
-          <span className="text-gray-600 text-xs md:text-sm">•</span>
+          <span>•</span>
           <p className="text-gray-600 text-xs md:text-sm shrink-0">
             {formatTime(post.createdAt)}
           </p>
         </div>
 
-        {/* Text */}
+        {/* Caption */}
         {post.content && (
-          <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">
+          <p className="text-sm md:text-base whitespace-pre-wrap">
             {post.content}
           </p>
         )}
@@ -77,62 +83,41 @@ const FeedCard = ({ post }) => {
         {/* Image */}
         {post.media?.length > 0 && (
           <div className="border border-gray-600 max-h-140 w-fit overflow-hidden rounded-xl md:rounded-2xl">
-            <img
-              src={post.media[0]}
-              className="w-full h-full object-contain cursor-pointer hover:opacity-95 transition-opacity"
-            />
+            <img src={post.media[0]} className="w-full h-full object-contain" />
           </div>
         )}
 
-        {/* Action Buttons (same as before) */}
+        {/* Actions */}
         <div className="flex items-center justify-between mx-2">
           {/* LIKE */}
-          <div className="flex items-center px-2 py-1.5 rounded-lg transition-colors group">
-            <button
-              onClick={() => setLiked(!liked)}
-              title={liked ? "Unlike" : "Like"}
-            >
+          <div className="flex items-center px-2 py-1.5">
+            <button onClick={handleLike}>
               <Heart
                 className={`size-5 cursor-pointer hover:text-red-500 ${
-                  liked ? "fill-red-500 text-red-500" : ""
+                  isLiked ? "fill-red-500 text-red-500" : ""
                 }`}
               />
             </button>
             <span className="ml-1 text-sm font-medium inline-flex justify-center min-w-[3ch]">
-              {shortenNumber(liked ? post.likes + 1000 : post.likes)}
+              {shortenNumber(likeCount)}
             </span>
           </div>
 
           {/* COMMENT */}
-          <div className="flex items-center px-2 py-1.5 rounded-lg transition-colors group">
-            <button onClick={() => setCommented(!commented)} title="Comment">
-              <MessageCircle className="size-5 cursor-pointer hover:text-blue-500" />
-            </button>
-            <span className="ml-1 text-sm font-medium inline-flex justify-center min-w-[3ch]">
-              {formatNumber(post.comments)}
+          <div className="flex items-center px-2 py-1.5">
+            <MessageCircle className="size-5 cursor-pointer hover:text-blue-500" />
+            <span className="ml-1 text-sm font-medium">
+              {formatNumber(post.comments?.length || 0)}
             </span>
           </div>
 
-          {/* SHARE */}
-          <div className="flex items-center px-2 py-1.5 rounded-lg transition-colors group">
-            <button title="Share">
-              <Share2 className="size-5 cursor-pointer hover:text-green-500" />
-            </button>
-          </div>
+          <button>
+            <Share2 className="size-5 cursor-pointer hover:text-green-500" />
+          </button>
 
-          {/* SAVE */}
-          <div className="flex items-center px-2 py-1.5 rounded-lg transition-colors group">
-            <button
-              onClick={() => setSaved(!saved)}
-              title={saved ? "Unsave" : "Save"}
-            >
-              <Bookmark
-                className={`size-5 cursor-pointer hover:text-yellow-500 ${
-                  saved ? "fill-yellow-500 text-yellow-500" : ""
-                }`}
-              />
-            </button>
-          </div>
+          <button>
+            <Bookmark className="size-5 cursor-pointer hover:text-yellow-500" />
+          </button>
         </div>
       </div>
     </article>
