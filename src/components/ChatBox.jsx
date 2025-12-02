@@ -8,10 +8,11 @@ import {
   Image,
   MapPin,
 } from "lucide-react";
-import { useRef, useState, useEffect } from "react";
+import { useState } from "react";
 import CallModal from "./VideoCallModal";
 import VoiceCallModal from "./VoiceCallModal";
 import { useNavigate } from "react-router-dom";
+import useClickOutside from "../hooks/useClickOutside";
 
 const ChatBox = () => {
   // state variables
@@ -22,25 +23,8 @@ const ChatBox = () => {
   // hooks
   const navigate = useNavigate();
 
-  // refs
-  const dropdownRef = useRef(null);
-
-  // effects
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsUp(false);
-      }
-    }
-
-    if (isUp) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isUp]);
+  // click outside hook for dropdown
+  const dropdownRef = useClickOutside(() => setIsUp(false));
 
   // handlers
   const handleClick = () => {

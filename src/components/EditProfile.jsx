@@ -28,10 +28,7 @@ const EditProfile = () => {
   // effects
   useEffect(() => {
     if (user) {
-      setProfileImage(
-        user.avatar ||
-          `https://api.dicebear.com/7.x/initials/svg?seed=${user?.name}`
-      );
+      setProfileImage(user.avatar || getDiceBearAvatar(user?.name));
       setName(user.name || "");
       setBio(user.bio || "");
       setWebsite(user.website || "");

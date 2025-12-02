@@ -1,10 +1,11 @@
 import FeedCard from "./FeedCard";
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import ProfileInfo from "./ProfileInfo";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserPosts } from "../redux/postSlice";
 import { getDiceBearAvatar } from "../utils/dicebear";
 import { formatNumber } from "../utils/numbers";
+import useClickOutside from "../hooks/useClickOutside";
 
 const ProfileCard = () => {
   // state variables
@@ -17,9 +18,6 @@ const ProfileCard = () => {
   // hooks
   const dispatch = useDispatch();
 
-  // refs
-  const dropdownRef = useRef(null);
-
   // effects
   useEffect(() => {
     if (user?._id) {
@@ -27,15 +25,8 @@ const ProfileCard = () => {
     }
   }, [user, dispatch]);
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsUp(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  // click outside hook for profile info
+  const dropdownRef = useClickOutside(() => setIsUp(false));
 
   // JSX
   return (

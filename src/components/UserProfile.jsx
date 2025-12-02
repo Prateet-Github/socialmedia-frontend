@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Left from "../components/Left";
 import FeedCard from "../components/FeedCard";
 import ProfileInfo from "../components/ProfileInfo";
@@ -7,6 +7,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { getDiceBearAvatar } from "../utils/dicebear";
 import { formatNumber } from "../utils/numbers";
+import useClickOutside from "../hooks/useClickOutside";
 
 const API_URL = "http://localhost:5001/api/users";
 
@@ -25,23 +26,13 @@ const UserProfile = () => {
   const { username } = useParams();
   const navigate = useNavigate();
 
-  // refs
-  const dropdownRef = useRef(null);
-
   // derived
   const isMe = loggedInUser?.username === profile?.username;
 
-  // effects
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setShowInfo(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  // click outside hook for profile info
+  const dropdownRef = useClickOutside(() => setShowInfo(false));
 
+  // effects
   useEffect(() => {
     const fetchProfile = async () => {
       try {

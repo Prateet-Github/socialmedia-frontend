@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useRef, useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Bell,
   Home,
@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { getDiceBearAvatar } from "../utils/dicebear";
 import { APP_NAME } from "../utils/constants";
+import useClickOutside from "../hooks/useClickOutside";
 
 const Left = ({ showLabels = true }) => {
   // state variables
@@ -28,31 +29,14 @@ const Left = ({ showLabels = true }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // redux
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   // hooks
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // refs
-  const dropdownRef = useRef(null);
-
-  // effects
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsUp(false);
-      }
-    }
-
-    if (isUp) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isUp]);
+  // click outside hook for dropdown
+  const dropdownRef = useClickOutside(() => setIsUp(false));
 
   // handlers
   const handleLinkClick = () => {
