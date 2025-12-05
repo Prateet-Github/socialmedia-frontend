@@ -13,6 +13,9 @@ import {
   unfollowUserProfile,
   clearProfile,
 } from "../redux/userSlice";
+import axios from "axios";
+
+const API = "http://localhost:5001/api";
 
 const UserProfile = () => {
   const [showInfo, setShowInfo] = useState(false);
@@ -61,6 +64,20 @@ const UserProfile = () => {
       }
     } catch (err) {
       console.error("Follow/Unfollow error:", err);
+    }
+  };
+
+  const startChat = async () => {
+    try {
+      const res = await axios.post(
+        `${API}/chats/start`,
+        { receiverId: profile._id }, // ✅ fixed
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      navigate("/messages", { state: { chatId: res.data._id } });
+    } catch (err) {
+      console.error("Failed to start chat:", err);
     }
   };
 
@@ -156,7 +173,10 @@ const UserProfile = () => {
                           ? "Unfollow"
                           : "Follow"}
                       </button>
-                      <button className="flex-1 text-white py-2 px-4 rounded-xl bg-gray-700 hover:bg-gray-600 transition">
+                      <button
+                        onClick={startChat}
+                        className="flex-1 text-white py-2 px-4 rounded-xl bg-gray-700 hover:bg-gray-600 transition"
+                      >
                         Message
                       </button>
                     </div>

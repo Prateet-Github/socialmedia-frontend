@@ -1,7 +1,22 @@
+// src/socket.js
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5001", {
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5001";
+
+export const socket = io(SOCKET_URL, {
   withCredentials: true,
+  transports: ["websocket"],
+  autoConnect: false, // we control when to connect
 });
 
-export default socket;
+// helper to connect with optional token
+export const connectSocket = (opts = {}) => {
+  if (!socket.connected) {
+    socket.auth = opts.auth || {};
+    socket.connect();
+  }
+};
+
+export const disconnectSocket = () => {
+  if (socket.connected) socket.disconnect();
+};

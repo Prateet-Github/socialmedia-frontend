@@ -1,29 +1,37 @@
+import { useState } from "react";
 import Left from "../components/Left";
 import ChatBox from "../components/ChatBox";
 import Dm from "../components/Dm";
 
 const Messages = () => {
-  // JSX
+  const [selectedChat, setSelectedChat] = useState(null);
+
   return (
     <main className="flex min-h-screen w-full mx-auto pt-16 lg:pt-0">
-      {/* Left Sidebar - Hidden on mobile, icons only on desktop */}
+      {/* Left Sidebar */}
       <div className="hidden md:block md:w-20 lg:w-22 shrink-0 border-r border-gray-200 dark:border-gray-800">
         <Left showLabels={false} />
       </div>
 
-      {/* Mobile hamburger menu - Only renders on mobile */}
+      {/* Mobile sidebar */}
       <div className="md:hidden">
         <Left showLabels={true} />
       </div>
 
-      {/* Chats List - Responsive width */}
+      {/* Chats List */}
       <div className="w-full md:w-80 lg:w-96 shrink-0 border-r border-gray-200 dark:border-gray-800">
-        <Dm />
+        <Dm onSelectChat={setSelectedChat} />
       </div>
 
-      {/* Chat Box - Takes remaining space, hidden on mobile */}
+      {/* Chat Box Area */}
       <div className="hidden md:block flex-1 min-w-0 border-l border-gray-200 dark:border-gray-800">
-        <ChatBox />
+        {selectedChat ? (
+          <ChatBox chat={selectedChat} />
+        ) : (
+          <div className="h-full flex items-center justify-center text-gray-500">
+            Select a chat to begin messaging
+          </div>
+        )}
       </div>
     </main>
   );

@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import socket from "./socket";
+import { socket } from "./socket";
 
 import ForgotPassword from "./pages/ForgotPassword";
 import Home from "./pages/Home";
@@ -20,16 +20,23 @@ import UserProfile from "./components/UserProfile";
 
 const App = () => {
   const { user } = useSelector((state) => state.auth);
-
   useEffect(() => {
+    if (user?._id) {
+      // attach userId for future auth (optional)
+      socket.auth = { userId: user._id };
+
+      // MUST connect manually
+      socket.connect();
+    }
+
     socket.on("connect", () => {
       console.log("frontend socket connected:", socket.id);
-    });
 
-    if (user?._id) {
-      socket.emit("join", user._id);
-      console.log("user joined socket:", user._id);
-    }
+      if (user?._id) {
+        socket.emit("join", user._id);
+        console.log("user joined socket:", user._id);
+      }
+    });
 
     return () => {
       socket.off("connect");

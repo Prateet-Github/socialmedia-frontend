@@ -1,23 +1,37 @@
-const Chats = () => {
-  // JSX
+import { useSelector } from "react-redux";
+import { getDiceBearAvatar } from "../utils/dicebear";
+
+const Chats = ({ chat, onClick }) => {
+  const { user: currentUser } = useSelector((state) => state.auth);
+
+  // Find other user in the chat
+  const partner = chat.users.find((u) => u._id !== currentUser._id);
+
   return (
-    <article className="flex gap-3 md:gap-4 p-3 md:p-3 cursor-pointer dark:hover:bg-gray-800 hover:bg-gray-200  transition-colors">
-      <div className="shrink-0">
-        <img
-          src="./pfp.jpeg"
-          alt="pfp"
-          className="h-12 w-12 md:h-14 md:w-14 object-cover rounded-full border"
-        />
-      </div>
-      <div className="flex flex-col justify-center flex-1 min-w-0">
-        <div className="flex items-center justify-between gap-2">
-          <h1 className="font-semibold text-sm md:text-base truncate">
-            Prateet Tiwari
-          </h1>
-          <span className="text-xs text-gray-500 shrink-0">2h</span>
+    <article
+      onClick={onClick}
+      className="flex gap-3 p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+    >
+      <img
+        src={partner?.avatar || getDiceBearAvatar(partner?.name)}
+        className="h-12 w-12 rounded-full object-cover border"
+      />
+
+      <div className="flex-1">
+        <div className="flex justify-between">
+          <h1 className="font-semibold">{partner?.name}</h1>
+          <span className="text-xs text-gray-500">
+            {chat.lastMessage?.createdAt
+              ? new Date(chat.lastMessage.createdAt).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : ""}
+          </span>
         </div>
-        <p className="text-gray-400 text-xs md:text-sm truncate">
-          Hey! How are you?
+
+        <p className="text-sm text-gray-400 truncate">
+          {chat.lastMessage?.text || "No messages yet"}
         </p>
       </div>
     </article>
