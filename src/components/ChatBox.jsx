@@ -8,6 +8,7 @@ import {
   File,
   Image,
   MapPin,
+  X,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import CallModal from "./VideoCallModal";
@@ -28,9 +29,13 @@ const ChatBox = ({ chat }) => {
   const [voiceCall, setVoiceCall] = useState(false);
 
   // messages & input
-  const [messages, setMessages] = useState([]); // real messages
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // hooks
   const navigate = useNavigate();
@@ -84,13 +89,13 @@ const ChatBox = ({ chat }) => {
       // Only messages for this chat
       if (msg.chatId !== chat._id) return;
 
-      // ✅ FIXED: Check if message already exists (by _id, not sender)
+      // Check if message already exists
       setMessages((prev) => {
         const exists = prev.some((m) => m._id === msg._id);
         if (exists) return prev;
         return [...prev, msg];
       });
-      
+
       setTimeout(scrollToBottom, 50);
     };
 
@@ -102,54 +107,195 @@ const ChatBox = ({ chat }) => {
     };
   }, [chat?._id, currentUser?._id]);
 
-  // send message: POST to backend then emit via socket
-  const sendMessage = async () => {
-    const text = input?.trim();
-    if (!text || !chat?._id) return;
+  // Handle image selection
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-    // optimistic UI: append a temp message
-    const tempMessage = {
-      _id: `temp-${Date.now()}`,
-      chatId: chat._id,
-      sender: {
-        _id: currentUser._id,
-        name: currentUser.name,
-        avatar: currentUser.avatar,
-      },
-      text,
-      createdAt: new Date().toISOString(),
-      pending: true,
-    };
-    setMessages((m) => [...m, tempMessage]);
-    setInput("");
-    setTimeout(scrollToBottom, 50);
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Please select an image file");
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image size should be less than 5MB");
+      return;
+    }
+
+    setSelectedImage(file);
+    setImagePreview(URL.createObjectURL(file));
+    setIsUp(false);
+  };
+
+  // Remove selected image
+  const removeImage = () => {
+    setSelectedImage(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  // Send text or image message
+  const sendMessage = async () => {
+    if (!chat?._id) return;
+
+    const text = input?.trim();
+    const hasImage = selectedImage;
+
+    if (!text && !hasImage) return;
+
+    setUploading(true);
 
     try {
+      let mediaUrls = [];
+
+      // Upload image if selected
+      if (hasImage) {
+        const formData = new FormData();
+        formData.append("image", selectedImage);
+
+        const uploadRes = await axios.post(
+          `${API}/messages/upload-image`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        mediaUrls.push(uploadRes.data.url);
+      }
+
+      // Create optimistic message
+      const tempMessage = {
+        _id: `temp-${Date.now()}`,
+        chatId: chat._id,
+        sender: {
+          _id: currentUser._id,
+          name: currentUser.name,
+          avatar: currentUser.avatar,
+        },
+        text: text || "",
+        media: mediaUrls.length > 0 ? mediaUrls : (imagePreview ? [imagePreview] : []),
+        createdAt: new Date().toISOString(),
+        pending: true,
+      };
+
+      setMessages((m) => [...m, tempMessage]);
+      setInput("");
+      removeImage();
+      setTimeout(scrollToBottom, 50);
+
+      // Send message to backend
       const res = await axios.post(
         `${API}/messages`,
-        { chatId: chat._id, text },
+        {
+          chatId: chat._id,
+          text: text || "",
+          media: mediaUrls,
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      const saved = res.data; // saved message object
+      const saved = res.data;
 
-      // replace temp message with saved message
+      // Replace temp message with saved message
       setMessages((prev) =>
         prev.map((m) => (m._id === tempMessage._id ? saved : m))
       );
 
-      // ✅ FIXED: Emit with correct structure (message object)
+      // Emit via socket
       socket.emit("message:send", { message: saved });
-      
     } catch (err) {
       console.error("Failed to send message:", err);
-      // mark temp message as failed (optional)
+      alert("Failed to send message. Please try again.");
+      // Remove optimistic message on failure
       setMessages((prev) =>
-        prev.map((m) =>
-          m._id === tempMessage._id ? { ...m, failed: true, pending: false } : m
-        )
+        prev.filter((m) => !m._id.startsWith("temp-"))
       );
+    } finally {
+      setUploading(false);
     }
+  };
+
+  // Send location
+  const sendLocation = async () => {
+    if (!chat?._id) return;
+
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setIsUp(false);
+    setUploading(true);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const locationUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+        try {
+          // Create optimistic message
+          const tempMessage = {
+            _id: `temp-${Date.now()}`,
+            chatId: chat._id,
+            sender: {
+              _id: currentUser._id,
+              name: currentUser.name,
+              avatar: currentUser.avatar,
+            },
+            text: `📍 Location: ${locationUrl}`,
+            media: [],
+            location: { latitude, longitude },
+            createdAt: new Date().toISOString(),
+            pending: true,
+          };
+
+          setMessages((m) => [...m, tempMessage]);
+          setTimeout(scrollToBottom, 50);
+
+          // Send to backend
+          const res = await axios.post(
+            `${API}/messages`,
+            {
+              chatId: chat._id,
+              text: `📍 Location: ${locationUrl}`,
+              location: { latitude, longitude },
+            },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+
+          const saved = res.data;
+
+          // Replace temp with saved
+          setMessages((prev) =>
+            prev.map((m) => (m._id === tempMessage._id ? saved : m))
+          );
+
+          // Emit via socket
+          socket.emit("message:send", { message: saved });
+        } catch (err) {
+          console.error("Failed to send location:", err);
+          alert("Failed to send location");
+          setMessages((prev) =>
+            prev.filter((m) => !m._id.startsWith("temp-"))
+          );
+        } finally {
+          setUploading(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        alert("Failed to get your location. Please enable location access.");
+        setUploading(false);
+      }
+    );
   };
 
   // Enter key handler
@@ -160,25 +306,37 @@ const ChatBox = ({ chat }) => {
     }
   };
 
-  // click handlers from original UI (kept exactly)
+  // Click handlers
   const handleClick = () => {
     navigate(`/user/${otherUser?.username}`);
   };
+
   const handleFileClick = () => {
     setIsUp(false);
-    navigate("/profile");
+    // You can implement file upload here later
+    alert("File upload coming soon!");
   };
+
   const handlePhotoClick = () => {
     setIsUp(false);
-    navigate("/profile");
+    fileInputRef.current?.click();
   };
+
   const handleLocationClick = () => {
-    setIsUp(false);
-    navigate("/profile");
+    sendLocation();
   };
 
   return (
     <main className="flex flex-col h-screen">
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleImageSelect}
+        className="hidden"
+      />
+
       {/* Header - fixed to top */}
       <div className="border-b border-gray-300 dark:border-gray-800 p-3 md:p-4 flex justify-between items-center sticky top-0 z-10 bg-white dark:bg-black">
         <div className="flex gap-3 md:gap-4 items-center">
@@ -240,7 +398,25 @@ const ChatBox = ({ chat }) => {
                     : "dark:bg-gray-800 bg-gray-200 rounded-2xl rounded-tl-sm"
                 } p-2.5 md:p-3 max-w-[75%] md:max-w-xs break-words`}
               >
-                <p className="text-sm md:text-base">{m.text}</p>
+                {/* Images from media array */}
+                {m.media && m.media.length > 0 && (
+                  <div className="space-y-2 mb-2">
+                    {m.media.map((url, idx) => (
+                      <img
+                        key={idx}
+                        src={url}
+                        alt="sent"
+                        className="rounded-lg max-w-full cursor-pointer hover:opacity-90"
+                        onClick={() => window.open(url, "_blank")}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* Text */}
+                {m.text && <p className="text-sm md:text-base">{m.text}</p>}
+
+                {/* Timestamp */}
                 <span
                   className={`${
                     mine ? "text-blue-200" : "text-gray-400"
@@ -261,13 +437,33 @@ const ChatBox = ({ chat }) => {
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Image Preview */}
+      {imagePreview && (
+        <div className="border-t border-gray-300 dark:border-gray-800 p-3 bg-white dark:bg-black">
+          <div className="relative inline-block">
+            <img
+              src={imagePreview}
+              alt="preview"
+              className="h-20 w-20 object-cover rounded-lg"
+            />
+            <button
+              onClick={removeImage}
+              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Input - fixed to bottom */}
       <div className="border-t border-gray-300 dark:border-gray-800 relative p-3 md:p-4 flex gap-2 md:gap-4 items-center bg-white dark:bg-black">
         {/* Wrapped button and dropdown together */}
         <div ref={dropdownRef} className="relative shrink-0">
           <button
             onClick={() => setIsUp(!isUp)}
-            className="hover:text-gray-300 transition-colors"
+            disabled={uploading}
+            className="hover:text-gray-300 transition-colors disabled:opacity-50"
           >
             <PlusCircle className="size-5 md:size-6 dark:hover:text-gray-300 hover:text-gray-500 cursor-pointer" />
           </button>
@@ -305,13 +501,14 @@ const ChatBox = ({ chat }) => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
+          disabled={uploading}
           type="text"
-          placeholder="Type a message..."
-          className="flex-1 p-2 md:p-2.5 px-4 border border-gray-300 dark:border-gray-700 rounded-full outline-none focus:border-blue-500 transition-colors text-sm md:text-base bg-transparent"
+          placeholder={uploading ? "Uploading..." : "Type a message..."}
+          className="flex-1 p-2 md:p-2.5 px-4 border border-gray-300 dark:border-gray-700 rounded-full outline-none focus:border-blue-500 transition-colors text-sm md:text-base bg-transparent disabled:opacity-50"
         />
         <button
           onClick={sendMessage}
-          disabled={!input.trim()}
+          disabled={(!input.trim() && !selectedImage) || uploading}
           className="shrink-0 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed p-2 md:p-2.5 cursor-pointer rounded-full transition-colors"
         >
           <SendHorizonal className="size-4 md:size-5" />
