@@ -15,6 +15,8 @@ Check out the live application: [geeksgram-by-prateet.vercel.app](https://geeksg
 - **Profile Management** - Customize your profile with photos and bio
 - **Post Creation** - Share text, images, and updates with your network
 - **Social Interactions** - Like, comment, and engage with posts
+- **Video/ Voice Calling** - P2P live video and voice calling
+- **Chats** - Text messages, file sharing and location sharing
 - **Real-time Feed** - Dynamic content feed with latest updates
 - **Responsive Design** - Seamless experience across all devices
 - **Modern UI/UX** - Clean and intuitive interface
