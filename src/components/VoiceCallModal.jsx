@@ -1,59 +1,219 @@
-import { X, Mic, MicOff, Phone, Volume2, VolumeX } from "lucide-react";
-import { useState } from "react";
+// src/components/VoiceCallModal.jsx
 
-export default function VoiceCallModal({ onClose }) {
-  // state variables
+import { X, Mic, MicOff, Phone } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { socket } from "../socket";
+
+export default function VoiceCallModal({
+  onClose,
+  callerId,
+  calleeId,
+  isCaller,
+  incomingOffer,
+  incomingCallerSocketId,
+  callerName,
+  callerAvatar,
+}) {
+  const peerRef = useRef(null);
+  const localStream = useRef(null);
+  const remoteSocketId = useRef(null);
+
   const [micOn, setMicOn] = useState(true);
-  const [speakerOn, setSpeakerOn] = useState(true);
+  const [callStarted, setCallStarted] = useState(false);
+  const [timer, setTimer] = useState(0);
 
-  // JSX
+  // ---------------- TIMER ----------------
+  useEffect(() => {
+    let interval;
+    if (callStarted) {
+      interval = setInterval(() => setTimer((t) => t + 1), 1000);
+    }
+    return () => clearInterval(interval);
+  }, [callStarted]);
+
+  const formatTime = (sec) =>
+    new Date(sec * 1000).toISOString().substring(14, 19);
+
+  // ---------------- MICROPHONE ----------------
+  useEffect(() => {
+    const startMedia = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: false,
+        });
+
+        localStream.current = stream;
+
+        if (isCaller) {
+          startCall();
+        } else if (incomingOffer) {
+          handleOffer(incomingOffer, incomingCallerSocketId);
+        }
+      } catch (err) {
+        alert("Microphone access denied.");
+        onClose();
+      }
+    };
+
+    startMedia();
+  }, []);
+
+  // ---------------- CREATE PEER ----------------
+  const createPeer = () => {
+    const peer = new RTCPeerConnection({
+      iceServers: [{ urls: ["stun:stun.l.google.com:19302"] }],
+    });
+
+    localStream.current.getTracks().forEach((track) => {
+      peer.addTrack(track, localStream.current);
+    });
+
+    peer.onicecandidate = (event) => {
+      if (event.candidate && remoteSocketId.current) {
+        socket.emit("voice:ice-candidate", {
+          toSocketId: remoteSocketId.current,
+          candidate: event.candidate,
+        });
+      }
+    };
+
+    peerRef.current = peer;
+  };
+
+  // ---------------- CALLER → OFFER ----------------
+  const startCall = async () => {
+    createPeer();
+
+    const offer = await peerRef.current.createOffer();
+    await peerRef.current.setLocalDescription(offer);
+
+    socket.emit("voice:offer", {
+      toUserId: calleeId,
+      offer,
+      callerId,
+    });
+
+    setCallStarted(true);
+  };
+
+  // ---------------- RECEIVER → OFFER HANDLER ----------------
+  const handleOffer = async (offer, callerSocketId) => {
+    remoteSocketId.current = callerSocketId;
+
+    createPeer();
+    await peerRef.current.setRemoteDescription(offer);
+
+    const answer = await peerRef.current.createAnswer();
+    await peerRef.current.setLocalDescription(answer);
+
+    socket.emit("voice:answer", {
+      toSocketId: callerSocketId,
+      answer,
+    });
+
+    setCallStarted(true);
+  };
+
+  // ---------------- CALLER → ANSWER RECEIVED ----------------
+  useEffect(() => {
+    const onAnswer = async ({ answer, fromSocketId }) => {
+      remoteSocketId.current = fromSocketId; // 🔥 FIX
+      await peerRef.current.setRemoteDescription(answer);
+      setCallStarted(true);
+    };
+
+    socket.on("voice:answer", onAnswer);
+    return () => socket.off("voice:answer", onAnswer);
+  }, []);
+
+  // ---------------- ICE CANDIDATES ----------------
+  useEffect(() => {
+    const onICE = async (candidate) => {
+      if (candidate && peerRef.current) {
+        await peerRef.current.addIceCandidate(candidate);
+      }
+    };
+
+    socket.on("voice:ice-candidate", onICE);
+    return () => socket.off("voice:ice-candidate", onICE);
+  }, []);
+
+  // ---------------- END CALL ----------------
+  const endCall = () => {
+    if (remoteSocketId.current) {
+      socket.emit("voice:end", { toSocketId: remoteSocketId.current });
+    }
+
+    peerRef.current?.close();
+    localStream.current?.getTracks().forEach((t) => t.stop());
+    onClose();
+  };
+
+  useEffect(() => {
+    const onEnd = () => {
+      peerRef.current?.close();
+      localStream.current?.getTracks().forEach((t) => t.stop());
+      onClose();
+    };
+
+    socket.on("voice:end", onEnd);
+    return () => socket.off("voice:end", onEnd);
+  }, []);
+
+  // ---------------- MUTE ----------------
+  const toggleMic = () => {
+    setMicOn((prev) => !prev);
+    localStream.current
+      ?.getAudioTracks()
+      .forEach((t) => (t.enabled = !micOn));
+  };
+
+  // ---------------- UI ----------------
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center">
-      <div className="relative w-[350px] bg-gray-900 text-white rounded-2xl p-8 text-center flex flex-col items-center gap-6">
-        {/* Close Button */}
+    <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center">
+      <div className="w-[350px] bg-gray-900 text-white rounded-2xl p-8 text-center relative">
+        {/* Close */}
         <button
-          onClick={onClose}
+          onClick={endCall}
           className="absolute top-4 right-4 text-white/60 hover:text-white"
         >
           <X size={22} />
         </button>
 
-        {/* Profile / Caller UI */}
-        <div className="w-28 h-28 rounded-full bg-gray-700 flex items-center justify-center text-xl font-semibold">
-          U
+        {/* Avatar */}
+        <div className="w-24 h-24 rounded-full bg-gray-700 mx-auto flex items-center justify-center overflow-hidden">
+          {callerAvatar ? (
+            <img src={callerAvatar} className="w-full h-full object-cover" />
+          ) : (
+            <span className="text-2xl font-semibold">
+              {callerName?.charAt(0) || "U"}
+            </span>
+          )}
         </div>
 
-        <div>
-          <h2 className="text-lg font-semibold">Calling Username...</h2>
-          <p className="text-sm text-white/60 mt-1">00:12</p>
-        </div>
+        <h2 className="mt-4 text-xl font-semibold">
+          {callerName || "Voice Call"}
+        </h2>
+
+        <p className="text-white/60 mt-1">
+          {callStarted ? formatTime(timer) : "Ringing…"}
+        </p>
 
         {/* Controls */}
-        <div className="flex justify-center gap-6">
-          {/* Mic Toggle */}
+        <div className="flex justify-center gap-6 mt-6">
           <button
-            className={`p-4 rounded-full transition ${
+            className={`p-4 rounded-full ${
               micOn ? "bg-white/20" : "bg-red-600"
             }`}
-            onClick={() => setMicOn(!micOn)}
+            onClick={toggleMic}
           >
             {micOn ? <Mic size={22} /> : <MicOff size={22} />}
           </button>
 
-          {/* Speaker Toggle */}
           <button
-            className={`p-4 rounded-full transition ${
-              speakerOn ? "bg-white/20" : "bg-red-600"
-            }`}
-            onClick={() => setSpeakerOn(!speakerOn)}
-          >
-            {speakerOn ? <Volume2 size={22} /> : <VolumeX size={22} />}
-          </button>
-
-          {/* End Call */}
-          <button
-            className="p-4 rounded-full bg-red-600 hover:bg-red-700 transition"
-            onClick={onClose}
+            className="p-4 rounded-full bg-red-600 hover:bg-red-700"
+            onClick={endCall}
           >
             <Phone size={22} className="-rotate-45" />
           </button>

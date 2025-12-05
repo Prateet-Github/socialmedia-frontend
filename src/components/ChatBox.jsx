@@ -1,3 +1,4 @@
+// src/components/ChatBox.jsx
 import {
   Camera,
   PhoneCall,
@@ -24,8 +25,11 @@ const API = "http://localhost:5001/api";
 const ChatBox = ({ chat }) => {
   // state variables
   const [isUp, setIsUp] = useState(false);
-  const [showCallerModal, setShowCallerModal] = useState(false); // caller UI
-  const [showVoiceCall, setShowVoiceCall] = useState(false);
+  const [showVideoCallerModal, setShowVideoCallerModal] = useState(false); // outgoing video
+  const [showVideoCalleeModalData, setShowVideoCalleeModalData] =
+    useState(null); // incoming video offer data
+  const [showVoiceModalOutgoing, setShowVoiceModalOutgoing] = useState(false);
+  const [incomingVoiceCall, setIncomingVoiceCall] = useState(null); // incoming voice offer data
 
   // messages & input
   const [messages, setMessages] = useState([]);
@@ -33,7 +37,7 @@ const ChatBox = ({ chat }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [incomingCall, setIncomingCall] = useState(null); // { callerId, callerSocketId, offer, callerName }
+  const [incomingCall, setIncomingCall] = useState(null); // incoming video offer popup
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -77,7 +81,9 @@ const ChatBox = ({ chat }) => {
     };
   }, [chat?._id, token]);
 
-  // socket: join chat room and listen for incoming messages & incoming calls
+  // --------------------------
+  // Socket listeners for messages & video call offers (per chat)
+  // --------------------------
   useEffect(() => {
     if (!chat?._id || !currentUser) return;
 
@@ -96,32 +102,96 @@ const ChatBox = ({ chat }) => {
       setTimeout(scrollToBottom, 50);
     };
 
+    // Video call offer arrives here when server sends it to this user's socket
+    const onVideoCallOffer = ({
+      offer,
+      callerId,
+      callerSocketId,
+      callerName,
+      callerAvatar,
+    }) => {
+      setIncomingCall({
+        offer,
+        callerId,
+        callerSocketId,
+        callerName,
+        callerAvatar,
+      });
+    };
+
+    const onVideoCallEnd = ({ fromSocketId }) => {
+      // if popup is showing from same socket remove it
+      setIncomingCall((cur) =>
+        cur && cur.callerSocketId === fromSocketId ? null : cur
+      );
+      // if callee modal open for same socket, close it
+      setShowVideoCalleeModalData((cur) =>
+        cur && cur.callerSocketId === fromSocketId ? null : cur
+      );
+      // also close outgoing caller modal if it was to that socket
+      setShowVideoCallerModal(false);
+    };
+
     socket.on("message:new", onNewMessage);
-
-    // incoming call offer (arrives globally; we only react if it targets this user — server will send only to target)
-    const onCallOffer = ({ offer, callerId, callerSocketId, callerName }) => {
-      // show small accept/decline UI
-      setIncomingCall({ offer, callerId, callerSocketId, callerName });
-    };
-
-    socket.on("call:offer", onCallOffer);
-
-    const onCallEnd = () => {
-      setIncomingCall(null);
-    };
-    socket.on("call:end", onCallEnd);
+    socket.on("call:offer", onVideoCallOffer);
+    socket.on("call:end", onVideoCallEnd);
 
     return () => {
       socket.off("message:new", onNewMessage);
-      socket.off("call:offer", onCallOffer);
-      socket.off("call:end", onCallEnd);
+      socket.off("call:offer", onVideoCallOffer);
+      socket.off("call:end", onVideoCallEnd);
       socket.emit("leave-chat", { chatId: chat._id, userId: currentUser._id });
     };
   }, [chat?._id, currentUser?._id]);
 
-  // Handle image selection
+  // --------------------------
+  // Socket listeners for voice calls (global)
+  // These run once
+  // --------------------------
+  useEffect(() => {
+    // incoming voice call offer (server sends only to the target user's socket)
+    const onVoiceOffer = ({
+      offer,
+      callerId,
+      callerName,
+      callerAvatar,
+      callerSocketId,
+    }) => {
+      setIncomingVoiceCall({
+        offer,
+        callerId,
+        callerName,
+        callerAvatar,
+        callerSocketId,
+      });
+    };
+
+    // caller ended/cancelled -> remove popup / active modal if matches
+    const onVoiceEnd = ({ fromSocketId }) => {
+      setIncomingVoiceCall((cur) =>
+        cur && cur.callerSocketId === fromSocketId ? null : cur
+      );
+      // close outgoing/incoming voice modal if it's for that socket
+      setShowVoiceModalOutgoing((cur) => {
+        // if outgoing is open, close it (no easy check of target socket here)
+        return false;
+      });
+    };
+
+    socket.on("voice:offer", onVoiceOffer);
+    socket.on("voice:end", onVoiceEnd);
+
+    return () => {
+      socket.off("voice:offer", onVoiceOffer);
+      socket.off("voice:end", onVoiceEnd);
+    };
+  }, []);
+
+  // --------------------------
+  // Image selection helpers
+  // --------------------------
   const handleImageSelect = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
@@ -145,10 +215,11 @@ const ChatBox = ({ chat }) => {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  // Send text or image message
+  // --------------------------
+  // Sending messages / location
+  // --------------------------
   const sendMessage = async () => {
     if (!chat?._id) return;
-
     const text = input?.trim();
     const hasImage = selectedImage;
     if (!text && !hasImage) return;
@@ -207,7 +278,7 @@ const ChatBox = ({ chat }) => {
         prev.map((m) => (m._id === tempMessage._id ? saved : m))
       );
 
-      // Emit saved message so other devices receive it
+      // broadcast so other clients receive it
       socket.emit("message:send", { message: saved });
     } catch (err) {
       console.error("Failed to send message:", err);
@@ -218,7 +289,6 @@ const ChatBox = ({ chat }) => {
     }
   };
 
-  // Send location
   const sendLocation = async () => {
     if (!chat?._id) return;
     if (!navigator.geolocation) {
@@ -291,41 +361,49 @@ const ChatBox = ({ chat }) => {
     }
   };
 
-  // Click handlers
-  const handleClick = () => {
-    navigate(`/user/${otherUser?.username}`);
-  };
-
+  // simple click handlers
+  const handleClick = () => navigate(`/user/${otherUser?.username}`);
   const handleFileClick = () => {
     setIsUp(false);
     alert("File upload coming soon!");
   };
-
   const handlePhotoClick = () => {
     setIsUp(false);
     fileInputRef.current?.click();
   };
+  const handleLocationClick = () => sendLocation();
 
-  const handleLocationClick = () => {
-    sendLocation();
+  // ---------- Incoming Video Call popup handlers ----------
+  const acceptIncomingVideoCall = () => {
+    if (!incomingCall) return;
+    // open callee modal with incomingCall data
+    setShowVideoCalleeModalData(incomingCall);
+    // keep the incomingCall state; modal will clear it on close
+    // optionally hide the small popup
+    setIncomingCall(null);
   };
 
-  // ---------- INCOMING CALL HANDLERS (popup accept) ----------
-  const acceptIncomingCall = () => {
+  const declineIncomingVideoCall = () => {
     if (!incomingCall) return;
-    // open callee modal with the offer + caller socket
-    setShowCallerModal(true); // reuse VideoCallModal for callee flow, with isCaller=false
-    // keep incomingCall data so we can pass to modal
-  };
-
-  const declineIncomingCall = () => {
-    if (!incomingCall) return;
-    // notify caller that we declined/ended
     socket.emit("call:end", { toSocketId: incomingCall.callerSocketId });
     setIncomingCall(null);
   };
 
-  // ---------- UI ----------
+  // ---------- Incoming Voice Call popup handlers ----------
+  const acceptVoiceCall = () => {
+    if (!incomingVoiceCall) return;
+    // Open the incoming voice modal and pass offer and caller socket id
+    setShowVoiceModalOutgoing(true); // reusing outgoing flag to show the modal component
+    // don't clear incomingVoiceCall — pass it into modal as prop; modal's onClose will clear
+  };
+
+  const rejectVoiceCall = () => {
+    if (!incomingVoiceCall) return;
+    socket.emit("voice:end", { toSocketId: incomingVoiceCall.callerSocketId });
+    setIncomingVoiceCall(null);
+  };
+
+  // ---------- Render ----------
   return (
     <main className="flex flex-col h-screen">
       {/* Hidden file input */}
@@ -343,12 +421,14 @@ const ChatBox = ({ chat }) => {
           <button className="md:hidden" onClick={() => navigate("/messages")}>
             <ArrowLeft className="size-5" />
           </button>
+
           <img
             src={otherUser?.avatar || getDiceBearAvatar(otherUser?.name)}
             alt="pfp"
             className="h-9 cursor-pointer hover:opacity-90 w-9 md:h-10 md:w-10 object-cover rounded-full border"
             onClick={handleClick}
           />
+
           <div className="flex flex-col">
             <span className="font-semibold text-sm md:text-base">
               {otherUser?.name || "No chat selected"}
@@ -360,21 +440,20 @@ const ChatBox = ({ chat }) => {
         </div>
 
         <div className="flex gap-3 md:gap-4">
+          {/* Video call (outgoing) */}
           <button
-            onClick={() => {
-              // open caller modal, isCaller=true
-              setShowCallerModal(true);
-            }}
+            onClick={() => setShowVideoCallerModal(true)}
             title="Video Call"
             className="cursor-pointer dark:hover:text-gray-300 hover:text-gray-500 transition-colors"
           >
             <Camera className="size-5 md:size-6" />
           </button>
 
-          {showCallerModal && (
+          {/* Outgoing video modal */}
+          {showVideoCallerModal && !showVideoCalleeModalData && (
             <VideoCallModal
               onClose={() => {
-                setShowCallerModal(false);
+                setShowVideoCallerModal(false);
                 setIncomingCall(null);
               }}
               callerId={currentUser._id}
@@ -383,20 +462,48 @@ const ChatBox = ({ chat }) => {
             />
           )}
 
+          {/* Voice Call button */}
           <button
-            onClick={() => setShowVoiceCall(true)}
+            onClick={() => setShowVoiceModalOutgoing(true)}
             title="Voice Call"
             className="cursor-pointer dark:hover:text-gray-300 hover:text-gray-500 transition-colors"
           >
             <PhoneCall className="size-5 md:size-6" />
           </button>
-          {showVoiceCall && (
-            <VoiceCallModal onClose={() => setShowVoiceCall(false)} />
+
+          {/* Outgoing voice modal */}
+          {showVoiceModalOutgoing && !incomingVoiceCall && (
+            <VoiceCallModal
+              onClose={() => {
+                setShowVoiceModalOutgoing(false);
+                setIncomingVoiceCall(null);
+              }}
+              callerId={currentUser._id}
+              calleeId={otherUser?._id}
+              isCaller={true}
+            />
+          )}
+
+          {/* Incoming voice accepted (callee modal) */}
+          {incomingVoiceCall && showVoiceModalOutgoing && (
+            <VoiceCallModal
+              onClose={() => {
+                setShowVoiceModalOutgoing(false);
+                setIncomingVoiceCall(null);
+              }}
+              callerId={incomingVoiceCall.callerId}
+              calleeId={currentUser._id}
+              isCaller={false}
+              incomingOffer={incomingVoiceCall.offer}
+              incomingCallerSocketId={incomingVoiceCall.callerSocketId}
+              callerName={incomingVoiceCall.callerName}
+              callerAvatar={incomingVoiceCall.callerAvatar}
+            />
           )}
         </div>
       </div>
 
-      {/* Messages */}
+      {/* Messages area */}
       <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4">
         {messages.length === 0 && (
           <div className="text-center text-gray-400 py-8">
@@ -413,7 +520,7 @@ const ChatBox = ({ chat }) => {
                   mine
                     ? "bg-blue-600 text-white rounded-2xl rounded-tr-sm"
                     : "dark:bg-gray-800 bg-gray-200 rounded-2xl rounded-tl-sm"
-                } p-2.5 md:p-3 max-w-[75%] md:max-w-xs break-words`}
+                } p-2.5 md:p-3 max-w-[75%] md:max-w-xs wrap-break-words`}
               >
                 {m.media && m.media.length > 0 && (
                   <div className="space-y-2 mb-2">
@@ -528,8 +635,8 @@ const ChatBox = ({ chat }) => {
         </button>
       </div>
 
-      {/* ---------- INCOMING CALL POPUP (ACCEPT / DECLINE) ---------- */}
-      {incomingCall && !showCallerModal && (
+      {/* ---------- INCOMING VIDEO CALL POPUP (ACCEPT / DECLINE) ---------- */}
+      {incomingCall && !showVideoCalleeModalData && (
         <div className="fixed right-4 bottom-24 z-50 bg-white dark:bg-gray-900 border rounded-xl shadow-lg p-3 flex items-center gap-3 w-72">
           <div className="flex-1">
             <div className="font-semibold">
@@ -539,13 +646,13 @@ const ChatBox = ({ chat }) => {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={acceptIncomingCall}
+              onClick={acceptIncomingVideoCall}
               className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg"
             >
               Accept
             </button>
             <button
-              onClick={declineIncomingCall}
+              onClick={declineIncomingVideoCall}
               className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg"
             >
               Decline
@@ -554,20 +661,55 @@ const ChatBox = ({ chat }) => {
         </div>
       )}
 
-      {/* ---------- CALEE MODAL: show when accepted ---------- */}
-      {showCallerModal && incomingCall && (
+      {/* ---------- CALEE VIDEO MODAL: show when accepted ---------- */}
+      {showVideoCalleeModalData && (
         <VideoCallModal
           onClose={() => {
-            setShowCallerModal(false);
+            setShowVideoCalleeModalData(null);
             setIncomingCall(null);
+            setShowVideoCallerModal(false);
           }}
-          // callee flow: use the offer and caller socket id
           isCaller={false}
-          callerId={incomingCall.callerId}
+          callerId={showVideoCalleeModalData.callerId}
           calleeId={currentUser._id}
-          callerSocketId={incomingCall.callerSocketId}
-          offer={incomingCall.offer}
+          callerSocketId={showVideoCalleeModalData.callerSocketId}
+          offer={showVideoCalleeModalData.offer}
         />
+      )}
+
+      {/* ---------- INCOMING VOICE CALL POPUP ---------- */}
+      {incomingVoiceCall && !showVoiceModalOutgoing && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-2xl w-[320px] text-center">
+            <img
+              src={
+                incomingVoiceCall.callerAvatar ||
+                getDiceBearAvatar(incomingVoiceCall.callerName)
+              }
+              className="w-20 h-20 rounded-full mx-auto mb-3"
+            />
+            <h3 className="text-lg font-semibold">
+              {incomingVoiceCall.callerName}
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">
+              Incoming Voice Call…
+            </p>
+            <div className="flex justify-center gap-6">
+              <button
+                onClick={rejectVoiceCall}
+                className="bg-red-600 hover:bg-red-700 text-white p-3 rounded-full"
+              >
+                <X size={20} />
+              </button>
+              <button
+                onClick={acceptVoiceCall}
+                className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full"
+              >
+                <PhoneCall size={20} />
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );
