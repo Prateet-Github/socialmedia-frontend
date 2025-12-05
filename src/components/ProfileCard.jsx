@@ -1,3 +1,4 @@
+// src/components/ProfileCard.jsx
 import FeedCard from "./FeedCard";
 import { useState, useEffect } from "react";
 import ProfileInfo from "./ProfileInfo";
@@ -8,10 +9,13 @@ import { formatNumber } from "../utils/numbers";
 import { useNavigate } from "react-router-dom";
 import useClickOutside from "../hooks/useClickOutside";
 import { fetchCurrentUserProfile } from "../redux/authSlice";
+import PostCard from "./PostCard";
+import { Plus } from "lucide-react"; // ← IMPORT THE ICON
 
 const ProfileCard = () => {
   // state
   const [isUp, setIsUp] = useState(false);
+  const [showPostCard, setShowPostCard] = useState(false);
   const [activeTab, setActiveTab] = useState("posts");
 
   // redux
@@ -22,7 +26,6 @@ const ProfileCard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // ✅ Fixed: Single useEffect
   useEffect(() => {
     if (user?._id) {
       dispatch(getUserPosts(user._id));
@@ -112,13 +115,24 @@ const ProfileCard = () => {
             {user?.bio || "This user has no bio."}
           </p>
 
-          {/* EDIT PROFILE BUTTON */}
-          <button
-            onClick={() => navigate("/edit-profile")}
-            className="bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded-xl font-medium w-full sm:w-auto text-center transition"
-          >
-            Edit Profile
-          </button>
+          <div className="flex gap-3 pt-2 w-full">
+            {/* CREATE POST BUTTON */}
+            <button
+              title="Create Post"
+              onClick={() => setShowPostCard(true)}
+              className="flex-1 text-white py-2 px-4 rounded-xl  bg-blue-500 hover:bg-blue-600 transition"
+            >
+              Create Post
+            </button>
+
+            {/* EDIT PROFILE BUTTON */}
+            <button
+              onClick={() => navigate("/edit-profile")}
+              className="flex-1 text-white py-2 px-4 rounded-xl bg-blue-500 hover:bg-blue-600 transition"
+            >
+              Edit Profile
+            </button>
+          </div>
         </div>
       </div>
 
@@ -216,6 +230,8 @@ const ProfileCard = () => {
           </div>
         )}
       </div>
+
+      {showPostCard && <PostCard onClose={() => setShowPostCard(false)} />}
     </main>
   );
 };

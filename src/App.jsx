@@ -17,6 +17,7 @@ import EnterEmail from "./pages/EnterEmail";
 import Edit from "./pages/Edit";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UserProfile from "./components/UserProfile";
+import ChatBoxMobile from "./components/ChatboxMobile";
 
 const App = () => {
   const { user } = useSelector((state) => state.auth);
@@ -103,6 +104,7 @@ const App = () => {
             </ProtectedRoute>
           }
         ></Route>
+        <Route path="/messages/:chatId" element={<ChatBoxMobile />} />
         <Route
           path="/user/:username"
           element={

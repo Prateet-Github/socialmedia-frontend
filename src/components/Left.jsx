@@ -66,7 +66,7 @@ const Left = ({ showLabels = true }) => {
       {/* Mobile Menu Button - Fixed at top */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-800 shadow-lg"
+        className="lg:hidden fixed top-2 left-2 z-50 p-2 rounded-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-800 shadow-lg"
         aria-label="Toggle menu"
       >
         {isMobileMenuOpen ? (
@@ -87,7 +87,7 @@ const Left = ({ showLabels = true }) => {
       {/* Sidebar */}
       <aside
         className={`
-          fixed lg:sticky top-0 left-0 h-screen z-40
+          fixed lg:sticky top-6 left-0 h-screen z-40
           flex flex-col justify-between py-6 px-4 
           bg-white dark:bg-black
           border-r border-gray-200 dark:border-gray-800

@@ -19,11 +19,6 @@ const Notifications = () => {
       <div className="flex-1 min-w-0 max-w-2xl flex flex-col">
         <Notification />
       </div>
-
-      {/* Right Sidebar - Fixed width, hidden on small screens */}
-      {/* <div className="hidden border-l border-gray-200 dark:border-gray-800 lg:block w-80 xl:w-96 shrink-0">
-  
-      </div> */}
     </main>
   );
 };

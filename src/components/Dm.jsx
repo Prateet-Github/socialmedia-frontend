@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Chats from "./Chats";
 
 const API_URL = "http://localhost:5001/api/chats";
@@ -8,6 +9,7 @@ const API_URL = "http://localhost:5001/api/chats";
 const Dm = ({ onSelectChat }) => {
   const [chats, setChats] = useState([]);
   const { token } = useSelector((state) => state.auth);
+  const navigate = useNavigate(); // ✅ needed for mobile redirect
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -23,6 +25,17 @@ const Dm = ({ onSelectChat }) => {
 
     fetchChats();
   }, [token]);
+
+  // ✅ Correctly handle mobile vs desktop
+  const handleSelectChat = (chat) => {
+    if (window.innerWidth < 768) {
+      // mobile → go to `/messages/:id`
+      navigate(`/messages/${chat._id}`, { state: { chat } }); // pass full chat
+    } else {
+      // desktop → show chat in right panel
+      onSelectChat(chat);
+    }
+  };
 
   return (
     <main className="overflow-y-auto h-screen scroll-hide">
@@ -42,7 +55,7 @@ const Dm = ({ onSelectChat }) => {
         <Chats
           key={chat._id}
           chat={chat}
-          onClick={() => onSelectChat(chat)}
+          onClick={() => handleSelectChat(chat)} // ✅ FIXED
         />
       ))}
     </main>
