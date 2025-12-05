@@ -1,4 +1,3 @@
-// src/components/ProfileCard.jsx
 import FeedCard from "./FeedCard";
 import { useState, useEffect } from "react";
 import ProfileInfo from "./ProfileInfo";
@@ -10,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 import useClickOutside from "../hooks/useClickOutside";
 import { fetchCurrentUserProfile } from "../redux/authSlice";
 import PostCard from "./PostCard";
-import { Plus } from "lucide-react"; // ← IMPORT THE ICON
 
 const ProfileCard = () => {
   // state

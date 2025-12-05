@@ -1,5 +1,3 @@
-// src/components/VoiceCallModal.jsx
-
 import { X, Mic, MicOff, Phone } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { socket } from "../socket";
@@ -164,9 +162,7 @@ export default function VoiceCallModal({
   // ---------------- MUTE ----------------
   const toggleMic = () => {
     setMicOn((prev) => !prev);
-    localStream.current
-      ?.getAudioTracks()
-      .forEach((t) => (t.enabled = !micOn));
+    localStream.current?.getAudioTracks().forEach((t) => (t.enabled = !micOn));
   };
 
   // ---------------- UI ----------------

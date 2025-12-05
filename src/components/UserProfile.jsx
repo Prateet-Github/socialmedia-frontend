@@ -15,7 +15,7 @@ import {
 } from "../redux/userSlice";
 import axios from "axios";
 
-const API = "http://localhost:5001/api";
+const API = `${import.meta.env.VITE_BACKEND_URL}/api`;
 
 const UserProfile = () => {
   const [showInfo, setShowInfo] = useState(false);

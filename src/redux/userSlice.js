@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const USER_API = "http://localhost:5001/api/users";
+const USER_API = `${import.meta.env.VITE_BACKEND_URL}/api/users`;
 
 export const fetchPublicProfile = createAsyncThunk(
   "user/fetchPublicProfile",

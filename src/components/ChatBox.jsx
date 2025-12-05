@@ -1,4 +1,3 @@
-// src/components/ChatBox.jsx
 import {
   Camera,
   PhoneCall,
@@ -20,7 +19,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { getDiceBearAvatar } from "../utils/dicebear";
 
-const API = "http://localhost:5001/api";
+const API = `${import.meta.env.VITE_BACKEND_URL}/api`;
 
 const ChatBox = ({ chat }) => {
   // state variables

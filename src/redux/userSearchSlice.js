@@ -8,7 +8,7 @@ export const searchUsers = createAsyncThunk(
       const token = getState().auth.token;
 
       const res = await axios.get(
-        `http://localhost:5001/api/users/search?q=${query}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/search?q=${query}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

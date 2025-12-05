@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Chats from "./Chats";
 
-const API_URL = "http://localhost:5001/api/chats";
+const API_URL = `${import.meta.env.VITE_BACKEND_URL}/api/chats`;
 
 const Dm = ({ onSelectChat }) => {
   const [chats, setChats] = useState([]);

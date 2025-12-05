@@ -1,4 +1,3 @@
-// src/components/VideoCallModal.jsx
 import { X, Mic, MicOff, Video, VideoOff, Phone } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { socket } from "../socket";
@@ -36,7 +35,10 @@ export default function VideoCallModal({
 
     const getMedia = async () => {
       try {
-        const s = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        const s = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
         if (!mounted) {
           // stop if unmounted
           s.getTracks().forEach((t) => t.stop());
@@ -53,7 +55,9 @@ export default function VideoCallModal({
     };
 
     getMedia();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   // Create RTCPeerConnection and hook tracks/events
@@ -67,7 +71,9 @@ export default function VideoCallModal({
     });
 
     // add local tracks
-    localStream.current.getTracks().forEach((track) => pc.addTrack(track, localStream.current));
+    localStream.current
+      .getTracks()
+      .forEach((track) => pc.addTrack(track, localStream.current));
 
     // on remote track
     pc.ontrack = (ev) => {
@@ -129,7 +135,10 @@ export default function VideoCallModal({
       await peerRef.current.setLocalDescription(answer);
 
       // send answer back to caller's socket id
-      socket.emit("call:answer", { toSocketId: incomingCallerSocketId, answer });
+      socket.emit("call:answer", {
+        toSocketId: incomingCallerSocketId,
+        answer,
+      });
       console.log("Callee: answer emitted");
     } catch (err) {
       console.error("handleIncomingOffer error", err);
@@ -224,22 +233,49 @@ export default function VideoCallModal({
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center">
       <div className="relative w-full h-full flex items-center justify-center">
         <div className="w-[80%] h-[70%] bg-gray-800 rounded-xl relative">
-          <video ref={remoteVideo} autoPlay playsInline className="absolute top-0 left-0 w-full h-full object-cover" />
-          <video ref={localVideo} autoPlay muted playsInline className="absolute bottom-4 right-4 w-32 rounded-lg border-2 border-white" />
+          <video
+            ref={remoteVideo}
+            autoPlay
+            playsInline
+            className="absolute top-0 left-0 w-full h-full object-cover"
+          />
+          <video
+            ref={localVideo}
+            autoPlay
+            muted
+            playsInline
+            className="absolute bottom-4 right-4 w-32 rounded-lg border-2 border-white"
+          />
         </div>
 
-        <button onClick={endCall} className="absolute top-6 right-6 text-white p-2 rounded-full bg-white/10 hover:bg-white/20 transition">
+        <button
+          onClick={endCall}
+          className="absolute top-6 right-6 text-white p-2 rounded-full bg-white/10 hover:bg-white/20 transition"
+        >
           <X size={22} />
         </button>
 
         <div className="absolute bottom-10 flex gap-6">
-          <button className={`p-4 rounded-full ${micOn ? "bg-white/20" : "bg-red-600"}`} onClick={toggleMic}>
+          <button
+            className={`p-4 rounded-full ${
+              micOn ? "bg-white/20" : "bg-red-600"
+            }`}
+            onClick={toggleMic}
+          >
             {micOn ? <Mic size={20} /> : <MicOff size={20} />}
           </button>
-          <button className={`p-4 rounded-full ${camOn ? "bg-white/20" : "bg-red-600"}`} onClick={toggleCam}>
+          <button
+            className={`p-4 rounded-full ${
+              camOn ? "bg-white/20" : "bg-red-600"
+            }`}
+            onClick={toggleCam}
+          >
             {camOn ? <Video size={20} /> : <VideoOff size={20} />}
           </button>
-          <button className="p-4 rounded-full bg-red-600 hover:bg-red-700 transition" onClick={endCall}>
+          <button
+            className="p-4 rounded-full bg-red-600 hover:bg-red-700 transition"
+            onClick={endCall}
+          >
             <Phone size={20} />
           </button>
         </div>

@@ -4,7 +4,7 @@ import ChatBox from "../components/ChatBox";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
-const API = "http://localhost:5001/api";
+const API = `${import.meta.env.VITE_BACKEND_URL}/api`;
 
 export default function ChatBoxMobile() {
   const { chatId } = useParams();

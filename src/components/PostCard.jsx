@@ -65,12 +65,14 @@ const PostCard = ({ onClose }) => {
       <div className="bg-black border border-gray-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-800">
-          <h2 className="text-lg md:text-xl font-semibold">Create Post</h2>
+          <h2 className="text-lg md:text-xl text-white font-semibold">
+            Create Post
+          </h2>
           <button
             onClick={onClose}
             className="hover:bg-gray-900 p-2 rounded-full transition-colors"
           >
-            <X className="size-5" />
+            <X className="size-5 text-white" />
           </button>
         </div>
 
@@ -84,7 +86,7 @@ const PostCard = ({ onClose }) => {
               className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover"
             />
             <div>
-              <h3 className="font-semibold text-sm md:text-base">
+              <h3 className="font-semibold text-white text-sm md:text-base">
                 {user?.name || "User"}
               </h3>
               <p className="text-xs text-gray-400">
@@ -98,7 +100,7 @@ const PostCard = ({ onClose }) => {
             value={postText}
             onChange={(e) => setPostText(e.target.value)}
             placeholder="What's on your mind?"
-            className="w-full bg-transparent outline-none resize-none text-sm md:text-base min-h-32 md:min-h-40"
+            className="w-full bg-transparent text-white outline-none resize-none text-sm md:text-base min-h-32 md:min-h-40"
             maxLength={MAX_CAPTION_LENGTH}
           />
 
