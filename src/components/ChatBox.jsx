@@ -1,4 +1,3 @@
-// src/components/ChatBox.jsx
 import {
   Camera,
   PhoneCall,
@@ -11,8 +10,8 @@ import {
   X,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
-import CallModal from "./VideoCallModal";
 import VoiceCallModal from "./VoiceCallModal";
+import VideoCallModal from "./VideoCallModal";
 import { useNavigate } from "react-router-dom";
 import useClickOutside from "../hooks/useClickOutside";
 import { socket } from "../socket";
@@ -25,8 +24,8 @@ const API = "http://localhost:5001/api";
 const ChatBox = ({ chat }) => {
   // state variables
   const [isUp, setIsUp] = useState(false);
-  const [showCall, setShowCall] = useState(false);
-  const [voiceCall, setVoiceCall] = useState(false);
+  const [showCallerModal, setShowCallerModal] = useState(false); // caller UI
+  const [showVoiceCall, setShowVoiceCall] = useState(false);
 
   // messages & input
   const [messages, setMessages] = useState([]);
@@ -34,6 +33,7 @@ const ChatBox = ({ chat }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [incomingCall, setIncomingCall] = useState(null); // { callerId, callerSocketId, offer, callerName }
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -77,19 +77,16 @@ const ChatBox = ({ chat }) => {
     };
   }, [chat?._id, token]);
 
-  // socket: join chat room and listen for incoming messages
+  // socket: join chat room and listen for incoming messages & incoming calls
   useEffect(() => {
     if (!chat?._id || !currentUser) return;
 
     socket.emit("join-chat", { chatId: chat._id, userId: currentUser._id });
 
-    const onNew = (msg) => {
+    const onNewMessage = (msg) => {
       if (!msg) return;
-
-      // Only messages for this chat
       if (msg.chatId !== chat._id) return;
 
-      // Check if message already exists
       setMessages((prev) => {
         const exists = prev.some((m) => m._id === msg._id);
         if (exists) return prev;
@@ -99,10 +96,25 @@ const ChatBox = ({ chat }) => {
       setTimeout(scrollToBottom, 50);
     };
 
-    socket.on("message:new", onNew);
+    socket.on("message:new", onNewMessage);
+
+    // incoming call offer (arrives globally; we only react if it targets this user — server will send only to target)
+    const onCallOffer = ({ offer, callerId, callerSocketId, callerName }) => {
+      // show small accept/decline UI
+      setIncomingCall({ offer, callerId, callerSocketId, callerName });
+    };
+
+    socket.on("call:offer", onCallOffer);
+
+    const onCallEnd = () => {
+      setIncomingCall(null);
+    };
+    socket.on("call:end", onCallEnd);
 
     return () => {
-      socket.off("message:new", onNew);
+      socket.off("message:new", onNewMessage);
+      socket.off("call:offer", onCallOffer);
+      socket.off("call:end", onCallEnd);
       socket.emit("leave-chat", { chatId: chat._id, userId: currentUser._id });
     };
   }, [chat?._id, currentUser?._id]);
@@ -112,13 +124,11 @@ const ChatBox = ({ chat }) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       alert("Please select an image file");
       return;
     }
 
-    // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
       alert("Image size should be less than 5MB");
       return;
@@ -129,13 +139,10 @@ const ChatBox = ({ chat }) => {
     setIsUp(false);
   };
 
-  // Remove selected image
   const removeImage = () => {
     setSelectedImage(null);
     setImagePreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   // Send text or image message
@@ -144,15 +151,12 @@ const ChatBox = ({ chat }) => {
 
     const text = input?.trim();
     const hasImage = selectedImage;
-
     if (!text && !hasImage) return;
 
     setUploading(true);
 
     try {
       let mediaUrls = [];
-
-      // Upload image if selected
       if (hasImage) {
         const formData = new FormData();
         formData.append("image", selectedImage);
@@ -171,7 +175,6 @@ const ChatBox = ({ chat }) => {
         mediaUrls.push(uploadRes.data.url);
       }
 
-      // Create optimistic message
       const tempMessage = {
         _id: `temp-${Date.now()}`,
         chatId: chat._id,
@@ -181,7 +184,8 @@ const ChatBox = ({ chat }) => {
           avatar: currentUser.avatar,
         },
         text: text || "",
-        media: mediaUrls.length > 0 ? mediaUrls : (imagePreview ? [imagePreview] : []),
+        media:
+          mediaUrls.length > 0 ? mediaUrls : imagePreview ? [imagePreview] : [],
         createdAt: new Date().toISOString(),
         pending: true,
       };
@@ -191,33 +195,24 @@ const ChatBox = ({ chat }) => {
       removeImage();
       setTimeout(scrollToBottom, 50);
 
-      // Send message to backend
       const res = await axios.post(
         `${API}/messages`,
-        {
-          chatId: chat._id,
-          text: text || "",
-          media: mediaUrls,
-        },
+        { chatId: chat._id, text: text || "", media: mediaUrls },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const saved = res.data;
 
-      // Replace temp message with saved message
       setMessages((prev) =>
         prev.map((m) => (m._id === tempMessage._id ? saved : m))
       );
 
-      // Emit via socket
+      // Emit saved message so other devices receive it
       socket.emit("message:send", { message: saved });
     } catch (err) {
       console.error("Failed to send message:", err);
       alert("Failed to send message. Please try again.");
-      // Remove optimistic message on failure
-      setMessages((prev) =>
-        prev.filter((m) => !m._id.startsWith("temp-"))
-      );
+      setMessages((prev) => prev.filter((m) => !m._id.startsWith("temp-")));
     } finally {
       setUploading(false);
     }
@@ -226,12 +221,10 @@ const ChatBox = ({ chat }) => {
   // Send location
   const sendLocation = async () => {
     if (!chat?._id) return;
-
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by your browser");
       return;
     }
-
     setIsUp(false);
     setUploading(true);
 
@@ -241,7 +234,6 @@ const ChatBox = ({ chat }) => {
         const locationUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
         try {
-          // Create optimistic message
           const tempMessage = {
             _id: `temp-${Date.now()}`,
             chatId: chat._id,
@@ -260,7 +252,6 @@ const ChatBox = ({ chat }) => {
           setMessages((m) => [...m, tempMessage]);
           setTimeout(scrollToBottom, 50);
 
-          // Send to backend
           const res = await axios.post(
             `${API}/messages`,
             {
@@ -272,20 +263,14 @@ const ChatBox = ({ chat }) => {
           );
 
           const saved = res.data;
-
-          // Replace temp with saved
           setMessages((prev) =>
             prev.map((m) => (m._id === tempMessage._id ? saved : m))
           );
-
-          // Emit via socket
           socket.emit("message:send", { message: saved });
         } catch (err) {
           console.error("Failed to send location:", err);
           alert("Failed to send location");
-          setMessages((prev) =>
-            prev.filter((m) => !m._id.startsWith("temp-"))
-          );
+          setMessages((prev) => prev.filter((m) => !m._id.startsWith("temp-")));
         } finally {
           setUploading(false);
         }
@@ -313,7 +298,6 @@ const ChatBox = ({ chat }) => {
 
   const handleFileClick = () => {
     setIsUp(false);
-    // You can implement file upload here later
     alert("File upload coming soon!");
   };
 
@@ -326,6 +310,22 @@ const ChatBox = ({ chat }) => {
     sendLocation();
   };
 
+  // ---------- INCOMING CALL HANDLERS (popup accept) ----------
+  const acceptIncomingCall = () => {
+    if (!incomingCall) return;
+    // open callee modal with the offer + caller socket
+    setShowCallerModal(true); // reuse VideoCallModal for callee flow, with isCaller=false
+    // keep incomingCall data so we can pass to modal
+  };
+
+  const declineIncomingCall = () => {
+    if (!incomingCall) return;
+    // notify caller that we declined/ended
+    socket.emit("call:end", { toSocketId: incomingCall.callerSocketId });
+    setIncomingCall(null);
+  };
+
+  // ---------- UI ----------
   return (
     <main className="flex flex-col h-screen">
       {/* Hidden file input */}
@@ -337,10 +337,9 @@ const ChatBox = ({ chat }) => {
         className="hidden"
       />
 
-      {/* Header - fixed to top */}
+      {/* Header */}
       <div className="border-b border-gray-300 dark:border-gray-800 p-3 md:p-4 flex justify-between items-center sticky top-0 z-10 bg-white dark:bg-black">
         <div className="flex gap-3 md:gap-4 items-center">
-          {/* Back button for mobile */}
           <button className="md:hidden" onClick={() => navigate("/messages")}>
             <ArrowLeft className="size-5" />
           </button>
@@ -359,27 +358,45 @@ const ChatBox = ({ chat }) => {
             </span>
           </div>
         </div>
+
         <div className="flex gap-3 md:gap-4">
           <button
-            onClick={() => setShowCall(true)}
+            onClick={() => {
+              // open caller modal, isCaller=true
+              setShowCallerModal(true);
+            }}
             title="Video Call"
             className="cursor-pointer dark:hover:text-gray-300 hover:text-gray-500 transition-colors"
           >
             <Camera className="size-5 md:size-6" />
           </button>
-          {showCall && <CallModal onClose={() => setShowCall(false)} />}
+
+          {showCallerModal && (
+            <VideoCallModal
+              onClose={() => {
+                setShowCallerModal(false);
+                setIncomingCall(null);
+              }}
+              callerId={currentUser._id}
+              calleeId={otherUser?._id}
+              isCaller={true}
+            />
+          )}
+
           <button
-            onClick={() => setVoiceCall(true)}
+            onClick={() => setShowVoiceCall(true)}
             title="Voice Call"
             className="cursor-pointer dark:hover:text-gray-300 hover:text-gray-500 transition-colors"
           >
             <PhoneCall className="size-5 md:size-6" />
           </button>
-          {voiceCall && <VoiceCallModal onClose={() => setVoiceCall(false)} />}
+          {showVoiceCall && (
+            <VoiceCallModal onClose={() => setShowVoiceCall(false)} />
+          )}
         </div>
       </div>
 
-      {/* Messages area - scrollable */}
+      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4">
         {messages.length === 0 && (
           <div className="text-center text-gray-400 py-8">
@@ -398,7 +415,6 @@ const ChatBox = ({ chat }) => {
                     : "dark:bg-gray-800 bg-gray-200 rounded-2xl rounded-tl-sm"
                 } p-2.5 md:p-3 max-w-[75%] md:max-w-xs break-words`}
               >
-                {/* Images from media array */}
                 {m.media && m.media.length > 0 && (
                   <div className="space-y-2 mb-2">
                     {m.media.map((url, idx) => (
@@ -413,10 +429,8 @@ const ChatBox = ({ chat }) => {
                   </div>
                 )}
 
-                {/* Text */}
                 {m.text && <p className="text-sm md:text-base">{m.text}</p>}
 
-                {/* Timestamp */}
                 <span
                   className={`${
                     mine ? "text-blue-200" : "text-gray-400"
@@ -456,9 +470,8 @@ const ChatBox = ({ chat }) => {
         </div>
       )}
 
-      {/* Input - fixed to bottom */}
+      {/* Input */}
       <div className="border-t border-gray-300 dark:border-gray-800 relative p-3 md:p-4 flex gap-2 md:gap-4 items-center bg-white dark:bg-black">
-        {/* Wrapped button and dropdown together */}
         <div ref={dropdownRef} className="relative shrink-0">
           <button
             onClick={() => setIsUp(!isUp)}
@@ -477,7 +490,7 @@ const ChatBox = ({ chat }) => {
                 <File className="size-5 text-blue-500" />
                 <span className="font-medium">File</span>
               </button>
-              <div className="border-t border-gray-300 dark:border-gray-800"></div>
+              <div className="border-t border-gray-300 dark:border-gray-800" />
               <button
                 onClick={handlePhotoClick}
                 className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors"
@@ -485,7 +498,7 @@ const ChatBox = ({ chat }) => {
                 <Image className="size-5 text-blue-500" />
                 <span className="font-medium">Photo & Video</span>
               </button>
-              <div className="border-t border-gray-300 dark:border-gray-800"></div>
+              <div className="border-t border-gray-300 dark:border-gray-800" />
               <button
                 onClick={handleLocationClick}
                 className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-200 dark:hover:bg-gray-900 transition-colors"
@@ -514,6 +527,48 @@ const ChatBox = ({ chat }) => {
           <SendHorizonal className="size-4 md:size-5" />
         </button>
       </div>
+
+      {/* ---------- INCOMING CALL POPUP (ACCEPT / DECLINE) ---------- */}
+      {incomingCall && !showCallerModal && (
+        <div className="fixed right-4 bottom-24 z-50 bg-white dark:bg-gray-900 border rounded-xl shadow-lg p-3 flex items-center gap-3 w-72">
+          <div className="flex-1">
+            <div className="font-semibold">
+              {incomingCall.callerName || "Unknown"}
+            </div>
+            <div className="text-xs text-gray-500">is calling you</div>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={acceptIncomingCall}
+              className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg"
+            >
+              Accept
+            </button>
+            <button
+              onClick={declineIncomingCall}
+              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg"
+            >
+              Decline
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ---------- CALEE MODAL: show when accepted ---------- */}
+      {showCallerModal && incomingCall && (
+        <VideoCallModal
+          onClose={() => {
+            setShowCallerModal(false);
+            setIncomingCall(null);
+          }}
+          // callee flow: use the offer and caller socket id
+          isCaller={false}
+          callerId={incomingCall.callerId}
+          calleeId={currentUser._id}
+          callerSocketId={incomingCall.callerSocketId}
+          offer={incomingCall.offer}
+        />
+      )}
     </main>
   );
 };
