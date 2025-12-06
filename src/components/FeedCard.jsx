@@ -5,9 +5,12 @@ import { getDiceBearAvatar } from "../utils/dicebear";
 import { formatTime } from "../utils/time";
 import { shortenNumber, formatNumber } from "../utils/numbers";
 import { likePost, unlikePost } from "../redux/postSlice";
-import { useState, useMemo } from "react";
+import { fetchComments } from "../redux/commentSlice";
+import { useState, useMemo, useEffect } from "react";
+import CommentModal from "./CommentModal.jsx";
 
 const FeedCard = ({ post }) => {
+  const [showComments, setShowComments] = useState(false);
   const { user: currentUser } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -15,8 +18,25 @@ const FeedCard = ({ post }) => {
   // initial likes state
   const [localLikes, setLocalLikes] = useState(post.likes);
 
-  // derived values
+  // Prefetch comments when card mounts
+  useEffect(() => {
+    // Only fetch if not already in Redux store
+    const commentsInStore = dispatch((_, getState) => {
+      return getState().comments.byPostId[post._id];
+    });
+    
+    if (!commentsInStore) {
+      dispatch(fetchComments(post._id));
+    }
+  }, [dispatch, post._id]);
+
+  const comments = useSelector((s) => s.comments.byPostId[post._id]);
+  
+  // Use Redux comments if available, otherwise fall back to post.comments
+  const commentCount = comments?.length ?? post.comments?.length ?? 0;
+
   const likeCount = localLikes?.length || 0;
+
   const isLiked = useMemo(
     () => localLikes?.includes(currentUser?._id),
     [localLikes, currentUser]
@@ -104,12 +124,22 @@ const FeedCard = ({ post }) => {
           </div>
 
           {/* COMMENT */}
-          <div className="flex items-center px-2 py-1.5">
-            <MessageCircle className="size-5 cursor-pointer hover:text-blue-500" />
+          <div
+            className="flex items-center px-2 py-1.5 cursor-pointer"
+            onClick={() => setShowComments(true)}
+          >
+            <MessageCircle className="size-5 hover:text-blue-500" />
             <span className="ml-1 text-sm font-medium">
-              {formatNumber(post.comments?.length || 0)}
+              {formatNumber(commentCount || 0)}
             </span>
           </div>
+
+          {showComments && (
+            <CommentModal
+              postId={post._id}
+              onClose={() => setShowComments(false)}
+            />
+          )}
 
           <button>
             <Share2 className="size-5 cursor-pointer hover:text-green-500" />

@@ -184,6 +184,7 @@ const postSlice = createSlice({
     userPost.likesCount = likes;
   }
 })
+
       ;
   },
 });
