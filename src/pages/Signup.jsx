@@ -4,8 +4,12 @@ import { useState } from "react";
 import { registerUser } from "../redux/authSlice";
 import { toast } from "react-hot-toast";
 
+const isValidGmail = (email) => {
+  const gmailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+  return gmailPattern.test(email);
+};
+
 const Signup = () => {
-  // state variables
   const [form, setForm] = useState({
     name: "",
     username: "",
@@ -13,16 +17,11 @@ const Signup = () => {
     password: "",
   });
 
-  // redux
-  const { loading, error, isAuthenticated } = useSelector(
-    (state) => state.auth
-  );
+  const { loading, error } = useSelector((state) => state.auth);
 
-  // hooks
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // handlers
   const handleChange = (e) => {
     setForm((prev) => ({
       ...prev,
@@ -30,27 +29,54 @@ const Signup = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    dispatch(registerUser(form)).then((res) => {
+    const { name, username, email, password } = form;
+
+    // Basic validations
+    if (!name || !username || !email.trim() || !password) {
+      toast.error("Please fill all fields");
+      return;
+    }
+
+    // Gmail-only validation
+    if (!isValidGmail(email)) {
+      toast.error("Please use a valid Gmail address");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    try {
+      const res = await dispatch(registerUser(form));
+
       if (res.meta.requestStatus === "fulfilled") {
-        toast.success("Account created successfully!");
-        navigate("/home");
+        toast.success("Account created! Check your Gmail for the OTP.");
+        // Navigate to OTP / email verification page
+        navigate("/email-verification", { state: { email } });
       } else {
         toast.error(res.payload || "Signup failed");
       }
-    });
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong. Please try again.");
+    }
   };
 
-  // JSX
   return (
     <form
       onSubmit={handleSubmit}
       className="flex flex-col gap-4 min-h-screen w-full justify-center items-center"
     >
       <div className="flex flex-col w-full max-w-sm border rounded text-center p-6 gap-8">
-        <h1 className="text-4xl">Welcome, to GeeksGram!</h1>
+        <h1 className="text-3xl font-semibold">Welcome to GeeksGram</h1>
+        <p className="text-sm text-gray-500">
+          Sign up with your Gmail to get started.
+        </p>
 
         <div className="flex flex-col gap-4">
           <input
@@ -58,8 +84,8 @@ const Signup = () => {
             type="text"
             value={form.name}
             onChange={handleChange}
-            placeholder="Name"
-            className="p-4 border rounded"
+            placeholder="Full Name"
+            className="p-3 border rounded outline-none focus:border-blue-500"
           />
           <input
             name="username"
@@ -67,15 +93,15 @@ const Signup = () => {
             value={form.username}
             onChange={handleChange}
             placeholder="Username"
-            className="p-4 border rounded"
+            className="p-3 border rounded outline-none focus:border-blue-500"
           />
           <input
             name="email"
             type="email"
             value={form.email}
             onChange={handleChange}
-            placeholder="Email"
-            className="p-4 border rounded"
+            placeholder="Gmail"
+            className="p-3 border rounded outline-none focus:border-blue-500"
           />
           <input
             name="password"
@@ -83,25 +109,26 @@ const Signup = () => {
             value={form.password}
             onChange={handleChange}
             placeholder="Password"
-            className="p-4 border rounded"
+            className="p-3 border rounded outline-none focus:border-blue-500"
           />
         </div>
 
+        {/* Backend error (e.g., username already exists) */}
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="border p-4 rounded-2xl cursor-pointer"
+          className="border p-3 rounded-2xl cursor-pointer bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition"
         >
-          {loading ? "Signing up..." : "Sign Up"}
+          {loading ? "Creating account..." : "Sign Up"}
         </button>
       </div>
 
-      <div className="border rounded py-4 px-6 w-full max-w-sm text-center">
+      <div className="border rounded py-4 px-6 w-full max-w-sm text-center mt-2">
         <p>
-          Have an Account?{" "}
-          <Link to="/" className="hover:underline">
+          Already have an account?{" "}
+          <Link to="/" className="hover:underline text-blue-500">
             Login
           </Link>
         </p>

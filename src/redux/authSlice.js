@@ -33,6 +33,19 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+// 🔹 Verify Email (OTP)
+export const verifyEmail = createAsyncThunk(
+  "auth/verifyEmail",
+  async ({ email, otp }, { rejectWithValue }) => {
+    try {
+      const res = await axios.post(`${API_URL}/email-verification`, { email, otp });
+      return res.data; // contains token + user
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Verification failed");
+    }
+  }
+);
+
 // 🔹 Login
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
@@ -160,8 +173,6 @@ export const fetchCurrentUserProfile = createAsyncThunk(
   }
 );
 
-
-
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -182,28 +193,47 @@ const authSlice = createSlice({
     builder
       // Register
       .addCase(registerUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+      state.loading = true;
+  state.error = null;
+  state.user = null;
+  state.token = null;
+  state.isAuthenticated = false;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = {
-          _id: action.payload._id,
-          name: action.payload.name,
-          username: action.payload.username,
-          email: action.payload.email,
-          createdAt: action.payload.createdAt,
-        };
-        state.token = action.payload.token;
-        state.isAuthenticated = true;
+     .addCase(registerUser.fulfilled, (state, action) => {
+  state.loading = false;
+  state.error = null;
 
-        localStorage.setItem("user", JSON.stringify(state.user));
-        localStorage.setItem("token", state.token);
-      })
+  // user must verify first, do not authenticate here
+  state.user = null;
+  state.token = null;
+  state.isAuthenticated = false;
+})
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Register failed";
       })
+
+      // Verify Email
+      .addCase(verifyEmail.pending, (state) => {
+  state.loading = true;
+  state.error = null;
+})
+
+.addCase(verifyEmail.fulfilled, (state, action) => {
+  state.loading = false;
+  state.error = null;
+  state.user = action.payload.user;
+  state.token = action.payload.token;
+  state.isAuthenticated = true;
+
+  localStorage.setItem("user", JSON.stringify(action.payload.user));
+  localStorage.setItem("token", action.payload.token);
+})
+
+.addCase(verifyEmail.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload || "Verification failed";
+})
 
       // Login
       .addCase(loginUser.pending, (state) => {
