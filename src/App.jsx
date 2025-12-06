@@ -13,11 +13,12 @@ import Notifications from "./pages/Notifications";
 import Messages from "./pages/Messages";
 import Search from "./pages/Search";
 import EmailVerification from "./pages/EmailVerification";
-import EnterEmail from "./pages/EnterEmail";
+import EnterResetOtp from "./pages/EnterResetOtp";
 import Edit from "./pages/Edit";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UserProfile from "./components/UserProfile";
 import ChatBoxMobile from "./components/ChatboxMobile";
+import ResetPassword from "./pages/ResetPassword";
 
 const App = () => {
   const { user } = useSelector((state) => state.auth);
@@ -48,6 +49,8 @@ const App = () => {
     <>
       <Routes>
         <Route path="*" element={<NotFound />}></Route>
+        <Route path="/reset-password" element={<ResetPassword />}></Route>
+        <Route path="/reset-otp" element={<EnterResetOtp />}></Route>
         <Route
           path="/home"
           element={
@@ -95,7 +98,7 @@ const App = () => {
           path="/email-verification"
           element={<EmailVerification />}
         ></Route>
-        <Route path="/enter-email" element={<EnterEmail />}></Route>
+        <Route path="/enter-reset-otp" element={<EnterResetOtp />}></Route>
         <Route
           path="edit-profile"
           element={
