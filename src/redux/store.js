@@ -4,6 +4,7 @@ import postReducer from "./postSlice.js";
 import publicUserReducer from "./userSlice.js";
 import userSearchReducer from "./userSearchSlice.js";
 import commentReducer from "./commentSlice.js";
+import notificationReducer from "./notificationSlice.js";
 
 export const store = configureStore({
   reducer: {
@@ -12,5 +13,6 @@ export const store = configureStore({
     publicUser: publicUserReducer,
      userSearch: userSearchReducer,
     comments: commentReducer,
+    notifications: notificationReducer,
   },
 });

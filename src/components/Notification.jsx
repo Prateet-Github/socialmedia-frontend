@@ -1,44 +1,92 @@
-import { Bell } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { markAllRead } from "../redux/notificationSlice";
+import { formatTime } from "../utils/time";
+import { useNavigate } from "react-router-dom";
+import { getDiceBearAvatar } from "../utils/dicebear";
 
 const Notification = () => {
-  // JSX
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { items, loading } = useSelector((s) => s.notifications);
+
+  useEffect(() => {
+    dispatch(markAllRead());
+  }, [dispatch]);
+
   return (
-    <>
-      {/* Header - separate from notification items */}
-      <div className="dark:border-gray-800 py-4 px-6 sticky top-0 bg-white dark:bg-black z-10">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-          Notifications
-        </h1>
+    <div className="p-4 space-y-4">
+      <h1 className="text-2xl font-bold">Notifications</h1>
+
+      {loading && <p className="text-gray-500">Loading…</p>}
+
+      {!loading && items.length === 0 && (
+        <p className="text-gray-500 text-center mt-10">
+          No notifications yet
+        </p>
+      )}
+
+      <div className="space-y-2">
+        {items.map((n) => {
+          const avatar =
+            n.fromUser?.avatar || getDiceBearAvatar(n.fromUser?.name);
+
+          return (
+            <div
+              key={n._id}
+              onClick={() => {
+                if (n.post?._id) navigate(`/post/${n.post._id}`);
+              }}
+              className={`flex gap-3 items-center p-3 rounded-xl border cursor-pointer 
+              hover:bg-gray-100 dark:hover:bg-gray-800 transition
+              ${
+                !n.read
+                  ? "border-blue-400"
+                  : "border-gray-300 dark:border-gray-700"
+              }
+            `}
+            >
+              {/* avatar */}
+              <img
+                src={avatar}
+                alt="pfp"
+                className="w-10 h-10 rounded-full object-cover"
+              />
+
+              <div className="flex flex-col flex-1">
+                <p className="text-sm leading-tight">
+                  <span className="font-semibold mr-1">
+                    {n.fromUser?.username}
+                  </span>
+
+                  {n.type === "like" && "liked your post"}
+                  {n.type === "comment" && "commented on your post"}
+                  {n.type === "follow" && "followed you"}
+                </p>
+
+                {/* post thumbnail if any */}
+                {n.post?.media?.[0] && (
+                  <img
+                    src={n.post.media[0]}
+                    className="w-14 h-14 rounded-lg object-cover mt-2"
+                  />
+                )}
+
+                <span className="text-xs text-gray-500">
+                  {formatTime(n.createdAt)}
+                </span>
+              </div>
+
+              {/* unread indicator */}
+              {!n.read && (
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+              )}
+            </div>
+          );
+        })}
       </div>
-      {/* Notification Item */}
-      <article className="border-b border-gray-200 dark:border-gray-800 p-4 flex items-center gap-3 w-full hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors cursor-pointer">
-        <Bell className="size-8 text-blue-500 dark:text-blue-400 shrink-0 mt-1" />
-        <p className="text-sm sm:text-base text-gray-800 dark:text-gray-200">
-          <span className="font-semibold hover:underline cursor-pointer text-gray-900 dark:text-white">
-            @prateettiwari
-          </span>{" "}
-          posted.
-        </p>
-      </article>
-      <article className="border-b border-gray-200 dark:border-gray-800 p-4 flex items-center gap-3 w-full hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors cursor-pointer">
-        <Bell className="size-8 text-blue-500 dark:text-blue-400 shrink-0 mt-1" />
-        <p className="text-sm sm:text-base text-gray-800 dark:text-gray-200">
-          <span className="font-semibold hover:underline cursor-pointer text-gray-900 dark:text-white">
-            @viratkohli
-          </span>{" "}
-          liked your post.
-        </p>
-      </article>{" "}
-      <article className="border-b border-gray-200 dark:border-gray-800 p-4 flex items-center gap-3 w-full hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors cursor-pointer">
-        <Bell className="size-8 text-blue-500 dark:text-blue-400 shrink-0 mt-1" />
-        <p className="text-sm sm:text-base text-gray-800 dark:text-gray-200">
-          <span className="font-semibold hover:underline cursor-pointer text-gray-900 dark:text-white">
-            @rohitsharma
-          </span>{" "}
-          liked your post.
-        </p>
-      </article>{" "}
-    </>
+    </div>
   );
 };
 

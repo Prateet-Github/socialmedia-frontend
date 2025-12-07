@@ -19,8 +19,11 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import UserProfile from "./components/UserProfile";
 import ChatBoxMobile from "./components/ChatboxMobile";
 import ResetPassword from "./pages/ResetPassword";
+import { useDispatch } from "react-redux";
+import { fetchNotifications } from "./redux/notificationSlice";
 
 const App = () => {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   useEffect(() => {
     if (user?._id) {
@@ -44,6 +47,10 @@ const App = () => {
       socket.off("connect");
     };
   }, [user?._id]);
+
+ useEffect(() => {
+  dispatch(fetchNotifications());
+}, [dispatch]);
 
   return (
     <>

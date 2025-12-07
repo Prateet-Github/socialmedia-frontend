@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import {
   Bell,
@@ -16,31 +16,43 @@ import {
 import PostCard from "./PostCard";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/authSlice";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { getDiceBearAvatar } from "../utils/dicebear";
 import { APP_NAME } from "../utils/constants";
 import useClickOutside from "../hooks/useClickOutside";
 
+// 🔥 import unread selector
+import { selectUnreadCount } from "../redux/notificationSlice";
+
 const Left = ({ showLabels = true }) => {
-  // state variables
   const [isUp, setIsUp] = useState(false);
   const [showPostCard, setShowPostCard] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
 
-  // redux
   const { user } = useSelector((state) => state.auth);
 
-  // hooks
+  // 🔥 unread notifications
+  const unreadCount = useSelector(selectUnreadCount);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // click outside hook for dropdown
   const dropdownRef = useClickOutside(() => setIsUp(false));
 
-  // handlers
   const handleLinkClick = () => {
     setIsMobileMenuOpen(false);
+  };
+
+  const handleNavClick = (to) => {
+    // If already on the page, refresh it
+    if (location.pathname === to) {
+      window.location.reload();
+    } else {
+      navigate(to);
+    }
+    handleLinkClick();
   };
 
   const handleLogout = () => {
@@ -50,33 +62,28 @@ const Left = ({ showLabels = true }) => {
     navigate("/");
   };
 
-  // nav items
   const navItems = [
     { to: "/home", icon: Home, label: "Home" },
     { to: "/search", icon: Search, label: "Search" },
+
+    // 🔥 replace icon later
     { to: "/notification", icon: Bell, label: "Notifications" },
+
     { to: "/messages", icon: Mail, label: "Messages" },
     { to: "/profile", icon: User2, label: "Profile" },
     { to: "/edit-profile", icon: Edit, label: "Edit Profile" },
   ];
 
-  // JSX
   return (
     <>
-      {/* Mobile Menu Button - Fixed at top */}
+      {/* mobile button */}
       <button
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         className="lg:hidden fixed top-2 left-2 z-50 p-2 rounded-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-800 shadow-lg"
-        aria-label="Toggle menu"
       >
-        {isMobileMenuOpen ? (
-          <X className="size-6" />
-        ) : (
-          <Menu className="size-6" />
-        )}
+        {isMobileMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
       </button>
 
-      {/* Overlay for mobile */}
       {isMobileMenuOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black/50 z-40"
@@ -84,7 +91,6 @@ const Left = ({ showLabels = true }) => {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`
           fixed lg:sticky top-6 left-0 h-screen z-40
@@ -92,24 +98,17 @@ const Left = ({ showLabels = true }) => {
           bg-white dark:bg-black
           border-r border-gray-200 dark:border-gray-800
           transition-transform duration-300 ease-in-out
-          ${
-            isMobileMenuOpen
-              ? "translate-x-0"
-              : "-translate-x-full lg:translate-x-0"
-          }
+          ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
           w-64 lg:w-auto
         `}
       >
         <div className="flex flex-col gap-2">
-          <Link
-            to="/home"
+          <button
             onClick={() => {
-              handleLinkClick();
+              handleNavClick("/home");
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className={`flex items-center ${
-              showLabels ? "justify-start" : "justify-center"
-            } gap-3 p-2 rounded-2xl hover:opacity-90`}
+            className="flex items-center gap-3 p-2 cursor-pointer"
           >
             <Instagram className="size-8 shrink-0 text-blue-500" />
             {showLabels && (
@@ -117,49 +116,47 @@ const Left = ({ showLabels = true }) => {
                 {APP_NAME}
               </span>
             )}
-          </Link>
+          </button>
 
           {navItems.map(({ to, icon: Icon, label }) => (
-            <Link
+            <button
               key={label}
-              title={label}
-              to={to}
-              onClick={handleLinkClick}
-              className={`flex items-center ${
-                showLabels ? "justify-start" : "justify-center"
-              } gap-3 p-2 rounded-2xl dark:hover:bg-gray-800 hover:bg-gray-200 cursor-pointer`}
+              onClick={() => handleNavClick(to)}
+              className="flex items-center gap-3 p-2 rounded-2xl dark:hover:bg-gray-800 hover:bg-gray-200 w-full text-left"
             >
-              <Icon className="size-6 shrink-0" />
-              {showLabels && (
-                <span className="text-xl whitespace-nowrap">{label}</span>
+              {/* 🔥 custom notification icon with badge */}
+              {label === "Notifications" ? (
+                <div className="relative">
+                  <Bell className="size-6" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full px-1.5 py-0">
+                      {unreadCount}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <Icon className="size-6" />
               )}
-            </Link>
+
+              {showLabels && <span className="text-xl">{label}</span>}
+            </button>
           ))}
 
           <button
-            title="Create Post"
-            className="w-full"
             onClick={() => {
               setShowPostCard(true);
               setIsMobileMenuOpen(false);
             }}
+            className="w-full"
           >
-            <div
-              className={`flex ${
-                showLabels ? "justify-start" : "justify-center"
-              } items-center gap-3 p-2 rounded-full bg-blue-600 hover:bg-blue-700 cursor-pointer`}
-            >
-              <Plus className="size-6 shrink-0 text-white" />
-              {showLabels && (
-                <span className="text-xl text-white whitespace-nowrap">
-                  Create Post
-                </span>
-              )}
+            <div className="flex items-center gap-3 p-2 rounded-full bg-blue-600 hover:bg-blue-700">
+              <Plus className="size-6 text-white" />
+              {showLabels && <span className="text-xl text-white">Create Post</span>}
             </div>
           </button>
         </div>
 
-        {/* FIXED: Wrapped both button and dropdown in ref container */}
+        {/* user dropdown */}
         <div ref={dropdownRef} className="relative w-full">
           <button onClick={() => setIsUp(!isUp)} className="w-full">
             <div
@@ -215,7 +212,6 @@ const Left = ({ showLabels = true }) => {
         </div>
       </aside>
 
-      {/* PostCard Modal - Rendered outside sidebar at root level */}
       {showPostCard && <PostCard onClose={() => setShowPostCard(false)} />}
     </>
   );
