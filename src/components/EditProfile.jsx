@@ -90,7 +90,7 @@ const EditProfile = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate(-1)}
-              className="hover:bg-gray-900 p-2 rounded-full transition-colors"
+              className="dark:hover:bg-gray-800 hover:bg-gray-200 p-2 rounded-full transition-colors"
             >
               <ArrowLeft className="size-5" />
             </button>
@@ -99,7 +99,7 @@ const EditProfile = () => {
           <button
             onClick={handleSave}
             disabled={loading}
-            className="text-blue-500 cursor-pointer hover:text-blue-400 font-semibold text-sm md:text-base transition-colors disabled:opacity-60"
+            className="text-blue-500 cursor-pointer hover:text-blue-600 font-semibold text-sm md:text-base transition-colors disabled:opacity-60"
           >
             {loading ? "Saving..." : "Done"}
           </button>
@@ -133,7 +133,7 @@ const EditProfile = () => {
           </div>
           <label
             htmlFor="pfp"
-            className="text-blue-500 text-sm font-semibold cursor-pointer hover:text-blue-400 transition-colors"
+            className="text-blue-500 text-sm font-semibold cursor-pointer hover:text-blue-600 transition-colors"
           >
             Change Profile Photo
           </label>

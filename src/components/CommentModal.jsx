@@ -11,8 +11,12 @@ const CommentModal = ({ postId, onClose }) => {
   const [text, setText] = useState("");
   const [submitError, setSubmitError] = useState("");
   const listRef = useRef(null);
-  
-  const { user: currentUser, token, isAuthenticated } = useSelector((state) => state.auth);
+
+  const {
+    user: currentUser,
+    token,
+    isAuthenticated,
+  } = useSelector((state) => state.auth);
 
   const comments = useSelector((state) => {
     const arr = state.comments.byPostId[postId];
@@ -23,9 +27,7 @@ const CommentModal = ({ postId, onClose }) => {
     (state) => state.comments.loadingByPostId[postId]
   );
 
-  const error = useSelector(
-    (state) => state.comments.errorByPostId[postId]
-  );
+  const error = useSelector((state) => state.comments.errorByPostId[postId]);
 
   // fetch comments when modal opens
   useEffect(() => {
@@ -59,18 +61,18 @@ const CommentModal = ({ postId, onClose }) => {
   };
 
   return (
-    <div 
-      className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
-      <div 
-        className="bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl flex flex-col max-h-[85vh] shadow-2xl"
+      <div
+        className="bg-white dark:bg-black border border-gray-300 dark:border-gray-800 w-full max-w-lg rounded-2xl flex flex-col max-h-[85vh] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800">
           <h2 className="font-semibold text-lg">Comments</h2>
-          <button 
+          <button
             onClick={onClose}
             className="hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full p-1.5 transition-colors"
           >
@@ -79,10 +81,7 @@ const CommentModal = ({ postId, onClose }) => {
         </div>
 
         {/* comments list */}
-        <div
-          ref={listRef}
-          className="flex-1 overflow-y-auto px-5 py-4"
-        >
+        <div ref={listRef} className="flex-1 overflow-y-auto px-5 py-4">
           {loading && (
             <div className="flex items-center justify-center py-8">
               <p className="text-sm text-gray-500">Loading comments...</p>
@@ -145,7 +144,9 @@ const CommentModal = ({ postId, onClose }) => {
           {submitError && (
             <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
               <AlertCircle className="size-4 text-red-500 shrink-0" />
-              <p className="text-sm text-red-600 dark:text-red-400">{submitError}</p>
+              <p className="text-sm text-red-600 dark:text-red-400">
+                {submitError}
+              </p>
             </div>
           )}
 
@@ -153,7 +154,9 @@ const CommentModal = ({ postId, onClose }) => {
           {!isAuthenticated && (
             <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
               <AlertCircle className="size-4 text-yellow-600 shrink-0" />
-              <p className="text-sm text-yellow-700 dark:text-yellow-400">Please log in to comment</p>
+              <p className="text-sm text-yellow-700 dark:text-yellow-400">
+                Please log in to comment
+              </p>
             </div>
           )}
 
@@ -161,7 +164,9 @@ const CommentModal = ({ postId, onClose }) => {
             {/* Current user avatar */}
             {currentUser && (
               <img
-                src={currentUser?.avatar || getDiceBearAvatar(currentUser?.name)}
+                src={
+                  currentUser?.avatar || getDiceBearAvatar(currentUser?.name)
+                }
                 alt="your avatar"
                 className="w-8 h-8 rounded-full object-cover shrink-0"
               />
@@ -172,12 +177,14 @@ const CommentModal = ({ postId, onClose }) => {
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
+                if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   handleSubmit(e);
                 }
               }}
-              placeholder={isAuthenticated ? "Add a comment..." : "Log in to comment"}
+              placeholder={
+                isAuthenticated ? "Add a comment..." : "Log in to comment"
+              }
               disabled={!isAuthenticated}
               className="flex-1 px-4 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-full outline-none focus:border-blue-500 dark:focus:border-blue-500 bg-transparent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             />

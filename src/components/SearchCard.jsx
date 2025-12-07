@@ -45,8 +45,8 @@ const Search = () => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search users..."
-        className="w-full border border-gray-600 p-3 rounded-full bg-transparent"
+        placeholder="Search for users..."
+        className="w-full border border-gray-300 dark:border-gray-700 p-3 rounded-full outline-none focus:ring-2 focus:ring-blue-500 bg-transparent"
       />
 
       <div className="mt-5 flex flex-col gap-4">

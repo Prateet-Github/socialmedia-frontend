@@ -48,9 +48,9 @@ const App = () => {
     };
   }, [user?._id]);
 
- useEffect(() => {
-  dispatch(fetchNotifications());
-}, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchNotifications());
+  }, [dispatch]);
 
   return (
     <>
@@ -71,6 +71,14 @@ const App = () => {
         <Route path="signup" element={<Signup />}></Route>
         <Route
           path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        ></Route>
+        <Route
+          path="/profile/post/:postId"
           element={
             <ProtectedRoute>
               <Profile />

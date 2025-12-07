@@ -24,14 +24,14 @@ const FeedCard = ({ post }) => {
     const commentsInStore = dispatch((_, getState) => {
       return getState().comments.byPostId[post._id];
     });
-    
+
     if (!commentsInStore) {
       dispatch(fetchComments(post._id));
     }
   }, [dispatch, post._id]);
 
   const comments = useSelector((s) => s.comments.byPostId[post._id]);
-  
+
   // Use Redux comments if available, otherwise fall back to post.comments
   const commentCount = comments?.length ?? post.comments?.length ?? 0;
 
@@ -88,7 +88,7 @@ const FeedCard = ({ post }) => {
             {post?.user?.name}
           </h1>
           <span>•</span>
-          <p className="text-gray-600 text-xs md:text-sm shrink-0">
+          <p className="text-gray-600 dark:text-gray-400 text-xs md:text-sm shrink-0">
             {formatTime(post.createdAt)}
           </p>
         </div>
@@ -102,7 +102,7 @@ const FeedCard = ({ post }) => {
 
         {/* Image */}
         {post.media?.length > 0 && (
-          <div className="border border-gray-600 max-h-140 w-fit overflow-hidden rounded-xl md:rounded-2xl">
+          <div className="border border-gray-200 dark:border-gray-800 max-h-140 w-fit overflow-hidden rounded-xl md:rounded-2xl">
             <img src={post.media[0]} className="w-full h-full object-contain" />
           </div>
         )}

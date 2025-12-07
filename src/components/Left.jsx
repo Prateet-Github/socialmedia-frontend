@@ -1,4 +1,4 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import {
   Bell,
@@ -8,7 +8,6 @@ import {
   Search,
   User2,
   Plus,
-  Instagram,
   Edit,
   Menu,
   X,
@@ -20,6 +19,7 @@ import { toast } from "react-hot-toast";
 import { getDiceBearAvatar } from "../utils/dicebear";
 import { APP_NAME } from "../utils/constants";
 import useClickOutside from "../hooks/useClickOutside";
+import Logo from "./Logo";
 
 // 🔥 import unread selector
 import { selectUnreadCount } from "../redux/notificationSlice";
@@ -28,7 +28,6 @@ const Left = ({ showLabels = true }) => {
   const [isUp, setIsUp] = useState(false);
   const [showPostCard, setShowPostCard] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
 
   const { user } = useSelector((state) => state.auth);
 
@@ -81,7 +80,11 @@ const Left = ({ showLabels = true }) => {
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         className="lg:hidden fixed top-2 left-2 z-50 p-2 rounded-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-800 shadow-lg"
       >
-        {isMobileMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
+        {isMobileMenuOpen ? (
+          <X className="size-6" />
+        ) : (
+          <Menu className="size-6" />
+        )}
       </button>
 
       {isMobileMenuOpen && (
@@ -93,36 +96,45 @@ const Left = ({ showLabels = true }) => {
 
       <aside
         className={`
-          fixed lg:sticky top-6 left-0 h-screen z-40
-          flex flex-col justify-between py-6 px-4 
+          fixed lg:sticky top-0 left-0 h-screen z-40
+          flex flex-col justify-between pb-4 pt-12 px-4 
           bg-white dark:bg-black
           border-r border-gray-200 dark:border-gray-800
           transition-transform duration-300 ease-in-out
-          ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+          ${
+            isMobileMenuOpen
+              ? "translate-x-0"
+              : "-translate-x-full lg:translate-x-0"
+          }
           w-64 lg:w-auto
         `}
       >
-        <div className="flex flex-col gap-2">
-          <button
+        <div className="flex flex-col gap-3">
+          {/* Logo */}
+          <div
             onClick={() => {
-              handleNavClick("/home");
-              window.scrollTo({ top: 0, behavior: "smooth" });
+              // Check if already on home page
+              if (location.pathname === "/home") {
+                window.location.reload();
+              } else {
+                navigate("/home");
+              }
+              setIsMobileMenuOpen(false);
             }}
-            className="flex items-center gap-3 p-2 cursor-pointer"
+            className="flex items-center gap-3 cursor-pointer mb-4 hover:opacity-80 transition-opacity"
           >
-            <Instagram className="size-8 shrink-0 text-blue-500" />
+            <Logo size={40} />
             {showLabels && (
-              <span className="text-blue-500 font-bold text-xl whitespace-nowrap">
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">
                 {APP_NAME}
               </span>
             )}
-          </button>
-
+          </div>
           {navItems.map(({ to, icon: Icon, label }) => (
             <button
               key={label}
               onClick={() => handleNavClick(to)}
-              className="flex items-center gap-3 p-2 rounded-2xl dark:hover:bg-gray-800 hover:bg-gray-200 w-full text-left"
+              className="flex items-center cursor-pointer gap-4 p-3 rounded-full dark:hover:bg-white/10 hover:bg-black/10 w-full text-left"
             >
               {/* 🔥 custom notification icon with badge */}
               {label === "Notifications" ? (
@@ -143,15 +155,18 @@ const Left = ({ showLabels = true }) => {
           ))}
 
           <button
+            title="Create Post"
             onClick={() => {
               setShowPostCard(true);
               setIsMobileMenuOpen(false);
             }}
-            className="w-full"
+            className="w-full cursor-pointer"
           >
-            <div className="flex items-center gap-3 p-2 rounded-full bg-blue-600 hover:bg-blue-700">
+            <div className="flex items-center gap-3 p-3 rounded-full bg-blue-500 hover:bg-blue-600">
               <Plus className="size-6 text-white" />
-              {showLabels && <span className="text-xl text-white">Create Post</span>}
+              {showLabels && (
+                <span className="text-xl text-white">Create Post</span>
+              )}
             </div>
           </button>
         </div>
@@ -163,7 +178,7 @@ const Left = ({ showLabels = true }) => {
               title="Options"
               className={`flex ${
                 showLabels ? "justify-between" : "justify-center"
-              } items-center gap-3 p-2 rounded-full dark:hover:bg-gray-800 hover:bg-gray-200 cursor-pointer`}
+              } items-center p-2 rounded-full dark:hover:bg-white/10 hover:bg-black/10 cursor-pointer`}
             >
               <img
                 src={user?.avatar || getDiceBearAvatar(user?.name)}

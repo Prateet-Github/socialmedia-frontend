@@ -47,7 +47,7 @@ const ProfileCard = () => {
           <button
             onClick={() => setIsUp(!isUp)}
             title="Profile Info"
-            className="hover:opacity-90 transition"
+            className="hover:opacity-90 transition cursor-pointer"
           >
             <img
               src={user?.avatar || getDiceBearAvatar(user?.name)}
@@ -75,7 +75,7 @@ const ProfileCard = () => {
           <div className="flex gap-4 justify-center md:justify-start">
             <button
               onClick={() => handleStatClick("posts")}
-              className={`hover:underline ${
+              className={`hover:underline cursor-pointer ${
                 activeTab === "posts" ? "text-blue-500" : ""
               }`}
             >
@@ -86,7 +86,7 @@ const ProfileCard = () => {
             </button>
             <button
               onClick={() => handleStatClick("followers")}
-              className={`hover:underline ${
+              className={`hover:underline cursor-pointer ${
                 activeTab === "followers" ? "text-blue-500" : ""
               }`}
             >
@@ -97,7 +97,7 @@ const ProfileCard = () => {
             </button>
             <button
               onClick={() => handleStatClick("following")}
-              className={`hover:underline ${
+              className={`hover:underline cursor-pointer ${
                 activeTab === "following" ? "text-blue-500" : ""
               }`}
             >
@@ -118,7 +118,7 @@ const ProfileCard = () => {
             <button
               title="Create Post"
               onClick={() => setShowPostCard(true)}
-              className="flex-1 text-white py-2 px-4 rounded-xl  bg-blue-500 hover:bg-blue-600 transition"
+              className="flex-1 cursor-pointer text-white py-2 px-4 rounded-xl  bg-blue-500 hover:bg-blue-600 transition"
             >
               Create Post
             </button>
@@ -126,7 +126,7 @@ const ProfileCard = () => {
             {/* EDIT PROFILE BUTTON */}
             <button
               onClick={() => navigate("/edit-profile")}
-              className="flex-1 text-white py-2 px-4 rounded-xl bg-blue-500 hover:bg-blue-600 transition"
+              className="flex-1 cursor-pointer text-white py-2 px-4 rounded-xl bg-blue-500 hover:bg-blue-600 transition"
             >
               Edit Profile
             </button>
@@ -135,7 +135,7 @@ const ProfileCard = () => {
       </div>
 
       {/* Tabs Section */}
-      <div className="border-t dark:border-gray-800 pt-6">
+      <div className="border-t border-gray-300 dark:border-gray-700 pt-6">
         {/* Posts Tab */}
         {activeTab === "posts" && (
           <div className="flex flex-col gap-6">

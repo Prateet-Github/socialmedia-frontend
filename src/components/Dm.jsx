@@ -15,7 +15,7 @@ const Dm = ({ onSelectChat }) => {
     const fetchChats = async () => {
       try {
         const res = await axios.get(API_URL, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
         setChats(res.data);
       } catch (err) {
