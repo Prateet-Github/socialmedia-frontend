@@ -12,11 +12,12 @@ export default function ChatBoxMobile() {
   const navigate = useNavigate();
   const { token } = useSelector((s) => s.auth);
 
+  // if chat object was passed via navigate (from Dm list)
   const [chat, setChat] = useState(location.state?.chat || null);
   const [loading, setLoading] = useState(!location.state?.chat);
 
   useEffect(() => {
-    // chat already passed → no need to fetch
+    // if chat was passed already, no need to fetch
     if (location.state?.chat) return;
 
     const fetchChat = async () => {
@@ -24,7 +25,6 @@ export default function ChatBoxMobile() {
         const res = await axios.get(`${API}/chats/${chatId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         setChat(res.data);
       } catch (err) {
         console.error("❌ Failed to fetch chat:", err);
@@ -35,14 +35,16 @@ export default function ChatBoxMobile() {
     };
 
     fetchChat();
-  }, []);
+  }, [chatId, token, navigate, location.state?.chat]);
 
-  if (loading)
+  if (loading || !chat) {
     return (
       <div className="h-screen flex items-center justify-center text-gray-500">
         Loading chat…
       </div>
     );
+  }
 
+  // ChatBox already contains all voice/video call popups + modals
   return <ChatBox chat={chat} />;
 }
