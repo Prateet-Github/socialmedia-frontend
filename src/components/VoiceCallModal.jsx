@@ -32,31 +32,6 @@ export default function VoiceCallModal({
   const formatTime = (sec) =>
     new Date(sec * 1000).toISOString().substring(14, 19);
 
-  // ---------------- MICROPHONE ----------------
-  useEffect(() => {
-    const startMedia = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-          video: false,
-        });
-
-        localStream.current = stream;
-
-        if (isCaller) {
-          startCall();
-        } else if (incomingOffer) {
-          handleOffer(incomingOffer, incomingCallerSocketId);
-        }
-      } catch (err) {
-        alert("Microphone access denied.");
-        onClose();
-      }
-    };
-
-    startMedia();
-  }, []);
-
   // ---------------- CREATE PEER ----------------
   const createPeer = () => {
     const peer = new RTCPeerConnection({
@@ -76,6 +51,14 @@ export default function VoiceCallModal({
       }
     };
 
+    // 🔥 ADD: Listen for remote audio
+    peer.ontrack = (event) => {
+      console.log("📡 Received remote audio track");
+      const remoteAudio = new Audio();
+      remoteAudio.srcObject = event.streams[0];
+      remoteAudio.play().catch(err => console.error("Audio play error:", err));
+    };
+
     peerRef.current = peer;
   };
 
@@ -92,7 +75,7 @@ export default function VoiceCallModal({
       callerId,
     });
 
-    setCallStarted(true);
+    console.log("📞 Call initiated to:", calleeId);
   };
 
   // ---------------- RECEIVER → OFFER HANDLER ----------------
@@ -111,12 +94,42 @@ export default function VoiceCallModal({
     });
 
     setCallStarted(true);
+    console.log("✅ Answer sent to caller");
   };
+
+  // ---------------- MICROPHONE ----------------
+  useEffect(() => {
+    const startMedia = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: false,
+        });
+
+        localStream.current = stream;
+        console.log("🎤 Microphone access granted");
+
+        // Now call the functions after they're defined
+        if (isCaller) {
+          startCall();
+        } else if (incomingOffer) {
+          handleOffer(incomingOffer, incomingCallerSocketId);
+        }
+      } catch (err) {
+        console.error("Microphone error:", err);
+        alert("Microphone access denied.");
+        onClose();
+      }
+    };
+
+    startMedia();
+  }, []);
 
   // ---------------- CALLER → ANSWER RECEIVED ----------------
   useEffect(() => {
     const onAnswer = async ({ answer, fromSocketId }) => {
-      remoteSocketId.current = fromSocketId; // 🔥 FIX
+      console.log("📞 Received answer from:", fromSocketId);
+      remoteSocketId.current = fromSocketId;
       await peerRef.current.setRemoteDescription(answer);
       setCallStarted(true);
     };
@@ -129,6 +142,7 @@ export default function VoiceCallModal({
   useEffect(() => {
     const onICE = async (candidate) => {
       if (candidate && peerRef.current) {
+        console.log("🧊 Adding ICE candidate");
         await peerRef.current.addIceCandidate(candidate);
       }
     };
@@ -139,6 +153,7 @@ export default function VoiceCallModal({
 
   // ---------------- END CALL ----------------
   const endCall = () => {
+    console.log("📴 Ending call");
     if (remoteSocketId.current) {
       socket.emit("voice:end", { toSocketId: remoteSocketId.current });
     }
@@ -150,6 +165,7 @@ export default function VoiceCallModal({
 
   useEffect(() => {
     const onEnd = () => {
+      console.log("📴 Call ended by remote");
       peerRef.current?.close();
       localStream.current?.getTracks().forEach((t) => t.stop());
       onClose();
@@ -161,8 +177,12 @@ export default function VoiceCallModal({
 
   // ---------------- MUTE ----------------
   const toggleMic = () => {
-    setMicOn((prev) => !prev);
-    localStream.current?.getAudioTracks().forEach((t) => (t.enabled = !micOn));
+    const newMicState = !micOn;
+    setMicOn(newMicState);
+    localStream.current?.getAudioTracks().forEach((t) => {
+      t.enabled = newMicState;
+    });
+    console.log("🎤 Mic:", newMicState ? "ON" : "OFF");
   };
 
   // ---------------- UI ----------------
@@ -211,7 +231,7 @@ export default function VoiceCallModal({
             className="p-4 rounded-full bg-red-600 hover:bg-red-700"
             onClick={endCall}
           >
-            <Phone size={22} className="-rotate-45" />
+            <Phone size={22} className="rotate-135" />
           </button>
         </div>
       </div>

@@ -128,7 +128,7 @@ const CommentModal = ({ postId, onClose }) => {
                         {formatTime(c.createdAt)}
                       </span>
                     </div>
-                    <p className="text-sm whitespace-pre-wrap break-words">
+                    <p className="text-sm whitespace-pre-wrap wrap-break-words">
                       {c.content}
                     </p>
                   </div>

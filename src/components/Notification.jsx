@@ -166,7 +166,7 @@ const Notification = () => {
                 `}
               >
                 {/* Avatar with Icon Badge */}
-                <div className="relative flex-shrink-0">
+                <div className="relative shrink-0">
                   <img
                     src={avatar}
                     alt={n.fromUser?.username}
@@ -189,7 +189,7 @@ const Notification = () => {
                       </span>
                     </p>
                     {!n.read && (
-                      <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1"></div>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full shrink-0 mt-1"></div>
                     )}
                   </div>
 
