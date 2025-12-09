@@ -62,8 +62,8 @@ const EmailVerification = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="p-8 rounded shadow-md w-full max-w-md">
+      <div className="min-h-screen w-full flex items-center justify-center px-4">
+        <div className="p-8 rounded shadow-md w-full max-w-sm border border-gray-300 dark:border-gray-700">
           <h2 className="text-2xl font-bold mb-6 text-center">
             Gmail Verification
           </h2>
@@ -76,13 +76,13 @@ const EmailVerification = () => {
             onChange={(e) => setOtp(e.target.value)}
             type="text"
             placeholder="Verification Code"
-            className="w-full p-4 border rounded mb-6"
+            className="w-full p-4 border border-gray-300 dark:border-gray-700  rounded mb-6"
             required
           />
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white p-4 rounded hover:bg-blue-700 transition disabled:bg-blue-400"
+            className="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600 transition disabled:bg-blue-400"
             disabled={loading}
           >
             {loading ? "Verifying..." : "Verify Gmail"}
