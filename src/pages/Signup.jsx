@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { registerUser } from "../redux/authSlice";
 import { toast } from "react-hot-toast";
+import Logo from "../components/Logo";
 
 const isValidGmail = (email) => {
   const gmailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
@@ -72,9 +73,12 @@ const Signup = () => {
       onSubmit={handleSubmit}
       className="flex flex-col gap-4 min-h-screen w-full justify-center items-center"
     >
-      <div className="flex flex-col w-full max-w-sm border rounded text-center p-6 gap-8">
-        <h1 className="text-3xl font-semibold">Welcome to GeeksGram</h1>
-        <p className="text-sm text-gray-500">
+      <div className="flex flex-col w-full max-w-sm border border-gray-300 dark:border-gray-700 rounded-2xl text-center p-6 gap-4">
+        <div className="flex gap-4 justify-center items-center p-2 w-fit mx-auto">
+          <Logo size={50}></Logo>
+          <span className="font-bold text-4xl">GeeksGram</span>
+        </div>
+        <p className="text-sm font-semibold text-gray-400 dark:text-gray-500">
           Sign up with your Gmail to get started.
         </p>
 
@@ -85,7 +89,7 @@ const Signup = () => {
             value={form.name}
             onChange={handleChange}
             placeholder="Full Name"
-            className="p-3 border rounded outline-none focus:border-blue-500"
+            className="p-3 border  border-gray-300 dark:border-gray-700 rounded outline-none focus:border-blue-500"
           />
           <input
             name="username"
@@ -93,7 +97,7 @@ const Signup = () => {
             value={form.username}
             onChange={handleChange}
             placeholder="Username"
-            className="p-3 border rounded outline-none focus:border-blue-500"
+            className="p-3 border border-gray-300 dark:border-gray-700 rounded outline-none focus:border-blue-500"
           />
           <input
             name="email"
@@ -101,7 +105,7 @@ const Signup = () => {
             value={form.email}
             onChange={handleChange}
             placeholder="Gmail"
-            className="p-3 border rounded outline-none focus:border-blue-500"
+            className="p-3 border  border-gray-300 dark:border-gray-700 rounded outline-none focus:border-blue-500"
           />
           <input
             name="password"
@@ -109,7 +113,7 @@ const Signup = () => {
             value={form.password}
             onChange={handleChange}
             placeholder="Password"
-            className="p-3 border rounded outline-none focus:border-blue-500"
+            className="p-3 border  border-gray-300 dark:border-gray-700 rounded outline-none focus:border-blue-500"
           />
         </div>
 
@@ -119,13 +123,13 @@ const Signup = () => {
         <button
           type="submit"
           disabled={loading}
-          className="border p-3 rounded-2xl cursor-pointer bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition"
+          className="border  border-gray-300  dark:border-gray-700 p-3 rounded-2xl mt-1 cursor-pointer bg-blue-500 text-white hover:bg-blue-600 disabled:bg-blue-400 disabled:cursor-not-allowed transition"
         >
           {loading ? "Creating account..." : "Sign Up"}
         </button>
       </div>
 
-      <div className="border rounded py-4 px-6 w-full max-w-sm text-center mt-2">
+      <div className="border border-gray-300 dark:border-gray-700 rounded-2xl py-4 px-6 w-full max-w-sm text-center">
         <p>
           Already have an account?{" "}
           <Link to="/" className="hover:underline text-blue-500">

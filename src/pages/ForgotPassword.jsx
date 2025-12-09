@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import Logo from "../components/Logo";
 
 const isValidGmail = (email) => /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/users`;
@@ -35,12 +36,12 @@ const ForgotPassword = () => {
     <main className="flex flex-col min-h-screen w-full justify-center items-center px-4">
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col w-full max-w-sm border rounded text-center p-6 gap-6"
+        className="flex flex-col w-full max-w-sm border border-gray-300 dark:border-gray-700 rounded-2xl text-center p-6 gap-6"
       >
-        <h1 className="text-3xl font-semibold">Forgot Password?</h1>
+        <h2 className="text-2xl font-bold text-center">Reset Password</h2>
 
-        <p className="text-gray-400 text-sm">
-          We'll send a verification code to your Gmail to reset your password
+        <p className="text-sm font-semibold text-gray-400 dark:text-gray-500">
+          <span>Enter your registered Gmail for a OTP.</span>
         </p>
 
         <input
@@ -48,19 +49,19 @@ const ForgotPassword = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your Gmail"
-          className="p-4 border border-gray-700 rounded bg-black text-white outline-none focus:border-blue-500"
+          className="p-4 border border-gray-300 dark:border-gray-700 rounded outline-none focus:border-blue-500"
           required
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="border border-blue-500 p-4 rounded-2xl cursor-pointer bg-blue-600 hover:bg-blue-700 transition disabled:bg-blue-400 disabled:cursor-not-allowed"
+          className="border border-gray-300 dark:border-gray-700 p-3 rounded-2xl cursor-pointer bg-blue-500 hover:bg-blue-600 transition disabled:bg-blue-400 disabled:cursor-not-allowed"
         >
           {loading ? "Sending..." : "Send Reset OTP"}
         </button>
 
-        <Link to="/" className="hover:underline text-blue-400 text-sm">
+        <Link to="/" className="hover:underline text-sm">
           Back to Login
         </Link>
       </form>

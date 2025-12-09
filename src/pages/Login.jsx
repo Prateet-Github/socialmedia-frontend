@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { loginUser, clearError } from "../redux/authSlice";
 import { toast } from "react-hot-toast";
+import Logo from "../components/Logo";
 
 const Login = () => {
   // state variables
@@ -51,15 +52,22 @@ const Login = () => {
       onSubmit={handleSubmit}
       className="flex flex-col gap-4 min-h-screen w-full justify-center items-center"
     >
-      <div className="flex flex-col w-full max-w-sm border rounded text-center p-6 gap-8">
-        <h1 className="text-4xl">Social Media</h1>
+      <div className="flex flex-col w-full max-w-sm border  border-gray-300 dark:border-gray-700 rounded-2xl text-center p-6 gap-4">
+        <div className="flex gap-4 justify-center items-center p-2 w-fit mx-auto">
+          <Logo size={50}></Logo>
+          <span className="font-bold text-4xl">GeeksGram</span>
+        </div>
+
+        <p className="text-sm font-semibold text-gray-400 dark:text-gray-500">
+          Login with your Gmail to continue.
+        </p>
 
         <div className="flex flex-col gap-4">
           <input
             name="email"
             type="text"
-            placeholder="Username or Email"
-            className="p-4 border rounded"
+            placeholder="Gmail"
+            className="p-4  border-gray-300 dark:border-gray-700 border rounded"
             value={form.email}
             onChange={handleChange}
           />
@@ -67,7 +75,7 @@ const Login = () => {
             name="password"
             type="password"
             placeholder="Password"
-            className="p-4 border rounded"
+            className="p-4 border  border-gray-300 dark:border-gray-700 rounded"
             value={form.password}
             onChange={handleChange}
           />
@@ -75,23 +83,26 @@ const Login = () => {
 
         {error && <p className="text-sm text-red-500">{error}</p>}
 
-        <Link to="/forgot-password" className="hover:underline text-sm">
+        <Link
+          to="/forgot-password"
+          className="hover:underline text-sm text-blue-500"
+        >
           Forgot password?
         </Link>
 
         <button
           type="submit"
           disabled={loading}
-          className="border p-4 rounded-2xl cursor-pointer disabled:opacity-60"
+          className="border  border-gray-300 dark:border-gray-700 bg-blue-500 hover:bg-blue-600 p-3 rounded-2xl cursor-pointer disabled:opacity-60"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
       </div>
 
-      <div className="border rounded py-4 px-6 w-full max-w-sm text-center">
+      <div className="border  border-gray-300 dark:border-gray-700 rounded-2xl py-4 px-6 w-full max-w-sm text-center">
         <p>
           Don't have account?{" "}
-          <Link to="/signup" className="hover:underline">
+          <Link to="/signup" className="hover:underline text-blue-500">
             Sign Up
           </Link>
         </p>

@@ -51,7 +51,7 @@ const ResetPassword = () => {
       onSubmit={handleSubmit}
       className="min-h-screen flex justify-center items-center"
     >
-      <div className="p-8 rounded shadow-md w-full max-w-md">
+      <div className="p-6 border border-gray-300 dark:border-gray-700 rounded-2xl shadow-md w-full max-w-sm">
         <h2 className="text-2xl font-bold text-center mb-6">Reset Password</h2>
 
         <p className="text-center text-gray-500 mb-8">
@@ -63,7 +63,7 @@ const ResetPassword = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="New Password"
-          className="w-full p-4 border rounded mb-4 outline-none focus:border-blue-500"
+          className="w-full p-4 border border-gray-300 dark:border-gray-700  rounded mb-4 outline-none focus:border-blue-500"
         />
 
         <input
@@ -71,13 +71,13 @@ const ResetPassword = () => {
           value={confirm}
           onChange={(e) => setConfirm(e.target.value)}
           placeholder="Confirm Password"
-          className="w-full p-4 border rounded mb-6 outline-none focus:border-blue-500"
+          className="w-full p-4 border border-gray-300 dark:border-gray-700  rounded mb-6 outline-none focus:border-blue-500"
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white p-4 rounded hover:bg-blue-700 transition"
+          className="w-full bg-blue-500 text-white p-3 rounded-2xl cursor-pointer hover:bg-blue-600 transition"
         >
           {loading ? "Updating..." : "Reset Password"}
         </button>
