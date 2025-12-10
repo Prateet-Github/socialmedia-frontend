@@ -11,7 +11,7 @@ export const store = configureStore({
     auth: authReducer,
     posts: postReducer,
     publicUser: publicUserReducer,
-     userSearch: userSearchReducer,
+    userSearch: userSearchReducer,
     comments: commentReducer,
     notifications: notificationReducer,
   },

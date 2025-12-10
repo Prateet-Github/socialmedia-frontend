@@ -67,7 +67,7 @@ const Login = () => {
             name="email"
             type="text"
             placeholder="Gmail"
-            className="p-4  border-gray-300 dark:border-gray-700 border rounded"
+            className="p-4 border-gray-300 dark:border-gray-700 border rounded outline-none focus:border-blue-500"
             value={form.email}
             onChange={handleChange}
           />
@@ -75,7 +75,7 @@ const Login = () => {
             name="password"
             type="password"
             placeholder="Password"
-            className="p-4 border  border-gray-300 dark:border-gray-700 rounded"
+            className="p-4 border border-gray-300 dark:border-gray-700 rounded outline-none focus:border-blue-500"
             value={form.password}
             onChange={handleChange}
           />

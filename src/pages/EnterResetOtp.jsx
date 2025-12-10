@@ -1,9 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import axios from "axios";
-
-const API = `${import.meta.env.VITE_BACKEND_URL}/api/users`;
+import api from "../utils/api";
 
 const EnterResetOtp = () => {
   const navigate = useNavigate();
@@ -12,7 +10,7 @@ const EnterResetOtp = () => {
   const [otp, setOtp] = useState("");
 
   useEffect(() => {
-    if (!email) navigate("/forgot-password"); // redirect if direct access
+    if (!email) navigate("/forgot-password");
   }, [email, navigate]);
 
   const handleSubmit = async (e) => {
@@ -21,7 +19,7 @@ const EnterResetOtp = () => {
     if (!otp.trim()) return toast.error("Please enter OTP");
 
     try {
-      await axios.post(`${API}/verify-reset-otp`, { email, otp });
+      await api.post(`/users/verify-reset-otp`, { email, otp });
       toast.success("OTP verified");
       navigate("/reset-password", { state: { email } });
     } catch (err) {

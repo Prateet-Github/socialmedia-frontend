@@ -1,8 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import axios from "axios";
-import Logo from "../components/Logo";
+import api from "../utils/api";
 
 const isValidGmail = (email) => /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/users`;
@@ -21,7 +20,7 @@ const ForgotPassword = () => {
     try {
       setLoading(true);
 
-      await axios.post(`${API}/reset-password-request`, { email });
+      await api.post(`/users/reset-password-request`, { email });
 
       toast.success("OTP sent to Gmail");
       navigate("/reset-otp", { state: { email } });

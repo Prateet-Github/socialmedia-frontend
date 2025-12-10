@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { verifyEmail } from "../redux/authSlice";
-import axios from "axios";
+import api from "../utils/api";
 
 const API = `${import.meta.env.VITE_BACKEND_URL}/api/users`;
 
@@ -49,7 +49,7 @@ const EmailVerification = () => {
 
   const resendOtp = async () => {
     try {
-      await axios.post(`${API}/resend-otp`, { email });
+      await api.post(`/users/resend-otp`, { email });
       toast.success("OTP sent again!");
     } catch (err) {
       if (err.response?.status === 429) {

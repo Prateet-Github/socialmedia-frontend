@@ -1,9 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../utils/api.js";
 
-const API_URL = `${import.meta.env.VITE_BACKEND_URL}/api/users`;
-
-// 🔹 Load from localStorage (if exists)
+// Load from localStorage (if exists)
 const storedUser = localStorage.getItem("user");
 const storedToken = localStorage.getItem("token");
 
@@ -15,12 +13,12 @@ const initialState = {
   error: null,
 };
 
-// 🔹 Register
+// Register
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async ({ name, username, email, password }, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${API_URL}/register`, {
+      const res = await api.post("/users/register", {
         name,
         username,
         email,
@@ -33,12 +31,12 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-// 🔹 Verify Email (OTP)
+// Verify Email (OTP)
 export const verifyEmail = createAsyncThunk(
   "auth/verifyEmail",
   async ({ email, otp }, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${API_URL}/email-verification`, { email, otp });
+      const res = await api.post("/users/email-verification", { email, otp });
       return res.data; // contains token + user
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Verification failed");
@@ -46,12 +44,12 @@ export const verifyEmail = createAsyncThunk(
   }
 );
 
-// 🔹 Login
+// Login
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${API_URL}/login`, { email, password });
+      const res = await api.post("/users/login", { email, password });
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Login failed");
@@ -59,14 +57,14 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// 🔹 Update Profile
+// Update Profile
 export const updateProfile = createAsyncThunk(
   "auth/updateProfile",
   async (profileData, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.token;
 
-      const res = await axios.put(`${API_URL}/update-profile`, profileData, {
+      const res = await api.put(`/users/update-profile`, profileData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -79,15 +77,15 @@ export const updateProfile = createAsyncThunk(
   }
 );
 
-// 🔹 Follow User
+// Follow User
 export const followUser = createAsyncThunk(
   "auth/followUser",
   async (username, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.token;
 
-      const res = await axios.post(
-        `${API_URL}/${username}/follow`,
+      const res = await api.post(
+        `/users/${username}/follow`,
         {},
         {
           headers: {
@@ -103,15 +101,15 @@ export const followUser = createAsyncThunk(
   }
 );
 
-// 🔹 Unfollow User
+// Unfollow User
 export const unfollowUser = createAsyncThunk(
   "auth/unfollowUser",
   async (username, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.token;
 
-      const res = await axios.post(
-        `${API_URL}/${username}/unfollow`,
+      const res = await api.post(
+        `/users/${username}/unfollow`,
         {},
         {
           headers: {
@@ -127,12 +125,12 @@ export const unfollowUser = createAsyncThunk(
   }
 );
 
-// 🔹 Get Followers
+// Get Followers
 export const getFollowers = createAsyncThunk(
   "auth/getFollowers",
   async (username, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${API_URL}/${username}/followers`);
+      const res = await api.get(`/users/${username}/followers`);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to fetch followers");
@@ -140,12 +138,12 @@ export const getFollowers = createAsyncThunk(
   }
 );
 
-// 🔹 Get Following
+// Get Following
 export const getFollowing = createAsyncThunk(
   "auth/getFollowing",
   async (username, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${API_URL}/${username}/following`);
+      const res = await api.get(`/users/${username}/following`);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to fetch following");
@@ -153,14 +151,14 @@ export const getFollowing = createAsyncThunk(
   }
 );
 
-// 🔹 Fetch Current User Profile
+// Fetch Current User Profile
 export const fetchCurrentUserProfile = createAsyncThunk(
   "auth/fetchCurrentUserProfile",
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.token;
       
-      const res = await axios.get(`${API_URL}/profile`, {
+      const res = await api.get(`/users/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -173,6 +171,7 @@ export const fetchCurrentUserProfile = createAsyncThunk(
   }
 );
 
+// Auth Slice
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -191,6 +190,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+
       // Register
       .addCase(registerUser.pending, (state) => {
       state.loading = true;
@@ -199,11 +199,10 @@ const authSlice = createSlice({
   state.token = null;
   state.isAuthenticated = false;
       })
-     .addCase(registerUser.fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state) => {
   state.loading = false;
   state.error = null;
 
-  // user must verify first, do not authenticate here
   state.user = null;
   state.token = null;
   state.isAuthenticated = false;
@@ -218,8 +217,7 @@ const authSlice = createSlice({
   state.loading = true;
   state.error = null;
 })
-
-.addCase(verifyEmail.fulfilled, (state, action) => {
+      .addCase(verifyEmail.fulfilled, (state, action) => {
   state.loading = false;
   state.error = null;
   state.user = action.payload.user;
@@ -229,8 +227,7 @@ const authSlice = createSlice({
   localStorage.setItem("user", JSON.stringify(action.payload.user));
   localStorage.setItem("token", action.payload.token);
 })
-
-.addCase(verifyEmail.rejected, (state, action) => {
+      .addCase(verifyEmail.rejected, (state, action) => {
   state.loading = false;
   state.error = action.payload || "Verification failed";
 })
@@ -292,7 +289,6 @@ const authSlice = createSlice({
       })
       .addCase(followUser.fulfilled, (state, action) => {
         state.loading = false;
-        // You can update user's following list here if needed
       })
       .addCase(followUser.rejected, (state, action) => {
         state.loading = false;
@@ -306,7 +302,6 @@ const authSlice = createSlice({
       })
       .addCase(unfollowUser.fulfilled, (state, action) => {
         state.loading = false;
-        // You can update user's following list here if needed
       })
       .addCase(unfollowUser.rejected, (state, action) => {
         state.loading = false;
@@ -338,15 +333,17 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload || "Failed to fetch following";
       })
+
+      // Fetch Current User Profile
       .addCase(fetchCurrentUserProfile.pending, (state) => {
   state.loading = true;
 })
-.addCase(fetchCurrentUserProfile.fulfilled, (state, action) => {
+      .addCase(fetchCurrentUserProfile.fulfilled, (state, action) => {
   state.loading = false;
   state.user = action.payload;
   localStorage.setItem("user", JSON.stringify(action.payload));
 })
-.addCase(fetchCurrentUserProfile.rejected, (state, action) => {
+      .addCase(fetchCurrentUserProfile.rejected, (state, action) => {
   state.loading = false;
   state.error = action.payload;
 });

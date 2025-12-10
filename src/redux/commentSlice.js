@@ -1,16 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../utils/api.js";
 
-const API = `${import.meta.env.VITE_BACKEND_URL}/api/comments`;
-
-// 🔹 Get comments for a post
+// Get comments for a post
 export const fetchComments = createAsyncThunk(
   "comments/fetchComments",
   async (postId, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.token;
 
-      const res = await axios.get(`${API}/${postId}`, {
+      const res = await api.get(`/comments/${postId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -26,7 +24,7 @@ export const fetchComments = createAsyncThunk(
   }
 );
 
-// 🔹 Add a new comment (WITH AUTH)
+// Add a new comment
 export const addComment = createAsyncThunk(
   "comments/addComment",
   async ({ postId, content }, { getState, rejectWithValue }) => {
@@ -34,16 +32,8 @@ export const addComment = createAsyncThunk(
       const state = getState();
       const token = state.auth.token;
 
-      console.log("=== COMMENT DEBUG ===");
-      console.log("Full auth state:", state.auth);
-      console.log("Token exists:", !!token);
-      console.log("Token value:", token ? token.substring(0, 20) + "..." : "null");
-      console.log("Is authenticated:", state.auth.isAuthenticated);
-      console.log("Request data:", { postId, content });
-      console.log("Authorization header:", `Bearer ${token}`);
-
-      const res = await axios.post(
-        API,
+      const res = await api.post(
+        "/comments",
         { postId, content },
         {
           headers: {
@@ -52,11 +42,11 @@ export const addComment = createAsyncThunk(
         }
       );
 
-      console.log("✅ Comment response from server:", res.data);
+      console.log("Comment response from server:", res.data);
 
       return { postId, comment: res.data };
     } catch (err) {
-      console.error("❌ Comment request failed:", err.response?.data || err.message);
+      console.error("Comment request failed:", err.response?.data || err.message);
       console.error("Full error:", err);
       return rejectWithValue({
         postId,
@@ -72,6 +62,7 @@ const initialState = {
   errorByPostId: {},    // postId -> message
 };
 
+// Comment Slice
 const commentSlice = createSlice({
   name: "comments",
   initialState,
@@ -83,7 +74,8 @@ const commentSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // ─── FETCH COMMENTS
+
+      // FETCH COMMENTS
       .addCase(fetchComments.pending, (state, action) => {
         const postId = action.meta.arg;
         state.loadingByPostId[postId] = true;
@@ -101,7 +93,7 @@ const commentSlice = createSlice({
         state.errorByPostId[postId] = message || "Failed to load comments";
       })
 
-      // ─── ADD COMMENT
+      // ADD COMMENT
       .addCase(addComment.pending, (state, action) => {
         const { postId } = action.meta.arg;
         state.errorByPostId[postId] = null;

@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import axios from "axios";
-
-const API = `${import.meta.env.VITE_BACKEND_URL}/api/users`;
+import api from "../utils/api";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -34,7 +32,7 @@ const ResetPassword = () => {
     }
 
     try {
-      await axios.post(`${API}/reset-password`, {
+      await api.post(`/users/reset-password`, {
         email,
         newPassword: password,
       });

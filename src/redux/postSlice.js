@@ -1,16 +1,14 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../utils/api.js";
 
-const API_URL = `${import.meta.env.VITE_BACKEND_URL}/api/posts`; 
-
-// 🔹 Fetch feed: GET /api/posts/feed
+//Fetch feed: GET /api/posts/feed
 export const fetchFeed = createAsyncThunk(
   "posts/fetchFeed",
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.token;
 
-      const res = await axios.get(`${API_URL}/feed`, {
+      const res = await api.get(`/posts/feed`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -25,15 +23,14 @@ export const fetchFeed = createAsyncThunk(
   }
 );
 
-// 🔹 Create post: POST /api/posts  (content + image)
-
+// Create post
 export const createPost = createAsyncThunk(
   "posts/createPost",
   async (formData, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.token;
 
-      const res = await axios.post(API_URL, formData, {
+      const res = await api.post("/posts", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           // DON'T set Content-Type manually for FormData
@@ -49,11 +46,12 @@ export const createPost = createAsyncThunk(
   }
 );
 
+// Get posts by user
 export const getUserPosts = createAsyncThunk(
   "posts/getUserPosts",
   async (userId, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${API_URL}/user/${userId}`);
+      const res = await api.get(`/posts/user/${userId}`);
       return res.data;
     } catch (err) {
       return rejectWithValue("Failed to load user posts");
@@ -68,8 +66,8 @@ export const likePost = createAsyncThunk(
     try {
       const token = getState().auth.token;
       
-      const res = await axios.post(
-        `http://localhost:5001/api/posts/${postId}/like`,
+      const res = await api.post(
+        `/posts/${postId}/like`,
         {},
         {
           headers: {
@@ -92,8 +90,8 @@ export const unlikePost = createAsyncThunk(
     try {
       const token = getState().auth.token;
       
-      const res = await axios.post(
-        `http://localhost:5001/api/posts/${postId}/unlike`,
+      const res = await api.post(
+        `/posts/${postId}/unlike`,
         {},
         {
           headers: {
@@ -109,6 +107,7 @@ export const unlikePost = createAsyncThunk(
   }
 );
 
+// Post Slice
 const postSlice = createSlice({
   name: "posts",
   initialState: {
@@ -120,7 +119,8 @@ const postSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // 🔹 fetchFeed
+
+      // fetchFeed
       .addCase(fetchFeed.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -134,7 +134,7 @@ const postSlice = createSlice({
         state.error = action.payload;
       })
 
-      // 🔹 createPost
+      //  createPost
       .addCase(createPost.fulfilled, (state, action) => {
         state.items.unshift(action.payload);
       })
@@ -142,7 +142,7 @@ const postSlice = createSlice({
         state.error = action.payload;
       })
 
-      // 🔹 getUserPosts
+      // getUserPosts
       .addCase(getUserPosts.pending, (state) => {
         state.loading = true;
       })
@@ -154,9 +154,9 @@ const postSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      // In your postSlice extraReducers, add these:
 
-.addCase(likePost.fulfilled, (state, action) => {
+      // likePost
+      .addCase(likePost.fulfilled, (state, action) => {
   const { postId, likes } = action.payload;
 
   // Feed posts
@@ -171,7 +171,8 @@ const postSlice = createSlice({
     userPost.likesCount = likes;
   }
 })
-.addCase(unlikePost.fulfilled, (state, action) => {
+      // unlikePost
+      .addCase(unlikePost.fulfilled, (state, action) => {
   const { postId, likes } = action.payload;
 
   const feedPost = state.items.find((p) => p._id === postId);

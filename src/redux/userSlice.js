@@ -1,13 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../utils/api.js";;
 
-const USER_API = `${import.meta.env.VITE_BACKEND_URL}/api/users`;
-
+// Fetch public profile by username
 export const fetchPublicProfile = createAsyncThunk(
   "user/fetchPublicProfile",
   async (username, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${USER_API}/public/${username}`);
+      const res = await api.get(`/users/public/${username}`);
       return res.data; // { user, posts }
     } catch (err) {
       return rejectWithValue(
@@ -17,13 +16,13 @@ export const fetchPublicProfile = createAsyncThunk(
   }
 );
 
-// ✅ Follow user action
+// Follow user action
 export const followUserProfile = createAsyncThunk(
   "user/followUserProfile",
   async ({ username, token }, { rejectWithValue }) => {
     try {
-      const res = await axios.post(
-        `${USER_API}/${username}/follow`,
+      const res = await api.post(
+        `/users/${username}/follow`,
         {},
         {
           headers: {
@@ -40,13 +39,13 @@ export const followUserProfile = createAsyncThunk(
   }
 );
 
-// ✅ Unfollow user action
+// Unfollow user action
 export const unfollowUserProfile = createAsyncThunk(
   "user/unfollowUserProfile",
   async ({ username, token }, { rejectWithValue }) => {
     try {
-      const res = await axios.post(
-        `${USER_API}/${username}/unfollow`,
+      const res = await api.post(
+        `/users/${username}/unfollow`,
         {},
         {
           headers: {
@@ -63,6 +62,7 @@ export const unfollowUserProfile = createAsyncThunk(
   }
 );
 
+// User Slice
 const userSlice = createSlice({
   name: "publicUser",
   initialState: {
@@ -73,11 +73,9 @@ const userSlice = createSlice({
     followLoading: false,
   },
   reducers: {
-    // ✅ Clear error
     clearError: (state) => {
       state.error = null;
     },
-    // ✅ Clear profile when leaving page
     clearProfile: (state) => {
       state.profile = null;
       state.posts = [];
@@ -86,6 +84,7 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+
       // Fetch Public Profile
       .addCase(fetchPublicProfile.pending, (state) => {
         state.loading = true;
@@ -108,7 +107,6 @@ const userSlice = createSlice({
       })
       .addCase(followUserProfile.fulfilled, (state, action) => {
         state.followLoading = false;
-        // ✅ Replace entire profile with backend's updated profile
         if (action.payload.user) {
           state.profile = {
             ...state.profile,
@@ -128,7 +126,6 @@ const userSlice = createSlice({
       })
       .addCase(unfollowUserProfile.fulfilled, (state, action) => {
         state.followLoading = false;
-        // ✅ Replace entire profile with backend's updated profile
         if (action.payload.user) {
           state.profile = {
             ...state.profile,

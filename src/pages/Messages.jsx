@@ -11,10 +11,10 @@ const Messages = () => {
   // When selecting a chat
   const handleSelectChat = (chat) => {
     if (window.innerWidth < 768) {
-      // 📱 MOBILE → redirect to full chat page
+      // MOBILE → redirect to full chat page
       navigate(`/messages/${chat._id}`);
     } else {
-      // 💻 DESKTOP → show chat on the right side
+      // DESKTOP → show chat on the right side
       setSelectedChat(chat);
     }
   };

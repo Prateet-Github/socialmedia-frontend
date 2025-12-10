@@ -1,14 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../utils/api.js";
 
-const API = `${import.meta.env.VITE_BACKEND_URL}/api/notifications`;
-
+// Fetch notifications
 export const fetchNotifications = createAsyncThunk(
   "notifications/fetch",
   async (_, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.token;
-      const res = await axios.get(API, {
+      const res = await api.get('/notifications', {
         headers: { Authorization: `Bearer ${token}` },
       });
       return res.data;
@@ -18,17 +17,19 @@ export const fetchNotifications = createAsyncThunk(
   }
 );
 
+// Mark all notifications as read
 export const markAllRead = createAsyncThunk(
   "notifications/markAllRead",
   async (_, { getState }) => {
     const token = getState().auth.token;
-    await axios.put(`${API}/read`, {}, {
+    await api.put(`/notifications/read`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     });
     return true;
   }
 );
 
+// Notification Slice
 const notificationSlice = createSlice({
   name: "notifications",
   initialState: {
@@ -46,8 +47,6 @@ const notificationSlice = createSlice({
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.loading = false;
         state.items = action.payload;
-
-        // count unread
         state.unreadCount = action.payload.filter(n => !n.read).length;
       })
 

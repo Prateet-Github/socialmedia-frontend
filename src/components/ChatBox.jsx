@@ -15,11 +15,9 @@ import VideoCallModal from "./VideoCallModal";
 import { useNavigate } from "react-router-dom";
 import useClickOutside from "../hooks/useClickOutside";
 import { socket } from "../socket";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { getDiceBearAvatar } from "../utils/dicebear";
-
-const API = `${import.meta.env.VITE_BACKEND_URL}/api`;
+import api from "../utils/api";
 
 const ChatBox = ({ chat }) => {
   // state variables
@@ -62,7 +60,7 @@ const ChatBox = ({ chat }) => {
     let mounted = true;
     const fetchMessages = async () => {
       try {
-        const res = await axios.get(`${API}/messages/${chat._id}`, {
+        const res = await api.get(`/messages/${chat._id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!mounted) return;
@@ -231,16 +229,12 @@ const ChatBox = ({ chat }) => {
         const formData = new FormData();
         formData.append("image", selectedImage);
 
-        const uploadRes = await axios.post(
-          `${API}/messages/upload-image`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        const uploadRes = await api.post(`/messages/upload-image`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
         mediaUrls.push(uploadRes.data.url);
       }
@@ -265,8 +259,8 @@ const ChatBox = ({ chat }) => {
       removeImage();
       setTimeout(scrollToBottom, 50);
 
-      const res = await axios.post(
-        `${API}/messages`,
+      const res = await api.post(
+        `/messages`,
         { chatId: chat._id, text: text || "", media: mediaUrls },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -321,8 +315,8 @@ const ChatBox = ({ chat }) => {
           setMessages((m) => [...m, tempMessage]);
           setTimeout(scrollToBottom, 50);
 
-          const res = await axios.post(
-            `${API}/messages`,
+          const res = await api.post(
+            `/messages`,
             {
               chatId: chat._id,
               text: `📍 Location: ${locationUrl}`,

@@ -10,7 +10,6 @@ const Notification = () => {
   const navigate = useNavigate();
 
   const { items, loading } = useSelector((s) => s.notifications);
-  const { user: currentUser } = useSelector((s) => s.auth);
 
   useEffect(() => {
     dispatch(markAllRead());

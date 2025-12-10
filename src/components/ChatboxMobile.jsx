@@ -1,8 +1,8 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ChatBox from "../components/ChatBox";
-import axios from "axios";
 import { useSelector } from "react-redux";
+import api from "../utils/api";
 
 const API = `${import.meta.env.VITE_BACKEND_URL}/api`;
 
@@ -22,7 +22,7 @@ export default function ChatBoxMobile() {
 
     const fetchChat = async () => {
       try {
-        const res = await axios.get(`${API}/chats/${chatId}`, {
+        const res = await api.get(`/chats/${chatId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setChat(res.data);

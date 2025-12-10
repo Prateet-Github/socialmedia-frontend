@@ -29,7 +29,6 @@ const Home = () => {
         <Left />
       </div>
 
-      {/* Center Feed */}
       <div className="flex-1 min-w-0 max-w-2xl flex flex-col items-center mx-auto">
         {loading && (
           <p className="text-gray-400 text-center mt-10">Loading feed…</p>

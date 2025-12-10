@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Chats from "./Chats";
-
-const API_URL = `${import.meta.env.VITE_BACKEND_URL}/api/chats`;
+import api from "../utils/api";
 
 const Dm = ({ onSelectChat }) => {
   const [chats, setChats] = useState([]);
@@ -14,7 +12,7 @@ const Dm = ({ onSelectChat }) => {
   useEffect(() => {
     const fetchChats = async () => {
       try {
-        const res = await axios.get(API_URL, {
+        const res = await api.get("/chats", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setChats(res.data);

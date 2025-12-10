@@ -56,7 +56,9 @@ export default function VoiceCallModal({
       console.log("📡 Received remote audio track");
       const remoteAudio = new Audio();
       remoteAudio.srcObject = event.streams[0];
-      remoteAudio.play().catch(err => console.error("Audio play error:", err));
+      remoteAudio
+        .play()
+        .catch((err) => console.error("Audio play error:", err));
     };
 
     peerRef.current = peer;

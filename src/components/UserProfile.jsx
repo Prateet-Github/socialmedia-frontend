@@ -13,9 +13,7 @@ import {
   unfollowUserProfile,
   clearProfile,
 } from "../redux/userSlice";
-import axios from "axios";
-
-const API = `${import.meta.env.VITE_BACKEND_URL}/api`;
+import api from "../utils/api";
 
 const UserProfile = () => {
   const [showInfo, setShowInfo] = useState(false);
@@ -69,8 +67,8 @@ const UserProfile = () => {
 
   const startChat = async () => {
     try {
-      const res = await axios.post(
-        `${API}/chats/start`,
+      const res = await api.post(
+        `/chats/start`,
         { receiverId: profile._id }, // ✅ fixed
         { headers: { Authorization: `Bearer ${token}` } }
       );

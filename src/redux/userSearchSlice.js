@@ -1,14 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "../utils/api.js";
 
+// Search users
 export const searchUsers = createAsyncThunk(
   "users/search",
   async (query, { getState, rejectWithValue }) => {
     try {
       const token = getState().auth.token;
 
-      const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/users/search?q=${query}`,
+      const res = await api.get(
+        `/users/search?q=${query}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -24,6 +25,7 @@ export const searchUsers = createAsyncThunk(
   }
 );
 
+// User Search Slice
 const userSearchSlice = createSlice({
   name: "userSearch",
   initialState: {
@@ -39,13 +41,15 @@ const userSearchSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+
+      // searchUsers
       .addCase(searchUsers.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(searchUsers.fulfilled, (state, action) => {
         state.loading = false;
-        state.results = action.payload; // ✅ array directly
+        state.results = action.payload;
       })
       .addCase(searchUsers.rejected, (state, action) => {
         state.loading = false;
