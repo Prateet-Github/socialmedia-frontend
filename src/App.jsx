@@ -24,7 +24,8 @@ import { fetchNotifications } from "./redux/notificationSlice";
 
 const App = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  
   useEffect(() => {
     if (user?._id) {
       // attach userId for future auth (optional)
@@ -48,9 +49,12 @@ const App = () => {
     };
   }, [user?._id]);
 
+  // ✅ Only fetch notifications when authenticated
   useEffect(() => {
-    dispatch(fetchNotifications());
-  }, [dispatch]);
+    if (isAuthenticated && user?._id) {
+      dispatch(fetchNotifications());
+    }
+  }, [isAuthenticated, user?._id, dispatch]);
 
   return (
     <>

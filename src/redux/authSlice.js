@@ -244,6 +244,7 @@ const authSlice = createSlice({
           name: action.payload.name,
           username: action.payload.username,
           email: action.payload.email,
+          avatar: action.payload.avatar,
           createdAt: action.payload.createdAt,
         };
         state.token = action.payload.token;
