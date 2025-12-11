@@ -17,10 +17,9 @@ const Search = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // debounced query hook
+  // debounced query
   const debouncedQuery = useDebounce(query, 400);
 
-  // effects
   useEffect(() => {
     if (!debouncedQuery.trim()) {
       dispatch(clearSearchResults());

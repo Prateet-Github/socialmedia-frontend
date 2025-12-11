@@ -121,13 +121,11 @@ const Left = ({ showLabels = true }) => {
               }
               setIsMobileMenuOpen(false);
             }}
-            className="flex items-center gap-3 cursor-pointer mb-4 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-3 cursor-pointer mb-4"
           >
             <Logo size={40} />
             {showLabels && (
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                {APP_NAME}
-              </span>
+              <span className="text-2xl font-bold">{APP_NAME}</span>
             )}
           </div>
           {navItems.map(({ to, icon: Icon, label }) => (

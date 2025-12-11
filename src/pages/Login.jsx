@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { loginUser, clearError } from "../redux/authSlice";
 import { toast } from "react-hot-toast";
 import Logo from "../components/Logo";
+import { APP_NAME } from "../utils/constants";
 
 const Login = () => {
   // state variables
@@ -55,7 +56,7 @@ const Login = () => {
       <div className="flex flex-col w-full max-w-sm border  border-gray-300 dark:border-gray-700 rounded-2xl text-center p-6 gap-4">
         <div className="flex gap-4 justify-center items-center p-2 w-fit mx-auto">
           <Logo size={50}></Logo>
-          <span className="font-bold text-4xl">GeeksGram</span>
+          <span className="font-bold text-4xl">{APP_NAME}</span>
         </div>
 
         <p className="text-sm font-semibold text-gray-400 dark:text-gray-500">

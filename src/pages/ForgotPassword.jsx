@@ -4,7 +4,6 @@ import { toast } from "react-hot-toast";
 import api from "../utils/api";
 
 const isValidGmail = (email) => /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
-const API = `${import.meta.env.VITE_BACKEND_URL}/api/users`;
 
 const ForgotPassword = () => {
   const navigate = useNavigate();

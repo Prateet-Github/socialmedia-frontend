@@ -5,8 +5,6 @@ import { useDispatch } from "react-redux";
 import { verifyEmail } from "../redux/authSlice";
 import api from "../utils/api";
 
-const API = `${import.meta.env.VITE_BACKEND_URL}/api/users`;
-
 const EmailVerification = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,7 +31,6 @@ const EmailVerification = () => {
     try {
       setLoading(true);
 
-      // instead of axios → use Redux
       const res = await dispatch(verifyEmail({ email, otp }));
 
       if (res.meta.requestStatus === "fulfilled") {

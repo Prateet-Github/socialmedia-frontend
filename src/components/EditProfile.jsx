@@ -55,7 +55,7 @@ const EditProfile = () => {
     if (bio !== user.bio) formData.append("bio", bio);
     if (website !== user.website) formData.append("website", website);
     if (location !== user.location) formData.append("location", location);
-    if (avatarFile) formData.append("avatar", avatarFile); // <– REAL File, not base64!
+    if (avatarFile) formData.append("avatar", avatarFile);
 
     if ([...formData.keys()].length === 0) {
       toast("Nothing to update");

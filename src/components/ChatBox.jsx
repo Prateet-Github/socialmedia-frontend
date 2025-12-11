@@ -22,19 +22,17 @@ import api from "../utils/api";
 const ChatBox = ({ chat }) => {
   // state variables
   const [isUp, setIsUp] = useState(false);
-  const [showVideoCallerModal, setShowVideoCallerModal] = useState(false); // outgoing video
+  const [showVideoCallerModal, setShowVideoCallerModal] = useState(false);
   const [showVideoCalleeModalData, setShowVideoCalleeModalData] =
-    useState(null); // incoming video offer data
+    useState(null);
   const [showVoiceModalOutgoing, setShowVoiceModalOutgoing] = useState(false);
-  const [incomingVoiceCall, setIncomingVoiceCall] = useState(null); // incoming voice offer data
-
-  // messages & input
+  const [incomingVoiceCall, setIncomingVoiceCall] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [incomingCall, setIncomingCall] = useState(null); // incoming video offer popup
+  const [incomingCall, setIncomingCall] = useState(null);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -305,7 +303,7 @@ const ChatBox = ({ chat }) => {
               name: currentUser.name,
               avatar: currentUser.avatar,
             },
-            text: `📍 Location: ${locationUrl}`,
+            text: `Location: ${locationUrl}`,
             media: [],
             location: { latitude, longitude },
             createdAt: new Date().toISOString(),
@@ -319,7 +317,7 @@ const ChatBox = ({ chat }) => {
             `/messages`,
             {
               chatId: chat._id,
-              text: `📍 Location: ${locationUrl}`,
+              text: `Location: ${locationUrl}`,
               location: { latitude, longitude },
             },
             { headers: { Authorization: `Bearer ${token}` } }

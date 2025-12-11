@@ -23,7 +23,7 @@ export default function useSocket({ userId, token } = {}) {
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
-      // DO NOT disconnect here since socket is global & persistent
+      // do not disconnect socket here, as other hooks might be using it
     };
   }, [userId, token]);
 }

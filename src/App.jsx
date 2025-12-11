@@ -49,7 +49,7 @@ const App = () => {
     };
   }, [user?._id]);
 
-  // ✅ Only fetch notifications when authenticated
+  // Only fetch notifications when authenticated
   useEffect(() => {
     if (isAuthenticated && user?._id) {
       dispatch(fetchNotifications());
