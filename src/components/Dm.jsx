@@ -7,7 +7,7 @@ import api from "../utils/api";
 const Dm = ({ onSelectChat }) => {
   const [chats, setChats] = useState([]);
   const { token } = useSelector((state) => state.auth);
-  const navigate = useNavigate(); // ✅ needed for mobile redirect
+  const navigate = useNavigate(); //needed for mobile redirect
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -24,7 +24,7 @@ const Dm = ({ onSelectChat }) => {
     fetchChats();
   }, [token]);
 
-  // ✅ Correctly handle mobile vs desktop
+  // Correctly handle mobile vs desktop
   const handleSelectChat = (chat) => {
     if (window.innerWidth < 768) {
       // mobile → go to `/messages/:id`
@@ -53,7 +53,7 @@ const Dm = ({ onSelectChat }) => {
         <Chats
           key={chat._id}
           chat={chat}
-          onClick={() => handleSelectChat(chat)} // ✅ FIXED
+          onClick={() => handleSelectChat(chat)}
         />
       ))}
     </main>

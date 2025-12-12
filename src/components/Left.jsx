@@ -21,7 +21,7 @@ import { APP_NAME } from "../utils/constants";
 import useClickOutside from "../hooks/useClickOutside";
 import Logo from "./Logo";
 
-// 🔥 import unread selector
+// import unread selector
 import { selectUnreadCount } from "../redux/notificationSlice";
 
 const Left = ({ showLabels = true }) => {
@@ -31,7 +31,7 @@ const Left = ({ showLabels = true }) => {
 
   const { user } = useSelector((state) => state.auth);
 
-  // 🔥 unread notifications
+  //  unread notifications
   const unreadCount = useSelector(selectUnreadCount);
 
   const dispatch = useDispatch();
@@ -65,7 +65,7 @@ const Left = ({ showLabels = true }) => {
     { to: "/home", icon: Home, label: "Home" },
     { to: "/search", icon: Search, label: "Search" },
 
-    // 🔥 replace icon later
+    // replace icon later
     { to: "/notification", icon: Bell, label: "Notifications" },
 
     { to: "/messages", icon: Mail, label: "Messages" },

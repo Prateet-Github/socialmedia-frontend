@@ -20,7 +20,7 @@ export default function VoiceCallModal({
   const [callStarted, setCallStarted] = useState(false);
   const [timer, setTimer] = useState(0);
 
-  // ---------------- TIMER ----------------
+  // Timer
   useEffect(() => {
     let interval;
     if (callStarted) {
@@ -32,7 +32,7 @@ export default function VoiceCallModal({
   const formatTime = (sec) =>
     new Date(sec * 1000).toISOString().substring(14, 19);
 
-  // ---------------- CREATE PEER ----------------
+  // Peer Connection Setup
   const createPeer = () => {
     const peer = new RTCPeerConnection({
       iceServers: [{ urls: ["stun:stun.l.google.com:19302"] }],
@@ -64,7 +64,7 @@ export default function VoiceCallModal({
     peerRef.current = peer;
   };
 
-  // ---------------- CALLER → OFFER ----------------
+  // Start Call (Caller)
   const startCall = async () => {
     createPeer();
 
@@ -80,7 +80,7 @@ export default function VoiceCallModal({
     console.log("📞 Call initiated to:", calleeId);
   };
 
-  // ---------------- RECEIVER → OFFER HANDLER ----------------
+  // Receive OFFER → ANSWER
   const handleOffer = async (offer, callerSocketId) => {
     remoteSocketId.current = callerSocketId;
 
@@ -99,7 +99,7 @@ export default function VoiceCallModal({
     console.log("✅ Answer sent to caller");
   };
 
-  // ---------------- MICROPHONE ----------------
+  // Microphone and Media Setup
   useEffect(() => {
     const startMedia = async () => {
       try {
@@ -127,7 +127,7 @@ export default function VoiceCallModal({
     startMedia();
   }, []);
 
-  // ---------------- CALLER → ANSWER RECEIVED ----------------
+  // Answer Handler
   useEffect(() => {
     const onAnswer = async ({ answer, fromSocketId }) => {
       console.log("📞 Received answer from:", fromSocketId);
@@ -140,7 +140,7 @@ export default function VoiceCallModal({
     return () => socket.off("voice:answer", onAnswer);
   }, []);
 
-  // ---------------- ICE CANDIDATES ----------------
+  // Ice Candidate Handling
   useEffect(() => {
     const onICE = async (candidate) => {
       if (candidate && peerRef.current) {
@@ -153,7 +153,7 @@ export default function VoiceCallModal({
     return () => socket.off("voice:ice-candidate", onICE);
   }, []);
 
-  // ---------------- END CALL ----------------
+  // End Call
   const endCall = () => {
     console.log("📴 Ending call");
     if (remoteSocketId.current) {
@@ -177,7 +177,7 @@ export default function VoiceCallModal({
     return () => socket.off("voice:end", onEnd);
   }, []);
 
-  // ---------------- MUTE ----------------
+  // Toggle mic
   const toggleMic = () => {
     const newMicState = !micOn;
     setMicOn(newMicState);
@@ -187,7 +187,6 @@ export default function VoiceCallModal({
     console.log("🎤 Mic:", newMicState ? "ON" : "OFF");
   };
 
-  // ---------------- UI ----------------
   return (
     <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center">
       <div className="w-[350px] bg-gray-900 text-white rounded-2xl p-8 text-center relative">

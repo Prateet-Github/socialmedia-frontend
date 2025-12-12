@@ -2,15 +2,6 @@ import { X, Mic, MicOff, Video, VideoOff, Phone } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { socket } from "../socket";
 
-/**
- Props:
-  - onClose()
-  - isCaller: boolean
-  - callerId (userId of caller)
-  - calleeId (userId of callee, used when caller initiates)
-  - callerSocketId (string) - when callee receives offer, server sends callerSocketId
-  - offer (RTCSessionDescriptionInit) - when callee receives an offer
-*/
 export default function VideoCallModal({
   onClose,
   isCaller = false,
